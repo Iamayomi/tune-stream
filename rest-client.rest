@@ -1,0 +1,67 @@
+#### SEND REQUEST TO GETS SONGS BY PAGES AND LIMIT
+GET http://localhost:8080/songs?page=16&limit=1
+
+#### SEND REQUEST TO GETS SONGS
+GET http://localhost:8080/songs
+
+
+#### FIND A SONG
+GET http://localhost:8080/songs/2
+
+#### CREATE A NEW SONG
+POST http://localhost:8080/songs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vdEBnbWFpbC5jb20iLCJ1c2VySWQiOjEsImFydGlzdElkIjoxLCJpYXQiOjE3MzQ5NzU5MTUsImV4cCI6MTczNTA2MjMxNX0.d6bBOmqsADSaRIJe1k_-3CDqxW-Fu2RD3P5pnZnA4OU
+
+{
+    "title": "You for me",
+    "artists": [1, 3],
+    "releasedDate" : "2022-08-29",
+    "duration" :"02:34",
+    "lyrics": "by, you're my adrenaline. Brought out this other side of me You don't"
+}
+
+# {
+#     "title": "New Song 4",
+#     "artists": ["Siagla", "Yan", "Ny"],
+#     "releasedDate": "2024-09-30",
+#     "duration": "02:45",
+#     "lyrics": "Sby, you're my adrenaline. Brought out this other side of me You don't even know Controlling my whole anatomy, oh Fingers are holding you right at the edge You're slipping out of my hands Keeping my secrets all up in my head I'm scared that you won't want me back, oh I dance to every song like it's about ya I drink 'til I kiss someone who looks like ya I wish that I was honest when I had you I shoulda told you that I wanted you for me I dance to every song like it's about ya I drink 'til I kiss someone who looks like ya"
+# }
+
+#### UPDATE A SONG
+PUT http://localhost:8080/songs/5
+Content-Type: application/json
+
+{
+    "title": "Kese",
+    "artists": ["wizzkid"],
+    "releasedDate": "2024-12-01",
+    "duration": "02:45",
+    "lyrics": "kese kese kese"
+}
+
+#### REMOVE A SONG
+DELETE http://localhost:8080/songs/6
+
+
+#### CREATE A NEW SONG
+POST http://localhost:8080/artists/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vdEBnbWFpbC5jb20iLCJ1c2VySWQiOjEsImlhdCI6MTczNDk3NTY5NSwiZXhwIjoxNzM1MDYyMDk1fQ.trKWb5MhOk5nO8Wv-OVUH176h7jlw7_zeRJ5oGY7lc8
+
+{
+    "userId": 1,
+    "stageName": "ayonz"
+}
+
+#### CREATE A NEW SONG
+POST http://localhost:8080/playlists
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vdEBnbWFpbC5jb20iLCJ1c2VySWQiOjEsImlhdCI6MTczNDk3NTY5NSwiZXhwIjoxNzM1MDYyMDk1fQ.trKWb5MhOk5nO8Wv-OVUH176h7jlw7_zeRJ5oGY7lc8
+
+{
+    "user": 1,
+    "name": "jams",
+    "songs": [1, 2, 3, 4]
+}
