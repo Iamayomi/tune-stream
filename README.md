@@ -26,11 +26,25 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-## Project setup
+## Clone the repository to your local machine:
+
+```bash
+$ git clone https://github.com/Iamayomi/spotify-clone.git
+```
+
+## Navigate to the project directory
+
+```bash
+cd spotify-clone
+```
+
+## Run the command to install dependencies
 
 ```bash
 $ yarn install
 ```
+
+
 
 ## Compile and run the project
 

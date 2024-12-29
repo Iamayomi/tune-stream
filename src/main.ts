@@ -1,12 +1,23 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
+import cookieparser from 'cookie-parser';
+import helmet from 'helmet';
+import * as morgan from 'morgan';
+import * as bodyParser from 'body-parser';
+import * as compression from 'compression';
 
 import { SeedService } from './module/seed/seed.service';
 import { HttpExceptionFilter } from 'src/common/helper/filter';
 
+declare const module: any;
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const configService = app.get(ConfigService)
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -15,6 +26,21 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  // security
+  app.use(helmet());
+
+  app.enableCors();
+
+  app.use(helmet());
+
+  app.use(compression());
+
+  app.use(bodyParser.json());
+
+  app.use(bodyParser.urlencoded({ extended: true }));
+
+  app.use(morgan('dev'));
 
   // Set global filters
   app.useGlobalFilters(new HttpExceptionFilter());
@@ -26,6 +52,11 @@ async function bootstrap() {
 
   // await seedService.seeder();
 
-  await app.listen(process.env.PORT ?? 8080);
+  await app.listen(configService.get<number>('port'));
+
+  if (module.hot) {
+    module.hot.accept();
+    module.hot.dispose(() => app.close());
+  }
 }
 bootstrap();

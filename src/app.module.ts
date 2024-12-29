@@ -4,6 +4,8 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+
 // import { LoggerMiddleware } from './common/middleware/logger.middleware';
 // import { SongsController } from './songs/songs.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -22,13 +24,18 @@ import { Playlist } from './module/playlists/playlist.entity';
 
 import { AuthModule } from './module/auth/auth.module';
 
-import { dataSourceOptions } from '../db/data-source';
+import { typeOrmAsyncConfig } from '../db/data-source';
 import { SeedModule } from './module/seed/seed.module';
-
+import configuration from './common/config/configuration';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(dataSourceOptions),
+    ConfigModule.forRoot({
+      envFilePath: ['.env'],
+      isGlobal: true,
+      load: [configuration]
+    }),
+    TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
     SongsModule,
     UsersModule,
     ArtistsModule,

@@ -1,10 +1,10 @@
 
 #### SEND REQUEST TO GETS SONGS
-GET http://localhost:8080/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vdEBnbWFpbC5jb20iLCJ1c2VySWQiOjEsImFydGlzdElkIjoxLCJpYXQiOjE3MzUwNTQ0MTQsImV4cCI6MTczNTE0MDgxNH0.Yc-E7R5WXNubOww-w-aNxQ6w_24rZdNMIP44NMnCM1k
+GET http://localhost:8080/api/v1/users/profile
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5vdEBnbWFpbC5jb20iLCJ1c2VySWQiOjEsImlhdCI6MTczNTM4NzQ4MSwiZXhwIjoxNzM1NDczODgxfQ.6SlVtKAGykfS-zTqfYsOh2MdoV5wzalaNHbBNx1p38c
 
 #### FIND A SONG
-POST  http://localhost:8080/auth/login
+POST  http://localhost:8080/api/v1/auth/login
 Content-Type: application/json
 
 {
