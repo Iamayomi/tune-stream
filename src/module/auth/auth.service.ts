@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ArtistsService } from 'src/module/artists/artist.service';
 import { PayloadType } from './types/payload.type';
 import { User } from 'src/module/users/user.entity';
-import { ConfigService } from '@nestjs/config';
+// import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {

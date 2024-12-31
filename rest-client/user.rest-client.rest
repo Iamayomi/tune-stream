@@ -1,18 +1,18 @@
 
-#### SEND REQUEST TO GETS SONGS
+#### SEND REQUEST TO GETS A PROFILE
 GET http://localhost:8080/api/v1/users/profile
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5vdEBnbWFpbC5jb20iLCJ1c2VySWQiOjEsImlhdCI6MTczNTM4NzQ4MSwiZXhwIjoxNzM1NDczODgxfQ.6SlVtKAGykfS-zTqfYsOh2MdoV5wzalaNHbBNx1p38c
 
-#### FIND A SONG
+#### LOGIN A USER
 POST  http://localhost:8080/api/v1/auth/login
 Content-Type: application/json
 
 {
-    "email": "not@gmail.com",
+    "email": "mary@gmail.com",
     "password": "123456"
 }
 
-#### CREATE A NEW SONG
+#### CREATE A NEW User
 POST http://localhost:8080/api/v1/auth/register
 Content-Type: application/json
 
@@ -23,17 +23,4 @@ Content-Type: application/json
     "password": "123456"
 }
 
-#### UPDATE A SONG
-PUT http://localhost:8080/songs/5
-Content-Type: application/json
 
-{
-    "title": "Kese",
-    "artists": ["wizzkid"],
-    "releasedDate": "2024-12-01",
-    "duration": "02:45",
-    "lyrics": "kese kese kese"
-}
-
-#### REMOVE A SONG
-DELETE http://localhost:8080/songs/6

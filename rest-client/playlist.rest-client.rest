@@ -1,0 +1,12 @@
+
+
+#### CREATE A NEW Playlist
+POST http://localhost:8080/playlists
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcnlAZ21haWwuY29tIiwidXNlcklkIjoxLCJhcnRpc3RJZCI6MSwiaWF0IjoxNzM1NTU1MDM3LCJleHAiOjE3MzU2NDE0Mzd9.wz3ybEVroYFAPYUA5Hz4cYZSbgzTAnTC099vW2GOk9A
+
+{
+    "user": 1,
+    "name": "jams",
+    "songs": [1, 2, 3, 4]
+}

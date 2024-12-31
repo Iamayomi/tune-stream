@@ -1,4 +1,7 @@
 import { NestFactory } from '@nestjs/core';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -12,12 +15,12 @@ import * as compression from 'compression';
 import { SeedService } from './module/seed/seed.service';
 import { HttpExceptionFilter } from 'src/common/helper/filter';
 
-declare const module: any;
+// declare const module: any;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  const configService = app.get(ConfigService)
+  // const configService = app.get(ConfigService)
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -52,11 +55,11 @@ async function bootstrap() {
 
   // await seedService.seeder();
 
-  await app.listen(configService.get<number>('port'));
+  await app.listen( false || process.env.PORT);
 
-  if (module.hot) {
-    module.hot.accept();
-    module.hot.dispose(() => app.close());
-  }
+  // if (module.hot) {
+  //   module.hot.accept();
+  //   module.hot.dispose(() => app.close());
+  // }
 }
 bootstrap();

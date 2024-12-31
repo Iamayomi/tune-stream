@@ -1,0 +1,23 @@
+
+#### CREATE A NEW ALBUM
+POST http://localhost:8080/api/v1/albums
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcnlAZ21haWwuY29tIiwidXNlcklkIjoxLCJhcnRpc3RJZCI6MSwiaWF0IjoxNzM1NTU1MDM3LCJleHAiOjE3MzU2NDE0Mzd9.wz3ybEVroYFAPYUA5Hz4cYZSbgzTAnTC099vW2GOk9A
+
+{
+    "title": "morayo",
+    "artist": 1,
+    "coverImage": "https://example.png",
+    "genre": "hippop",
+    "releaseDate" : "2022-08-29"
+}
+
+#### GET ALL ALBUM
+GET http://localhost:8080/api/v1/albums
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcnlAZ21haWwuY29tIiwidXNlcklkIjoxLCJhcnRpc3RJZCI6MSwiaWF0IjoxNzM1NTU1MDM3LCJleHAiOjE3MzU2NDE0Mzd9.wz3ybEVroYFAPYUA5Hz4cYZSbgzTAnTC099vW2GOk9A
+
+#### GET A ALBUM
+GET http://localhost:8080/api/v1/albums/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcnlAZ21haWwuY29tIiwidXNlcklkIjoxLCJhcnRpc3RJZCI6MSwiaWF0IjoxNzM1NTU1MDM3LCJleHAiOjE3MzU2NDE0Mzd9.wz3ybEVroYFAPYUA5Hz4cYZSbgzTAnTC099vW2GOk9A

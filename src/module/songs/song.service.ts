@@ -31,6 +31,8 @@ export class SongsService {
 
     const artists = await this.artistRepository.findBy(songDTO.artists);
     song.artists = artists;
+    console.log(song.artists);
+
     return await this.songRepository.save(song);
   }
 

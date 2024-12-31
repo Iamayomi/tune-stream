@@ -1,10 +1,13 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { User } from '../users/user.entity';
 import { Song } from 'src/module/songs/song.entity';
+import { Album } from '../albums/album.entity';
 
 
 @Entity('artists')
 export class Artist {
+
+  // @PrimaryGeneratedColumn('uuid')
 
   @PrimaryGeneratedColumn()
   id: number;
@@ -13,9 +16,18 @@ export class Artist {
   stageName: string;
 
   @ManyToMany(() => Song, (song) => song.artists)
-  songs: Song[];
+  songs: Song[]; // 1
+
+  @OneToMany(() => Album, (album) => album.artist)
+  albums: Album[]; // 2
 
   @OneToOne(() => User, (user) => user.artist, { cascade: true })
   @JoinColumn()
-  user: User;
+  user: User; 
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

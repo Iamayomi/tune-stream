@@ -1,11 +1,12 @@
 import { Exclude } from 'class-transformer';
 import { Artist } from 'src/module/artists/artist.entity';
 import { Playlist } from 'src/module/playlists/playlist.entity';
-import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
 
+  // @PrimaryGeneratedColumn('uuid')
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -30,4 +31,10 @@ export class User {
 
   @OneToOne(() => Artist, (artist) => artist.user)
   artist: Artist;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

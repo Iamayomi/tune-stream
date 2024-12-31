@@ -9,13 +9,13 @@ GET http://localhost:8080/songs
 GET http://localhost:8080/songs/2
 
 #### CREATE A NEW SONG
-POST http://localhost:8080/songs
+POST http://localhost:8080/api/v1/songs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vdEBnbWFpbC5jb20iLCJ1c2VySWQiOjEsImFydGlzdElkIjoxLCJpYXQiOjE3MzQ5NzU5MTUsImV4cCI6MTczNTA2MjMxNX0.d6bBOmqsADSaRIJe1k_-3CDqxW-Fu2RD3P5pnZnA4OU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcnlAZ21haWwuY29tIiwidXNlcklkIjoxLCJpYXQiOjE3MzU0ODc0ODIsImV4cCI6MTczNTU3Mzg4Mn0.MWny7NdQqiG-p6osf0Q0IBF4QTUVZ4Pq4RCO2GV4G4E
 
 {
     "title": "You for me",
-    "artists": [1, 3],
+    "artists": [1],
     "releasedDate" : "2022-08-29",
     "duration" :"02:34",
     "lyrics": "by, you're my adrenaline. Brought out this other side of me You don't"
@@ -45,23 +45,6 @@ Content-Type: application/json
 DELETE http://localhost:8080/songs/6
 
 
-#### CREATE A NEW SONG
-POST http://localhost:8080/artists/1
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vdEBnbWFpbC5jb20iLCJ1c2VySWQiOjEsImlhdCI6MTczNDk3NTY5NSwiZXhwIjoxNzM1MDYyMDk1fQ.trKWb5MhOk5nO8Wv-OVUH176h7jlw7_zeRJ5oGY7lc8
 
-{
-    "userId": 1,
-    "stageName": "ayonz"
-}
 
-#### CREATE A NEW SONG
-POST http://localhost:8080/playlists
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vdEBnbWFpbC5jb20iLCJ1c2VySWQiOjEsImlhdCI6MTczNDk3NTY5NSwiZXhwIjoxNzM1MDYyMDk1fQ.trKWb5MhOk5nO8Wv-OVUH176h7jlw7_zeRJ5oGY7lc8
 
-{
-    "user": 1,
-    "name": "jams",
-    "songs": [1, 2, 3, 4]
-}

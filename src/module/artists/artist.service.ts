@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Artist } from './artist.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { User } from 'src/module/users/user.entity';
 import { createArtistDTO } from './dto/create-artist.dto';
 
@@ -9,21 +9,20 @@ import { createArtistDTO } from './dto/create-artist.dto';
 export class ArtistsService {
   constructor(
     @InjectRepository(Artist)
-
     private artistRepository: Repository<Artist>,
-    
+
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {}
 
   async findArtist(userId: number): Promise<Artist> {
     return await this.artistRepository.findOneBy({ id: userId });
-
   }
 
   async createArtistForUser(userId: number, artistData: createArtistDTO): Promise<Artist> {
-
     const user = await this.userRepository.findOneBy({ id: userId });
+
+    console.log(user)
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -34,6 +33,7 @@ export class ArtistsService {
       ...artistData,
       user,
     });
+
 
     return await this.artistRepository.save(artist);
   }
