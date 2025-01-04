@@ -12,18 +12,17 @@ export class Song {
   @Column()
   title: string;
 
-  // @Column('varchar', { array: true })
-  // artists: string[];
-
-
   @Column({ type: 'date' })
-  releasedDate: Date;
+  releaseDate: Date;
 
   @Column({ type: 'time' })
   duration: Date;
 
   @Column({ type: 'text' })
   lyrics: string;
+
+  @Column({ type: 'varchar'})
+  coverImage: string;
 
   @ManyToMany(() => Artist, (artist) => artist.songs, { cascade: true })
   @JoinTable({ name: "songs_artists" })
@@ -33,8 +32,8 @@ export class Song {
   @JoinTable({ name: "songs_playlists" })
   playlists: Playlist[];
 
-  @ManyToOne(() => Album, (album) => album.tracks)
-  album: Album;
+  @ManyToOne(() => Album, (album) => album.tracks, { onDelete: 'CASCADE' })
+  album?: Album;
 
   @CreateDateColumn()
   createdAt: Date;

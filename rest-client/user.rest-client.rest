@@ -8,7 +8,7 @@ POST  http://localhost:8080/api/v1/auth/login
 Content-Type: application/json
 
 {
-    "email": "mary@gmail.com",
+    "email": "man@gmail.com",
     "password": "123456"
 }
 
@@ -17,9 +17,9 @@ POST http://localhost:8080/api/v1/auth/register
 Content-Type: application/json
 
 {
-    "firstName": "mary",
-    "lastName": "alegun",
-    "email": "mary@gmail.com",
+    "firstName": "human",
+    "lastName": "man",
+    "email": "man@gmail.com",
     "password": "123456"
 }
 

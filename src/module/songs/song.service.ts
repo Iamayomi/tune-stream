@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateSongDTO } from './dto/create-song-dto';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,42 +10,95 @@ import {
   paginate,
 } from 'nestjs-typeorm-paginate';
 import { Artist } from 'src/module/artists/artist.entity';
+import { Album } from '../albums/album.entity';
+import { AlbumService } from '../albums/album.service';
 
 @Injectable()
 export class SongsService {
   constructor(
+    private albumService: AlbumService,
+
     @InjectRepository(Song)
     private songRepository: Repository<Song>,
-    
+
     @InjectRepository(Artist)
     private artistRepository: Repository<Artist>,
+
+    @InjectRepository(Album)
+    private albumRepository: Repository<Album>,
   ) {}
 
   async createSong(songDTO: CreateSongDTO): Promise<Song> {
     const song = new Song();
     song.title = songDTO.title;
     song.artists = songDTO.artists;
+    song.coverImage = songDTO.coverImage;
     song.duration = songDTO.duration;
     song.lyrics = songDTO.lyrics;
-    song.releasedDate = songDTO.releasedDate;
+    song.releaseDate = songDTO.releaseDate;
 
-    const artists = await this.artistRepository.findBy(songDTO.artists);
-    song.artists = artists;
-    console.log(song.artists);
+    song.artists = await this.artistRepository.findBy(songDTO.artists);
+    songDTO.album === undefined ? true : false;
 
+    if (songDTO.album) {
+      const album = await this.albumService.findAlbumById(songDTO.album);
+
+      if (!album) {
+        throw new NotFoundException(
+          `Album with this ID ${songDTO.album} not found`,
+        );
+      }
+      song.album = album;
+    }
     return await this.songRepository.save(song);
   }
 
-  async findSongById(id: number): Promise<Song> {
-    return await this.songRepository.findOneBy({ id });
+  async findSongById(songId: number): Promise<Song> {
+    const song = await this.songRepository.findOneBy({ id: songId });
+
+    if (!song) {
+      throw new NotFoundException(`Song with this ID ${songId} not found`);
+    }
+    return song;
   }
 
-  async updateSongById(id: number, updateData: UpdateSongDTO): Promise<UpdateResult> {
-    return await this.songRepository.update(id, updateData);
+  async updateSongById(
+    songId: number,
+    artistId: number,
+    updateSongData: UpdateSongDTO,
+  ): Promise<UpdateResult> {
+    const artist = await this.artistRepository.findOne({
+      where: { id: artistId },
+      relations: ['songs'],
+    });
+
+    if (!artist) {
+      throw new NotFoundException(`Artist with this ID ${artistId} not found`);
+    }
+    const song = artist.songs.find((song) => song.id === songId);
+
+    if (!song) {
+      throw new UnauthorizedException(`Song with this ID ${songId} not found`);
+    }
+    return await this.songRepository.update(songId, updateSongData);
   }
 
-  async deleteSongById(id: number): Promise<DeleteResult> {
-    return await this.songRepository.delete(id);
+  async deleteSongById(songId: number, artistId: number): Promise<DeleteResult> {
+    const artist = await this.artistRepository.findOne({
+      where: { id: artistId },
+      relations: ['songs'],
+    });
+
+    if (!artist) {
+      throw new NotFoundException(`Artist with this ID ${artistId} not found`);
+    }
+    const song = artist.songs.find((song) => song.id === songId);
+
+    if (!song) {
+      throw new UnauthorizedException(`Song with this ID ${songId} not found`);
+    }
+
+    return await this.songRepository.delete(songId);
   }
 
   async findAllSong(): Promise<Song[]> {
@@ -54,7 +107,7 @@ export class SongsService {
 
   async pagination(options: IPaginationOptions): Promise<Pagination<Song>> {
     const queryBuilder = this.songRepository.createQueryBuilder('c');
-    queryBuilder.orderBy('c.releasedDate', 'DESC');
+    queryBuilder.orderBy('c.releaseDate', 'DESC');
     return await paginate<Song>(queryBuilder, options);
   }
 }

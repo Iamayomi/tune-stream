@@ -13,14 +13,22 @@ export class CreateSongDTO {
   @IsNotEmpty()
   readonly title: string;
 
+  @IsNumber()
+  @IsOptional()
+  album?: number;
+
   @IsNotEmpty()
   @IsArray()
   @IsNumber({}, { each: true })
   readonly artists: any;
 
+  @IsString()
+  @IsNotEmpty()
+  readonly coverImage: string;
+
   @IsNotEmpty()
   @IsDateString()
-  readonly releasedDate: Date;
+  readonly releaseDate: Date;
 
   @IsNotEmpty()
   @IsMilitaryTime()

@@ -3,32 +3,31 @@ import {
   IsDateString,
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
 } from 'class-validator';
 
-export class CreateAlbumDTO {
+export class UpdateAlbumDTO {
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   readonly title: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   readonly coverImage: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
   readonly genre: string;
 
-  // @IsArray()
-  @IsNotEmpty()
-  @IsNumber()
-  readonly artist: number;
+ 
 
+  @IsOptional()
   @IsArray()
-  @IsNotEmpty()
   // @IsNumber({}, { each: true })
   readonly tracks: any[];
 
+  @IsOptional()
   @IsString()
   @IsDateString()
   readonly releaseDate: Date;

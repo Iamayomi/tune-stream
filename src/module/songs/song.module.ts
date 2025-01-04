@@ -4,16 +4,18 @@ import { SongsService } from './song.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Song } from './song.entity';
 import { Artist } from 'src/module/artists/artist.entity';
-
+import { Album } from '../albums/album.entity';
+import { AlbumService } from '../albums/album.service';
+import { AlbumsModule } from '../albums/album.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Song, Artist])],
+  imports: [TypeOrmModule.forFeature([Song, Album, Artist])],
   controllers: [SongsController],
   providers: [
-    //////// 1. standard providers 
+    //////// 1. standard providers
 
     SongsService,
-
+    AlbumService,
     // {
     //   provide: SongsService,
     //   useClass: SongsService,
@@ -25,6 +27,6 @@ import { Artist } from 'src/module/artists/artist.entity';
     //   useValue: mockSongsService,
     // },
   ],
-  exports: [SongsService]
+  exports: [SongsService],
 })
 export class SongsModule {}

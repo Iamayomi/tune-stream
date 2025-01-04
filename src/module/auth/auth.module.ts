@@ -6,7 +6,7 @@ import { UsersModule } from 'src/module/users/user.module';
 import { authConstant } from './auth.constant';
 import { JWTStrategy } from './auth.jwt.strategy';
 import { ArtistsModule } from 'src/module/artists/artist.module';
-import { AlbumsModule } from '../albums/album.module';
+
 
 // import { ApiKeyStrategy } from './apikey.strategy';
 

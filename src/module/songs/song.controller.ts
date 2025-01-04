@@ -8,6 +8,7 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Put,
   Query,
@@ -22,6 +23,7 @@ import { UpdateSongDTO } from './dto/update-song-dto';
 import { Song } from './song.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { JwtArtistGuard } from '../auth/auth.guide/artist.jwt.guard';
+import { JWTAuthGuard } from '../auth/auth.guide/jwt.guard';
 
 @Controller('songs')
 export class SongsController {
@@ -34,7 +36,7 @@ export class SongsController {
   }
 
   @Get()
-  @UseGuards(JwtArtistGuard)
+  @UseGuards(JWTAuthGuard)
   findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
@@ -46,27 +48,34 @@ export class SongsController {
     });
   }
 
-  @Get(':id')
+  @Get(':songId')
+  @UseGuards(JWTAuthGuard)
   findOne(
     @Param(
-      'id',
+      'songId',
       new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
     )
-    id: number,
+    songId: number,
   ): Promise<Song> {
-    return this.songServices.findSongById(id);
+    return this.songServices.findSongById(songId);
   }
 
-  @Put(':id')
+  @Patch(':songId/artists/:artistId')
+  @UseGuards(JwtArtistGuard)
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('songId', ParseIntPipe) songId: number,
+    @Param('artistId', ParseIntPipe) artistId: number,
     @Body() updateSongDTO: UpdateSongDTO,
   ): Promise<UpdateResult> {
-    return this.songServices.updateSongById(id, updateSongDTO);
+    return this.songServices.updateSongById(songId, artistId, updateSongDTO);
   }
 
-  @Delete(':id')
-  remove(@Param('id', ParseIntPipe) id: number): Promise<DeleteResult> {
-    return this.songServices.deleteSongById(id);
+  @Delete(':songId/artists/:artistId')
+  @UseGuards(JwtArtistGuard)
+  async remove(
+    @Param('songId', ParseIntPipe) songId: number,
+    @Param('artistId', ParseIntPipe) artistId: number,
+  ): Promise<DeleteResult> {
+    return await this.songServices.deleteSongById(songId, artistId);
   }
 }

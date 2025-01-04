@@ -1,7 +1,22 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+  UseGuards,
+  Req,
+  ParseIntPipe,
+  Patch,
+} from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDTO } from './dto/create-album-dto';
+import { UpdateAlbumDTO } from './dto/update-album-dto';
 import { JwtArtistGuard } from '../auth/auth.guide/artist.jwt.guard';
+import { JWTAuthGuard } from '../auth/auth.guide/jwt.guard';
+import { DeleteResult, UpdateResult } from 'typeorm';
 
 @Controller('albums')
 export class AlbumController {
@@ -10,29 +25,42 @@ export class AlbumController {
   @Post()
   @UseGuards(JwtArtistGuard)
   async create(@Body() createAlbumDto: CreateAlbumDTO, @Req() request) {
+    // console.log(createAlbumDto)
     return await this.albumService.createAlbum(createAlbumDto);
   }
 
   @Get()
+  @UseGuards(JWTAuthGuard)
   async findAll() {
     return await this.albumService.findAllAlbum();
   }
 
   @Get(':id')
-  @UseGuards(JwtArtistGuard)
-  async findOne(@Param('id') id: string) {
+  @UseGuards(JWTAuthGuard)
+  async findOne(@Param('id') id: number) {
     return await this.albumService.findAlbumById(id);
   }
 
-//   @Put(':id')
-//   @UseGuards(JwtArtistGuard)
-//   async update(@Param('id') id: string, @Body() updateAlbumDto: CreateAlbumDTO) {
-//     return await this.albumService.updateAlbumById(id, updateAlbumDto);
-//   }
-
-  @Delete(':id')
+  @Patch(':albumId/artist/:artistId')
   @UseGuards(JwtArtistGuard)
-  async delete(@Param('id') id: string) {
-    return await this.albumService.deleteAlbumById(id);
+  update(
+    @Param('albumId', ParseIntPipe) albumId: number,
+    @Param('artistId', ParseIntPipe) artistId: number,
+    @Body() updateAlbumDto: UpdateAlbumDTO
+  ): Promise<UpdateResult> {
+    return this.albumService.updateAlbumById(
+      albumId,
+      artistId,
+      updateAlbumDto
+    );
+  }
+
+  @Delete(':albumId/artist/:artistId')
+  @UseGuards(JwtArtistGuard)
+  async delete(
+    @Param('albumId', ParseIntPipe) albumId: number,
+    @Param('artistId', ParseIntPipe) artistId: number,
+  ): Promise<DeleteResult> {
+    return await this.albumService.deleteAlbumById(albumId, artistId);
   }
 }

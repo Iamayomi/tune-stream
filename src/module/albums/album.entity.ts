@@ -7,6 +7,7 @@ import {
   OneToMany,
   ManyToOne,
   JoinColumn,
+  JoinTable,
 } from 'typeorm';
 import { Song } from '../songs/song.entity';
 import { Artist } from '../artists/artist.entity';
@@ -15,7 +16,7 @@ import { Artist } from '../artists/artist.entity';
 export class Album {
   //   @PrimaryGeneratedColumn('uuid')
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column({ type: 'varchar', length: 255 })
   title: string;
@@ -32,7 +33,7 @@ export class Album {
   @Column({ type: 'varchar', nullable: true })
   coverImage: string;
 
-  @OneToMany(() => Song, (song) => song.album)
+  @OneToMany(() => Song, (song) => song.album, { cascade: true })
   tracks: Song[];
 
   @CreateDateColumn()

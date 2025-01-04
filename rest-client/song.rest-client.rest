@@ -1,23 +1,34 @@
 #### SEND REQUEST TO GETS SONGS BY PAGES AND LIMIT
-GET http://localhost:8080/songs?page=16&limit=1
+GET http://localhost:8080/api/v1/songs?page=1&limit=1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwidXNlcklkIjoxLCJhcnRpc3RJZCI6MSwiaWF0IjoxNzM1ODExNDE4LCJleHAiOjE3MzU4OTc4MTh9.5NAsXLsh1c1Cu04moaIpRQP92RQId45i_Upo2_3fOUU
 
 #### SEND REQUEST TO GETS SONGS
-GET http://localhost:8080/songs
+DELETE  http://localhost:8080/api/v1/songs/15
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwidXNlcklkIjoxLCJhcnRpc3RJZCI6MSwiaWF0IjoxNzM1ODExNDE4LCJleHAiOjE3MzU4OTc4MTh9.5NAsXLsh1c1Cu04moaIpRQP92RQId45i_Upo2_3fOUU
+
+
+#### SEND REQUEST TO GETS SONGS
+GET http://localhost:8080/api/v1/songs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwidXNlcklkIjoxLCJhcnRpc3RJZCI6MSwiaWF0IjoxNzM1ODExNDE4LCJleHAiOjE3MzU4OTc4MTh9.5NAsXLsh1c1Cu04moaIpRQP92RQId45i_Upo2_3fOUU
 
 
 #### FIND A SONG
-GET http://localhost:8080/songs/2
+GET http://localhost:8080/api/v1/songs/14
 
 #### CREATE A NEW SONG
 POST http://localhost:8080/api/v1/songs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcnlAZ21haWwuY29tIiwidXNlcklkIjoxLCJpYXQiOjE3MzU0ODc0ODIsImV4cCI6MTczNTU3Mzg4Mn0.MWny7NdQqiG-p6osf0Q0IBF4QTUVZ4Pq4RCO2GV4G4E
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwidXNlcklkIjoxLCJhcnRpc3RJZCI6MSwiaWF0IjoxNzM1Nzg5Nzk2LCJleHAiOjE3MzU4NzYxOTZ9.ExPOpXsbr5gpONwB_PC9M0mh9tT3twadgbzVYiT1Umg
 
 {
-    "title": "You for me",
+    "title": "reckless",
     "artists": [1],
-    "releasedDate" : "2022-08-29",
+    "releaseDate" : "2022-08-29",
     "duration" :"02:34",
+    "album": 1,
+    "coverImage": "http://pic.png",
     "lyrics": "by, you're my adrenaline. Brought out this other side of me You don't"
 }
 
@@ -30,13 +41,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcnlAZ
 # }
 
 #### UPDATE A SONG
-PUT http://localhost:8080/songs/5
+PATCH  http://localhost:8080/api/v1/songs/5
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwidXNlcklkIjoxLCJhcnRpc3RJZCI6MSwiaWF0IjoxNzM1ODExNDE4LCJleHAiOjE3MzU4OTc4MTh9.5NAsXLsh1c1Cu04moaIpRQP92RQId45i_Upo2_3fOUU
+
+
 
 {
     "title": "Kese",
-    "artists": ["wizzkid"],
-    "releasedDate": "2024-12-01",
+    "artists": [1, 2],
+    "releaseDate": "2024-12-01",
     "duration": "02:45",
     "lyrics": "kese kese kese"
 }

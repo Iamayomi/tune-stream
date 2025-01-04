@@ -1,7 +1,9 @@
+import { Optional } from '@nestjs/common';
 import {
   IsArray,
   IsDateString,
   IsMilitaryTime,
+  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
@@ -14,13 +16,17 @@ export class UpdateSongDTO {
   readonly title: string;
 
   @IsOptional()
+  @IsString()
+  readonly coverImage: string;
+  
+  @IsOptional()
   @IsArray()
   @IsNumber({}, { each: true })
   readonly artists;
 
   @IsOptional()
   @IsDateString()
-  readonly releasedDate: Date;
+  readonly releaseDate: Date;
 
   @IsOptional()
   @IsMilitaryTime()

@@ -2,14 +2,22 @@
 #### CREATE A NEW ALBUM
 POST http://localhost:8080/api/v1/albums
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1hcnlAZ21haWwuY29tIiwidXNlcklkIjoxLCJhcnRpc3RJZCI6MSwiaWF0IjoxNzM1NTU1MDM3LCJleHAiOjE3MzU2NDE0Mzd9.wz3ybEVroYFAPYUA5Hz4cYZSbgzTAnTC099vW2GOk9A
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwidXNlcklkIjoxLCJhcnRpc3RJZCI6MSwiaWF0IjoxNzM1Nzg5Nzk2LCJleHAiOjE3MzU4NzYxOTZ9.ExPOpXsbr5gpONwB_PC9M0mh9tT3twadgbzVYiT1Umg
 
 {
-    "title": "morayo",
+    "title": "made in lagos",
     "artist": 1,
-    "coverImage": "https://example.png",
-    "genre": "hippop",
-    "releaseDate" : "2022-08-29"
+    "releaseDate" : "2022-08-29",
+    "coverImage": "https://me.png",
+    "genre": "afrobeat",
+    "tracks": [{
+    "title": "True Love",
+    "artists": [1],
+    "coverImage": "https://me.png",
+    "releaseDate" : "2022-08-29",
+    "duration" :"02:34",
+    "lyrics": "by, you're my adrenaline. Brought out this other side of me You don't"
+}]
 }
 
 #### GET ALL ALBUM
