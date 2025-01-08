@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Playlist } from './playlist.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, In, Repository } from 'typeorm';
 import { Song } from 'src/module/songs/song.entity';
 import { User } from 'src/module/users/user.entity';
 import { CreatePlayListDto } from './dto/create-playlist-dto';
@@ -19,20 +23,47 @@ export class PlaylistsService {
     private userRepository: Repository<User>,
   ) {}
 
-  async createPlaylist(playListDTO: CreatePlayListDto): Promise<Playlist> {
-    
-    const playList = new Playlist();
+  async createPlaylist(playlistDTO: CreatePlayListDto): Promise<Playlist> {
+    const { name, songs, user } = playlistDTO;
+    const playlist = new Playlist();
 
-    playList.name = playListDTO.name;
-    
-    const songs = await this.songsRepository.findBy(playListDTO.songs);
+    playlist.name = name;
 
-    // playList.songs = songs;
+    const song = await this.songsRepository.find({ where: { id: In(songs) } });
 
-    // const user = await this.userRepository.findOneBy({ id: playListDTO.user });
+    playlist.songs = song;
 
-    // playList.user = user;
+    const users = await this.userRepository.findOneBy({ id: user });
 
-    return this.playlistRepository.save(playList);
+    playlist.user = users;
+
+    return await this.playlistRepository.save(playlist);
+  }
+
+  async getPlaylistById(playlistId: number): Promise<Playlist> {
+    const playlist = await this.playlistRepository.findOne({
+      where: { id: playlistId },
+      relations: ['songs'],
+    });
+
+    if (!playlist) {
+      throw new NotFoundException(
+        `Playlist with this ID ${playlistId} not found`,
+      );
+    }
+    return playlist;
+  }
+
+  async deletePlaylistById(playlistId: number): Promise<DeleteResult> {
+    const playlist = await this.playlistRepository.findOne({
+      where: { id: playlistId },
+    });
+
+    if (!playlist) {
+      throw new NotFoundException(
+        `Playlist with this ID ${playlistId} not found`,
+      );
+    }
+    return await this.playlistRepository.delete(playlistId);
   }
 }

@@ -38,7 +38,7 @@ export const dataSourceOptions: DataSourceOptions = {
   port: 5432,
   username: 'postgres',
   password: 'myserver',
-  database: 'spotify',
+  database: 'tunestream',
   entities: ['dist/**/*.entity.js'], //1
   synchronize: false, // 2
   migrations: ['dist/db/migrations/*.js'],

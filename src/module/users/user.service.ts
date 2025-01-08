@@ -6,13 +6,16 @@ import * as bcrypt from 'bcryptjs';
 import { CreateUserDTO } from './dto/create-user-dto';
 import { LoginDTO } from './dto/login-user-dto';
 import { generateUUID } from './uuid';
+import { Playlist } from '../playlists/playlist.entity';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
 
+    @InjectRepository(Playlist)
+    private playlistRepository: Repository<Playlist>,
   ) {}
 
   async createUser(userDTO: CreateUserDTO): Promise<User> {
@@ -44,5 +47,9 @@ export class UsersService {
 
   async findByApiKey(apiKey: string): Promise<User> {
     return this.userRepository.findOneBy({ apiKey });
+  }
+
+  async findUserPlaylistsById(userId: number): Promise<Playlist[]> {
+    return await this.playlistRepository.find({ where: { userId } });
   }
 }

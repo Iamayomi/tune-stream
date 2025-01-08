@@ -106,15 +106,17 @@ export class AlbumService {
 
   async deleteAlbumById(
     albumId: number,
-    artistId: number,
+    artistId: number
   ): Promise<DeleteResult> {
-    const album = await this.albumRepository.findOne({
-      where: { id: albumId },
-      relations: ['artist'],
+    const artist = await this.artistRepository.findOne({
+      where: { id: artistId },
+      relations: ['albums'],
     });
 
+    const album = artist.albums.find((album) => album.id === artistId);
+
     if (!album) {
-      throw new NotFoundException(`Album with this ID ${artistId} not found`);
+      throw new NotFoundException(`Album with this ID ${albumId} not found`);
     }
     return await this.albumRepository.delete(albumId);
   }

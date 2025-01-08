@@ -2,14 +2,14 @@ import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { CreateUserDTO } from 'src/module/users/dto/create-user-dto';
 import { LoginDTO } from 'src/module/users/dto/login-user-dto';
 import { User } from 'src/module/users/user.entity';
-import { UsersService } from 'src/module/users/user.service';
+import { UserService } from 'src/module/users/user.service';
 import { AuthService } from 'src/module/auth/auth.service';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
   constructor(
-    private userService: UsersService,
+    private userService: UserService,
     private authService: AuthService,
   ) {}
 

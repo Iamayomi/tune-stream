@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateSongDTO } from './dto/create-song-dto';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, In, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Song } from './song.entity';
 import { UpdateSongDTO } from './dto/update-song-dto';
@@ -37,8 +37,9 @@ export class SongsService {
     song.lyrics = songDTO.lyrics;
     song.releaseDate = songDTO.releaseDate;
 
-    song.artists = await this.artistRepository.findBy(songDTO.artists);
+    song.artists = await this.artistRepository.find({where: { id: In(songDTO.artists)}});
     songDTO.album === undefined ? true : false;
+
 
     if (songDTO.album) {
       const album = await this.albumService.findAlbumById(songDTO.album);

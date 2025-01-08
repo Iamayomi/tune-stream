@@ -22,6 +22,9 @@ export class Playlist {
   @Column()
   name: string;
 
+  @Column()
+  userId: number
+
   @ManyToOne(() => User, (user) => user.playlists)
   user: User;
 

@@ -24,18 +24,42 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tune-stream API
+
+The Tune-stream API is a RESTful service designed to power modern music applications by providing seamless access to music-related data and functionality. With a robust set of endpoints, developers can integrate features such as music streaming, album and artist management, playlist creation, and user interactions into their applications.
+
+## Key Features:
+
+1. Search & Discover: Search for songs, albums, and artists with advanced filtering and sorting options.
+
+2. Albums: Retrieve album details, track listings, and release information.
+
+3. Artists: Access artist profiles, discographies, top tracks, and collaborations.
+
+4. Playlist Management: Create, edit, and share playlists with custom metadata.
+
+5. Streaming Support: Securely stream high-quality audio tracks.
+
+6. User Profiles: Manage user preferences, favorites, and playback history.
+
+7. Genre & Mood Tags: Explore music by genres, moods, or custom tags.
+
+
+## Getting Started:
+
+To get started with the Tune-stream API, check out the API [documentation](https://docs.nestjs.com/) for endpoint details and usage examples.
+
 
 ## Clone the repository to your local machine:
 
 ```bash
-$ git clone https://github.com/Iamayomi/spotify-clone.git
+$ git clone https://github.com/Iamayomi/tune-stream.git
 ```
 
 ## Navigate to the project directory
 
 ```bash
-cd spotify-clone
+cd tune-stream
 ```
 
 ## Run the command to install dependencies
@@ -90,23 +114,17 @@ With Mau, you can deploy your application in just a few clicks, allowing you to 
 Check out a few resources that may come in handy when working with NestJS:
 
 - Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+
+
 
 ## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Tune-stream API is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
+- Author - [Amodu Ayomide](https:/x.com/iamayom93173603)
 - Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
 ## License
 

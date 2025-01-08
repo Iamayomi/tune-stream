@@ -24,7 +24,7 @@ export class AlbumController {
 
   @Post()
   @UseGuards(JwtArtistGuard)
-  async create(@Body() createAlbumDto: CreateAlbumDTO, @Req() request) {
+  async createAlbum(@Body() createAlbumDto: CreateAlbumDTO, @Req() request) {
     // console.log(createAlbumDto)
     return await this.albumService.createAlbum(createAlbumDto);
   }
@@ -41,7 +41,7 @@ export class AlbumController {
     return await this.albumService.findAlbumById(id);
   }
 
-  @Patch(':albumId/artist/:artistId')
+  @Patch(':albumId/artists/:artistId')
   @UseGuards(JwtArtistGuard)
   update(
     @Param('albumId', ParseIntPipe) albumId: number,
@@ -55,11 +55,11 @@ export class AlbumController {
     );
   }
 
-  @Delete(':albumId/artist/:artistId')
+  @Delete(':albumId/artists/:artistId')
   @UseGuards(JwtArtistGuard)
   async delete(
     @Param('albumId', ParseIntPipe) albumId: number,
-    @Param('artistId', ParseIntPipe) artistId: number,
+    @Param('artistId', ParseIntPipe) artistId: number
   ): Promise<DeleteResult> {
     return await this.albumService.deleteAlbumById(albumId, artistId);
   }

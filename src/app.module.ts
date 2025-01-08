@@ -14,7 +14,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SongsModule } from './module/songs/song.module';
 // import { Song } from './module/songs/song.entity';
 
-import { UsersModule } from './module/users/user.module';
+import { UserModule } from './module/users/user.module';
 // import { User } from './module/users/user.entity';
 
 import { ArtistsModule } from './module/artists/artist.module';
@@ -42,7 +42,7 @@ import { SeedModule } from './module/seed/seed.module';
     // }),
     TypeOrmModule.forRoot(dataSourceOptions),
     SongsModule,
-    UsersModule,
+    UserModule,
     ArtistsModule,
     PlaylistsModule,
     AuthModule,

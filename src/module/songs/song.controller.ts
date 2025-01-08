@@ -3,6 +3,7 @@ import {
   Controller,
   DefaultValuePipe,
   Delete,
+  ForbiddenException,
   Get,
   HttpException,
   HttpStatus,
@@ -13,6 +14,7 @@ import {
   Put,
   Query,
   Req,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { DeleteResult, UpdateResult } from 'typeorm';
@@ -24,6 +26,7 @@ import { Song } from './song.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { JwtArtistGuard } from '../auth/auth.guide/artist.jwt.guard';
 import { JWTAuthGuard } from '../auth/auth.guide/jwt.guard';
+import { CurrentUser } from 'src/common/decorator/decorator';
 
 @Controller('songs')
 export class SongsController {
@@ -66,7 +69,11 @@ export class SongsController {
     @Param('songId', ParseIntPipe) songId: number,
     @Param('artistId', ParseIntPipe) artistId: number,
     @Body() updateSongDTO: UpdateSongDTO,
+    @CurrentUser() currentUserId: number,
   ): Promise<UpdateResult> {
+    if (currentUserId !== artistId) {
+      throw new UnauthorizedException(`This user ${artistId} id does not belong to you`);
+    }
     return this.songServices.updateSongById(songId, artistId, updateSongDTO);
   }
 
@@ -75,7 +82,11 @@ export class SongsController {
   async remove(
     @Param('songId', ParseIntPipe) songId: number,
     @Param('artistId', ParseIntPipe) artistId: number,
+    @CurrentUser() currentUserId: number,
   ): Promise<DeleteResult> {
+    if (currentUserId !== artistId) {
+      throw new UnauthorizedException(`This user ${artistId} id does not belong to you`);
+    }
     return await this.songServices.deleteSongById(songId, artistId);
   }
 }
