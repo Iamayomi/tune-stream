@@ -2,12 +2,14 @@ import {
   MiddlewareConsumer,
   Module,
   NestModule,
-  RequestMethod,
+  RequestMethod
 } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
 
+import { ServeStaticModule } from '@nestjs/serve-static';
 
-// import { LoggerMiddleware } from './common/middleware/logger.middleware';
+import { join } from 'path';
+
+import { LoggerMiddleware } from './common';
 // import { SongsController } from './songs/songs.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 // import { DataSource } from 'typeorm';
@@ -29,17 +31,19 @@ import { AlbumsModule } from './module/albums/album.module';
 
 
 import { dataSourceOptions } from '../db/data-source';
+
 import { SeedModule } from './module/seed/seed.module';
 
-// import configuration from './common/config/configuration';
+import {AppController} from "./app.controller"
+
+import { SearchModule } from './module/search/search.module';
 
 @Module({
   imports: [
-    // ConfigModule.forRoot({
-    //   envFilePath: '.env',
-    //   isGlobal: true,
-    //   load: [configuration]
-    // }),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'src', 'public'), // Path to your static files directory
+      serveRoot: '/public', 
+    }),
     TypeOrmModule.forRoot(dataSourceOptions),
     SongsModule,
     UserModule,
@@ -48,8 +52,10 @@ import { SeedModule } from './module/seed/seed.module';
     AuthModule,
     SeedModule,
     AlbumsModule,
+    SearchModule,
+    // SearchModule,
   ],
-  controllers: [],
+  controllers: [AppController],
   providers: [],
 })
 export class AppModule implements NestModule {
@@ -57,8 +63,10 @@ export class AppModule implements NestModule {
   //   console.log('database_name', dataSource.driver.database);
   // }
   configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes('*');
     // consumer.apply(LoggerMiddleware).forRoutes('songs'); option 1.
     // consumer.apply(LoggerMiddleware).forRoutes({path: 'songs', method: RequestMethod.POST}); // option 2.
     // consumer.apply(LoggerMiddleware).forRoutes(SongsController); // option 3.
   }
 }
+

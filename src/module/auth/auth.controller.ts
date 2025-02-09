@@ -5,6 +5,7 @@ import { User } from 'src/module/users/user.entity';
 import { UserService } from 'src/module/users/user.service';
 import { AuthService } from 'src/module/auth/auth.service';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -13,6 +14,11 @@ export class AuthController {
     private authService: AuthService,
   ) {}
 
+  @ApiOperation({ summary: 'Register new user' })
+  @ApiResponse({
+    status: 201,
+    description: 'It will return the user in the response',
+  })
   @Post('register')
   signup(@Body() userData: CreateUserDTO): Promise<User> {
     return this.userService.createUser(userData);
@@ -23,6 +29,7 @@ export class AuthController {
     return this.authService.userLogin(loginDTO);
   }
 
+  @ApiBearerAuth('JWT-auth')
   @Get('profile')
   @UseGuards(AuthGuard('bearer'))
   getProfile(

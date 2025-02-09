@@ -18,6 +18,10 @@ export class User {
 
   @Column({unique: true})
   email: string;
+
+  
+  @Column({ type: "varchar", default: "free" }) 
+  subscription: string;
   
   @Column()
   @Exclude()

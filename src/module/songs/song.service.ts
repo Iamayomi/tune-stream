@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+// import { ElasticsearchService } from '@nestjs/elasticsearch';
 import { CreateSongDTO } from './dto/create-song-dto';
 import { DeleteResult, In, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -26,6 +27,8 @@ export class SongsService {
 
     @InjectRepository(Album)
     private albumRepository: Repository<Album>,
+
+    // private readonly elasticSearch: ElasticsearchService
   ) {}
 
   async createSong(songDTO: CreateSongDTO): Promise<Song> {

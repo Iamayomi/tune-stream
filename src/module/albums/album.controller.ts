@@ -48,11 +48,7 @@ export class AlbumController {
     @Param('artistId', ParseIntPipe) artistId: number,
     @Body() updateAlbumDto: UpdateAlbumDTO
   ): Promise<UpdateResult> {
-    return this.albumService.updateAlbumById(
-      albumId,
-      artistId,
-      updateAlbumDto
-    );
+    return this.albumService.updateAlbumById(albumId, artistId, updateAlbumDto);
   }
 
   @Delete(':albumId/artists/:artistId')
