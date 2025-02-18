@@ -8,8 +8,7 @@ export class ArtistsController {
     constructor(private artistService: ArtistsService){}
 
     @Post(':userId')
-    createArtist( @Param('userId', ParseIntPipe) userId: number, 
-    @Body() artistData: createArtistDTO) {
+    createArtist(@Param('userId', ParseIntPipe) userId: number, @Body() artistData: createArtistDTO) {
         return this.artistService.createArtistForUser(userId, artistData);
     }
 }

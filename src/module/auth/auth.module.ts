@@ -3,9 +3,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UserModule } from 'src/module/users/user.module';
-import { authConstant } from './auth.constant';
 import { JWTStrategy } from './auth.jwt.strategy';
 import { ArtistsModule } from 'src/module/artists/artist.module';
+import { envs } from '../../common';
 
 
 // import { ApiKeyStrategy } from './apikey.strategy';
@@ -15,7 +15,7 @@ import { ArtistsModule } from 'src/module/artists/artist.module';
     UserModule,
     ArtistsModule,
     JwtModule.register({
-      secret: authConstant.secret,
+      secret: envs.authSecret,
       signOptions: {
         expiresIn: '1d',
       },

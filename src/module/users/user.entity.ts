@@ -1,11 +1,19 @@
 import { Exclude } from 'class-transformer';
 import { Artist } from 'src/module/artists/artist.entity';
 import { Playlist } from 'src/module/playlists/playlist.entity';
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('users')
 export class User {
-
   // @PrimaryGeneratedColumn('uuid')
   @PrimaryGeneratedColumn()
   id: number;
@@ -16,9 +24,15 @@ export class User {
   @Column()
   lastName: string;
 
-  @Column({unique: true})
+  @Column({ unique: true })
   email: string;
-  
+
+  @Column({ type: 'varchar', default: 'free' })
+  subscription: string;
+
+  @Column({ type: 'varchar', default: 'false' })
+  terms_of_service: boolean;
+
   @Column()
   @Exclude()
   password: string;

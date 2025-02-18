@@ -5,6 +5,7 @@ import { User } from 'src/module/users/user.entity';
 import { UserService } from 'src/module/users/user.service';
 import { AuthService } from 'src/module/auth/auth.service';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Controller('auth')
 export class AuthController {
@@ -13,26 +14,31 @@ export class AuthController {
     private authService: AuthService,
   ) {}
 
+  @ApiOperation({ summary: 'Register new user' })
+  @ApiResponse({
+    status: 201,
+    description: 'It will return the user in the response',
+  })
   @Post('register')
   signup(@Body() userData: CreateUserDTO): Promise<User> {
     return this.userService.createUser(userData);
   }
 
+  @ApiOperation({ summary: 'login a user' })
   @Post('login')
   login(@Body() loginDTO: LoginDTO) {
     return this.authService.userLogin(loginDTO);
   }
 
+  @ApiOperation({ summary: 'fetch a user profile' })
+  @ApiBearerAuth('JWT-auth')
   @Get('profile')
-  @UseGuards(AuthGuard('bearer'))
-  getProfile(
-    @Req()
-    req,
-  ) {
-    delete req.user.password;
+  @UseGuards(AuthGuard('jwt'))
+  getProfile(@Req() request) {
+    delete request.user.password;
     return {
       msg: 'authenticated with api key',
-      user: req.user,
+      user: request.user,
     };
   }
 }

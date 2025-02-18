@@ -4,23 +4,29 @@ GET http://localhost:8080/api/v1/users/profile
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5vdEBnbWFpbC5jb20iLCJ1c2VySWQiOjEsImlhdCI6MTczNTM4NzQ4MSwiZXhwIjoxNzM1NDczODgxfQ.6SlVtKAGykfS-zTqfYsOh2MdoV5wzalaNHbBNx1p38c
 
 #### LOGIN A USER
-POST  http://localhost:8080/api/v1/auth/login
+POST  http://localhost:8080/auth/login
 Content-Type: application/json
 
 {
-    "email": "man@gmail.com",
-    "password": "123456"
+    "email": "monica@gmail.com",
+    "password": "test123#@"
 }
 
 #### CREATE A NEW User
-POST http://localhost:8080/api/v1/auth/register
+POST http://localhost:8080/auth/register
 Content-Type: application/json
 
 {
-    "firstName": "human",
-    "lastName": "man",
-    "email": "man@gmail.com",
-    "password": "123456"
+  "firstName": "monica",
+  "lastName": "Adam",
+  "email": "monica@gmail.com",
+  "subscription": "free",
+  "password": "test123#@"
 }
+
+#### CREATE A NEW User
+DELETE  http://localhost:9200/songs
+Content-Type: application/json
+
 
 

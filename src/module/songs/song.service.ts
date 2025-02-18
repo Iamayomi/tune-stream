@@ -1,4 +1,11 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  Logger,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { ElasticSearchService } from '../search/search.service';
 import { CreateSongDTO } from './dto/create-song-dto';
 import { DeleteResult, In, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,6 +22,8 @@ import { AlbumService } from '../albums/album.service';
 
 @Injectable()
 export class SongsService {
+  private readonly logger = new Logger(SongsService.name);
+  private readonly index = 'songs';
   constructor(
     private albumService: AlbumService,
 
@@ -26,6 +35,9 @@ export class SongsService {
 
     @InjectRepository(Album)
     private albumRepository: Repository<Album>,
+
+    @Inject(ElasticSearchService) // ✅ Explicitly inject ElasticSearchService
+    private readonly elasticSearch: ElasticSearchService,
   ) {}
 
   async createSong(songDTO: CreateSongDTO): Promise<Song> {
@@ -37,9 +49,10 @@ export class SongsService {
     song.lyrics = songDTO.lyrics;
     song.releaseDate = songDTO.releaseDate;
 
-    song.artists = await this.artistRepository.find({where: { id: In(songDTO.artists)}});
+    song.artists = await this.artistRepository.find({
+      where: { id: In(songDTO.artists) },
+    });
     songDTO.album === undefined ? true : false;
-
 
     if (songDTO.album) {
       const album = await this.albumService.findAlbumById(songDTO.album);
@@ -51,7 +64,13 @@ export class SongsService {
       }
       song.album = album;
     }
-    return await this.songRepository.save(song);
+    await this.songRepository.save(song);
+
+    await this.elasticSearch.indexDocument(this.index, String(song.id), song);
+
+    this.logger.log(`Song created: ${JSON.stringify(song)}`);
+
+    return song;
   }
 
   async findSongById(songId: number): Promise<Song> {
@@ -84,7 +103,10 @@ export class SongsService {
     return await this.songRepository.update(songId, updateSongData);
   }
 
-  async deleteSongById(songId: number, artistId: number): Promise<DeleteResult> {
+  async deleteSongById(
+    songId: number,
+    artistId: number,
+  ): Promise<DeleteResult> {
     const artist = await this.artistRepository.findOne({
       where: { id: artistId },
       relations: ['songs'],

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-import { SeedData } from '../../../db/seeds/seed-data';
+import { SeedData } from '../../common/database/seeds/seed-data';
 
 @Injectable()
 export class SeedService {
@@ -13,7 +13,7 @@ export class SeedService {
 
     try {
       const manager = queryRunner.manager;
-    //   await seedData(manager)
+      //   await seedData(manager)
       const seedData = new SeedData(manager);
       seedData.seedArtist;
       seedData.seedUser;

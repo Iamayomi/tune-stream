@@ -22,8 +22,6 @@ export class ArtistsService {
   async createArtistForUser(userId: number, artistData: createArtistDTO): Promise<Artist> {
     const user = await this.userRepository.findOneBy({ id: userId });
 
-    console.log(user)
-
     if (!user) {
       throw new NotFoundException('User not found');
     }
