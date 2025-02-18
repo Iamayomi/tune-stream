@@ -41,7 +41,7 @@ export const dataSourceOptions: DataSourceOptions = {
   database: 'tunestream',
   entities: ['dist/**/*.entity.js'], //1
   synchronize: false, // 2
-  migrations: ['dist/db/migrations/*.js'],
+  migrations: ['dist/src/common/database/migrations/*.js'],
 };
 
 // console.log(dataSourceOptions)

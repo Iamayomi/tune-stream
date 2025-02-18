@@ -7,19 +7,22 @@ import { Artist } from 'src/module/artists/artist.entity';
 import { Album } from '../albums/album.entity';
 import { AlbumService } from '../albums/album.service';
 import { AlbumsModule } from '../albums/album.module';
-// import { ElasticsearchService } from '@nestjs/elasticsearch';
+import { ElasticSearchService } from '../search/search.service';
+import { SearchModule } from '../search/search.module';
+
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Song, Album, Artist])],
+  imports: [TypeOrmModule.forFeature([Song, Album, Artist]),SearchModule ],
   controllers: [SongsController],
   providers: [
     //////// 1. standard providers
 
     SongsService,
     AlbumService,
+    // ElasticSearchService
     // {
-    //   provide: ElasticsearchService,
-    //   useClass: ElasticsearchService,
+    //   provide: ElasticSearchService,
+    //   useClass: ElasticSearchService,
     // },
 
     //////// 2. value providers

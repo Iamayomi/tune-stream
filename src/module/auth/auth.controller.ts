@@ -24,22 +24,21 @@ export class AuthController {
     return this.userService.createUser(userData);
   }
 
+  @ApiOperation({ summary: 'login a user' })
   @Post('login')
   login(@Body() loginDTO: LoginDTO) {
     return this.authService.userLogin(loginDTO);
   }
 
+  @ApiOperation({ summary: 'fetch a user profile' })
   @ApiBearerAuth('JWT-auth')
   @Get('profile')
-  @UseGuards(AuthGuard('bearer'))
-  getProfile(
-    @Req()
-    req,
-  ) {
-    delete req.user.password;
+  @UseGuards(AuthGuard('jwt'))
+  getProfile(@Req() request) {
+    delete request.user.password;
     return {
       msg: 'authenticated with api key',
-      user: req.user,
+      user: request.user,
     };
   }
 }

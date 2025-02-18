@@ -2,7 +2,7 @@ import {
   MiddlewareConsumer,
   Module,
   NestModule,
-  RequestMethod
+  RequestMethod,
 } from '@nestjs/common';
 
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -29,12 +29,11 @@ import { AuthModule } from './module/auth/auth.module';
 
 import { AlbumsModule } from './module/albums/album.module';
 
-
-import { dataSourceOptions } from '../db/data-source';
+import { dataSourceOptions } from './common/database/data-source';
 
 import { SeedModule } from './module/seed/seed.module';
 
-import {AppController} from "./app.controller"
+import { AppController } from './app.controller';
 
 import { SearchModule } from './module/search/search.module';
 
@@ -42,7 +41,7 @@ import { SearchModule } from './module/search/search.module';
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'src', 'public'), // Path to your static files directory
-      serveRoot: '/public', 
+      serveRoot: '/public',
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
     SongsModule,
@@ -53,7 +52,6 @@ import { SearchModule } from './module/search/search.module';
     SeedModule,
     AlbumsModule,
     SearchModule,
-    // SearchModule,
   ],
   controllers: [AppController],
   providers: [],
@@ -69,4 +67,3 @@ export class AppModule implements NestModule {
     // consumer.apply(LoggerMiddleware).forRoutes(SongsController); // option 3.
   }
 }
-

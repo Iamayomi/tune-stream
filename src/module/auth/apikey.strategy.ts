@@ -1,6 +1,6 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { AuthService } from './auth.service';
-import { Strategy } from "passport-http-bearer";
+import { Strategy } from 'passport-http-bearer';
 import { UnauthorizedException } from '@nestjs/common';
 
 export class ApiKeyStrategy extends PassportStrategy(Strategy) {

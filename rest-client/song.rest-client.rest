@@ -18,9 +18,9 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5AZ
 GET http://localhost:8080/api/v1/songs/14
 
 #### CREATE A NEW SONG
-POST http://localhost:8080/api/v1/songs
+POST http://localhost:8080/songs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5AZ21haWwuY29tIiwidXNlcklkIjoxLCJhcnRpc3RJZCI6MSwiaWF0IjoxNzM1Nzg5Nzk2LCJleHAiOjE3MzU4NzYxOTZ9.ExPOpXsbr5gpONwB_PC9M0mh9tT3twadgbzVYiT1Umg
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbmljYUBnbWFpbC5jb20iLCJ1c2VySWQiOjUsImlhdCI6MTczOTE1MjQ1NywiZXhwIjoxNzM5MjM4ODU3fQ.oIOTeP2S0LNSnjvxcm8aR_37q-4U98n2lSQecutaks0
 
 {
     "title": "reckless",

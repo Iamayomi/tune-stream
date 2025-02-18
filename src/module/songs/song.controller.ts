@@ -27,11 +27,13 @@ import { Pagination } from 'nestjs-typeorm-paginate';
 import { JwtArtistGuard } from '../auth/auth.guide/artist.jwt.guard';
 import { JWTAuthGuard } from '../auth/auth.guide/jwt.guard';
 import { CurrentUser } from 'src/common/decorator/decorator';
+import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('songs')
 export class SongsController {
   constructor(private songServices: SongsService) {}
 
+  @ApiBearerAuth('JWT-auth')
   @Post()
   @UseGuards(JwtArtistGuard)
   create(@Body() createSongDTO: CreateSongDTO, @Req() request): Promise<Song> {

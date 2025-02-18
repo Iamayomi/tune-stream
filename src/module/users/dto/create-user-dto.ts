@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsEmail, IsNotEmpty, IsString } from 'class-validator';
 import { Column } from 'typeorm';
 
 export class CreateUserDTO {
@@ -29,6 +29,7 @@ export class CreateUserDTO {
   email: string;
 
   @ApiProperty({ example: 'free', description: 'Subscription type' })
+  @IsString()
   subscription: 'free' | 'premium';
 
   @ApiProperty({
@@ -38,4 +39,13 @@ export class CreateUserDTO {
   @IsString()
   @IsNotEmpty()
   password: string;
+
+  @ApiProperty({
+    example: 'true',
+    description: 'Provide the terms_of_service',
+  })
+  @IsBoolean()
+  @IsNotEmpty()
+  @Column({ default: 'false' })
+  terms_of_service: boolean;
 }

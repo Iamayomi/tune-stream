@@ -10,12 +10,10 @@ import { ValidationPipe } from '@nestjs/common';
 import * as bodyParser from 'body-parser';
 import { HttpExceptionFilter } from './common';
 import { corsOptions } from './common';
-import {options} from "../src/common"
-
+import { options } from '../src/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
 
   const document = SwaggerModule.createDocument(app, options);
 
@@ -46,7 +44,7 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
 
   //  Set global prefix for routes
-    // app.setGlobalPrefix('/api/v1/');
+  // app.setGlobalPrefix('/api/v1/');
 
   await app.listen(false || process.env.PORT);
 
