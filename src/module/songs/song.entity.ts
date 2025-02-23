@@ -38,6 +38,9 @@ export class Song {
   @Column()
   popularity: number;
 
+  @Column({ type: 'varchar', length: 100, default: 'Other' })
+  genre: string;
+
   @ManyToMany(() => Artist, (artist) => artist.songs, { cascade: true })
   @JoinTable({ name: 'songs_artists' })
   artists: Artist[];

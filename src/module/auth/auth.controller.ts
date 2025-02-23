@@ -14,6 +14,9 @@ export class AuthController {
     private authService: AuthService,
   ) {}
 
+  /**
+   * @route {POST} /api/v1/auth/register
+   * @access public */
   @ApiOperation({ summary: 'Register new user' })
   @ApiResponse({
     status: 201,
@@ -24,12 +27,20 @@ export class AuthController {
     return this.userService.createUser(userData);
   }
 
+  /**
+   * @route {POST} /api/v1/auth/login
+   * @access public */
   @ApiOperation({ summary: 'login a user' })
   @Post('login')
   login(@Body() loginDTO: LoginDTO) {
     return this.authService.userLogin(loginDTO);
   }
 
+  /**
+   * Get user's profile
+   * @route {GET} /api/v1/user/profile
+   * @access protected
+   */
   @ApiOperation({ summary: 'fetch a user profile' })
   @ApiBearerAuth('JWT-auth')
   @Get('profile')

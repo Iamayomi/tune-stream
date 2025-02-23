@@ -1,10 +1,12 @@
 import * as fs from 'fs';
+import { INestApplication } from '@nestjs/common';
+import { SwaggerModule } from '@nestjs/swagger';
 import { DocumentBuilder } from '@nestjs/swagger';
 import { envs } from '../env';
 
-const description = ` 🎵 **TuneStream API** provides a seamless music streaming experience, enabling users to discover, play, and manage their favorite songs, albums, and playlists.`
+const description = ` 🎵 **TuneStream API** provides a seamless music streaming experience, enabling users to discover, play, and manage their favorite songs, albums, and playlists.`;
 
-export const options = new DocumentBuilder()
+export const swaggerOptions = new DocumentBuilder()
   .setTitle('Tunestream Api')
   .setDescription(description)
   .setVersion('1.0')
@@ -33,3 +35,8 @@ export const options = new DocumentBuilder()
     'JWT-auth',
   )
   .build();
+
+// export function setupSwagger(app: INestApplication, options: any) {
+//   const document = SwaggerModule.createDocument(app, options);
+//   SwaggerModule.setup('api/v1/docs', app, document);
+// }

@@ -20,6 +20,9 @@ import { Artist } from 'src/module/artists/artist.entity';
 import { Album } from '../albums/album.entity';
 import { AlbumService } from '../albums/album.service';
 
+import { SearchSongDto } from './dto/search-song-dto';
+import { sendError } from '../../common/library/errors';
+
 @Injectable()
 export class SongsService {
   private readonly logger = new Logger(SongsService.name);
@@ -36,7 +39,7 @@ export class SongsService {
     @InjectRepository(Album)
     private albumRepository: Repository<Album>,
 
-    @Inject(ElasticSearchService) // ✅ Explicitly inject ElasticSearchService
+    @Inject(ElasticSearchService) // Explicitly inject ElasticSearchService
     private readonly elasticSearch: ElasticSearchService,
   ) {}
 
@@ -57,11 +60,11 @@ export class SongsService {
     if (songDTO.album) {
       const album = await this.albumService.findAlbumById(songDTO.album);
 
-      if (!album) {
-        throw new NotFoundException(
+      if (!album)
+        sendError.notfoundError(
           `Album with this ID ${songDTO.album} not found`,
         );
-      }
+
       song.album = album;
     }
     await this.songRepository.save(song);
@@ -76,9 +79,8 @@ export class SongsService {
   async findSongById(songId: number): Promise<Song> {
     const song = await this.songRepository.findOneBy({ id: songId });
 
-    if (!song) {
-      throw new NotFoundException(`Song with this ID ${songId} not found`);
-    }
+    if (!song) sendError.notfoundError(`Song with this ID ${songId} not found`);
+
     return song;
   }
 
@@ -92,14 +94,13 @@ export class SongsService {
       relations: ['songs'],
     });
 
-    if (!artist) {
-      throw new NotFoundException(`Artist with this ID ${artistId} not found`);
-    }
+    if (!artist)
+      sendError.notfoundError(`Artist with this ID ${artistId} not found`);
+
     const song = artist.songs.find((song) => song.id === songId);
 
-    if (!song) {
-      throw new UnauthorizedException(`Song with this ID ${songId} not found`);
-    }
+    if (!song) sendError.notfoundError(`Song with this ID ${songId} not found`);
+
     return await this.songRepository.update(songId, updateSongData);
   }
 
@@ -112,20 +113,23 @@ export class SongsService {
       relations: ['songs'],
     });
 
-    if (!artist) {
-      throw new NotFoundException(`Artist with this ID ${artistId} not found`);
-    }
+    if (!artist)
+      sendError.notfoundError(`Artist with this ID ${artistId} not found`);
+
     const song = artist.songs.find((song) => song.id === songId);
 
-    if (!song) {
-      throw new UnauthorizedException(`Song with this ID ${songId} not found`);
-    }
+    if (!song)
+      sendError.unauthorizationError(`Song with this ID ${songId} not found`);
 
     return await this.songRepository.delete(songId);
   }
 
   async findAllSong(): Promise<Song[]> {
     return await this.songRepository.find();
+  }
+
+  async searchSong(searchSongDto: SearchSongDto) {
+    return await this.elasticSearch.searchsong(searchSongDto);
   }
 
   async pagination(options: IPaginationOptions): Promise<Pagination<Song>> {

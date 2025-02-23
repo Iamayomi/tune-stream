@@ -29,7 +29,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         ? exception.getResponse()
         : {
             success: false,
-            data: exception.getResponse(),
+            // data: exception.getResponse(),
             message: Array.isArray(responseMsg.message)
               ? responseMsg.message[0]
               : message,

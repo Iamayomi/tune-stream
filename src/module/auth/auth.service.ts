@@ -1,7 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { LoginDTO } from 'src/module/users/dto/login-user-dto';
 import { UserService } from 'src/module/users/user.service';
-import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { ArtistsService } from 'src/module/artists/artist.service';
 import { PayloadType } from './types/payload.type';
@@ -16,15 +15,11 @@ export class AuthService {
     private artistService: ArtistsService,
   ) {}
 
-  async userLogin(loginDTO: LoginDTO): Promise<{ accessToken: string }> {
-    const user = await this.userService.findUser(loginDTO);
+  async userLogin(data: LoginDTO): Promise<{ accessToken: string }> {
+    const user = await this.userService.findByEmail(data);
 
-    const passwordMatched = await bcrypt.compare(
-      loginDTO.password,
-      user.password,
-    );
-
-    if (passwordMatched) {
+    const verifyUserPassword = user.verifyPassword(data.password);
+    if (verifyUserPassword) {
       delete user.password;
 
       const payload: PayloadType = { email: user.email, userId: user.id };
