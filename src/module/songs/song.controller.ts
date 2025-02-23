@@ -16,8 +16,12 @@ import {
   Req,
   UnauthorizedException,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { DeleteResult, UpdateResult } from 'typeorm';
+
 import { SongsService } from './song.service';
 import { CreateSongDTO } from './dto/create-song-dto';
 import { UpdateSongDTO } from './dto/update-song-dto';
@@ -27,7 +31,8 @@ import { Pagination } from 'nestjs-typeorm-paginate';
 import { JwtArtistGuard } from '../auth/auth.guide/artist.jwt.guard';
 import { JWTAuthGuard } from '../auth/auth.guide/jwt.guard';
 import { CurrentUser } from 'src/common/decorator/decorator';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { sendError } from '../../common/library/errors';
+import { SearchSongDto } from './dto/search-song-dto';
 
 @Controller('songs')
 export class SongsController {
@@ -40,6 +45,7 @@ export class SongsController {
     return this.songServices.createSong(createSongDTO);
   }
 
+  @ApiBearerAuth('JWT-auth')
   @Get()
   @UseGuards(JWTAuthGuard)
   findAll(
@@ -53,6 +59,26 @@ export class SongsController {
     });
   }
 
+  @ApiBearerAuth('JWT-auth')
+  @Get('search')
+  @UseGuards(JWTAuthGuard)
+  async searchsongs(@Query() searchSongDto: SearchSongDto) {
+    // return await this.songServices.searchSong(query);
+    // if (!query) sendError.BadRequestError('Query parameter is required');
+    // const page = parseInt(searchSongDto.page);
+    // const limit = parseInt(searchSongDto.limit);
+    // return await this.songServices.searchSong(query, page, limit);
+    return await this.songServices.searchSong(searchSongDto);
+    // );
+    // return this.songServices.searchSong(query, { genre, artist },
+    //   sortBy,
+    //   order,
+    //   page,
+    //   limit,
+    // );
+  }
+
+  @ApiBearerAuth('JWT-auth')
   @Get(':songId')
   @UseGuards(JWTAuthGuard)
   findOne(
@@ -65,6 +91,7 @@ export class SongsController {
     return this.songServices.findSongById(songId);
   }
 
+  @ApiBearerAuth('JWT-auth')
   @Patch(':songId/artists/:artistId')
   @UseGuards(JwtArtistGuard)
   update(
@@ -73,12 +100,15 @@ export class SongsController {
     @Body() updateSongDTO: UpdateSongDTO,
     @CurrentUser() currentUserId: number,
   ): Promise<UpdateResult> {
-    if (currentUserId !== artistId) {
-      throw new UnauthorizedException(`This user ${artistId} id does not belong to you`);
-    }
+    if (currentUserId !== artistId)
+      sendError.unauthenticatedError(
+        `This user ${artistId} id does not belong to you`,
+      );
+
     return this.songServices.updateSongById(songId, artistId, updateSongDTO);
   }
 
+  @ApiBearerAuth('JWT-auth')
   @Delete(':songId/artists/:artistId')
   @UseGuards(JwtArtistGuard)
   async remove(
@@ -86,9 +116,11 @@ export class SongsController {
     @Param('artistId', ParseIntPipe) artistId: number,
     @CurrentUser() currentUserId: number,
   ): Promise<DeleteResult> {
-    if (currentUserId !== artistId) {
-      throw new UnauthorizedException(`This user ${artistId} id does not belong to you`);
-    }
+    if (currentUserId !== artistId)
+      sendError.unauthenticatedError(
+        `This user ${artistId} id does not belong to you`,
+      );
+
     return await this.songServices.deleteSongById(songId, artistId);
   }
 }

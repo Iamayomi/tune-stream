@@ -61,7 +61,7 @@ import { User } from 'src/module/users/user.entity';
 export class SeedData {
   constructor(public manager: EntityManager) {}
 
-  async seedUser():Promise<void> {
+  async seedUser(): Promise<void> {
     const salt = await bcrypt.genSalt();
     const encryptedPassword = await bcrypt.hash('123456', salt);
 
@@ -70,7 +70,7 @@ export class SeedData {
     user.lastName = faker.person.lastName();
     user.email = faker.internet.email();
     user.password = encryptedPassword;
-    user.apiKey = uuid4();
+    // user.apiKey = uuid4();
 
     await this.manager.getRepository(User).save(user);
   }
@@ -84,7 +84,7 @@ export class SeedData {
     user.lastName = faker.person.lastName();
     user.email = faker.internet.email();
     user.password = encryptedPassword;
-    user.apiKey = uuid4();
+    // user.apiKey = uuid4();
     const artist = new Artist();
     artist.user = user;
 
@@ -101,7 +101,7 @@ export class SeedData {
     user.lastName = faker.person.lastName();
     user.email = faker.internet.email();
     user.password = encryptedPassword;
-    user.apiKey = uuid4();
+    // user.apiKey = uuid4();
 
     const playList = new Playlist();
     playList.name = faker.music.genre();

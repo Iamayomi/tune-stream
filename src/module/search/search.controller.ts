@@ -5,25 +5,23 @@ import { ElasticSearchService } from './search.service';
 export class SearchController {
   constructor(private elasticSearchService: ElasticSearchService) {}
 
-  @Get('/search')
-  async searchTracks(
-    @Query('query') query: string,
-    @Query('genre') genre?: string,
-    @Query('artist') artist?: string,
-    @Query('sortBy') sortBy: 'popularity' | 'releaseDate' = 'popularity',
-    @Query('order') order: 'asc' | 'desc' = 'desc',
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-  ) {
-    return this.elasticSearchService.searchSongs(
-      query,
-      { genre, artist },
-      sortBy,
-      order,
-      page,
-      limit,
-    );
-  }
+  //   @Get('/search')
+  //   async searchTracks(
+  //     @Query('query') query: string,
+  //     @Query('genre') genre?: string,
+  //     @Query('artist') artist?: string,
+  //     @Query('sortBy') sortBy: 'popularity' | 'releaseDate' = 'popularity',
+  //     @Query('order') order: 'asc' | 'desc' = 'desc',
+  //     @Query('page') page = 1,
+  //     @Query('limit') limit = 10,
+  //   ) {
+  //     return this.elasticSearchService.searchSongs(query, { genre, artist },
+  //       sortBy,
+  //       order,
+  //       page,
+  //       limit,
+  //     );
+  //   }
 
   @Delete('/:id')
   async deleteTrack(@Param('id') id: string) {

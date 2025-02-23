@@ -1,5 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  Matches,
+  Max,
+  MaxLength,
+  Min,
+  MinLength,
+} from 'class-validator';
 import { Column } from 'typeorm';
 
 export class CreateUserDTO {
@@ -20,6 +31,18 @@ export class CreateUserDTO {
   lastName: string;
 
   @ApiProperty({
+    example: '+234806778****',
+    description: 'provide the phone number',
+  })
+  @IsString()
+  @IsNotEmpty()
+  phone: string;
+
+  @IsString()
+  @IsOptional()
+  apiKey?: string;
+
+  @ApiProperty({
     example: 'monica@gmail.com',
     description: 'Provide the email of the user',
   })
@@ -38,6 +61,15 @@ export class CreateUserDTO {
   })
   @IsString()
   @IsNotEmpty()
+  @MinLength(6)
+  @MaxLength(30)
+  @Matches(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])(?=\S+$)[a-zA-Z\d\W_]{6,30}$/,
+    {
+      message:
+        'Password must contain at least 1 uppercase, 1 lowercase, 1 number, 1 special character, and no spaces.',
+    },
+  )
   password: string;
 
   @ApiProperty({
@@ -46,6 +78,6 @@ export class CreateUserDTO {
   })
   @IsBoolean()
   @IsNotEmpty()
-  @Column({ default: 'false' })
+  @Column({ type: 'boolean', default: false })
   terms_of_service: boolean;
 }

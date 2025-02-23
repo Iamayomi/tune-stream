@@ -1,5 +1,11 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  OnModuleInit,
+} from '@nestjs/common';
 import { ElasticsearchService } from '@nestjs/elasticsearch';
+import { SearchSongDto } from '../songs/dto/search-song-dto';
 
 @Injectable()
 export class ElasticSearchService implements OnModuleInit {
@@ -76,7 +82,7 @@ export class ElasticSearchService implements OnModuleInit {
                       genre: { type: 'keyword' },
                       coverImage: { type: 'keyword' },
                       tracks: {
-                        type: 'nested', // ✅ FIXED! Tracks are objects, not keywords.
+                        type: 'nested', // Tracks are objects.
                         properties: {
                           id: { type: 'integer' },
                           title: { type: 'text' },
@@ -102,7 +108,7 @@ export class ElasticSearchService implements OnModuleInit {
                       email: { type: 'keyword' },
                       subscription: { type: 'keyword' },
                       terms_of_service: { type: 'boolean' },
-                      password: { type: 'keyword' }, // You might not want to store passwords in Elasticsearch
+                      password: { type: 'keyword' },
                       apiKey: { type: 'keyword' },
                       playlists: { type: 'keyword' }, // Array of playlist names
                       artist: { type: 'text' },
@@ -193,14 +199,20 @@ export class ElasticSearchService implements OnModuleInit {
     this.logger.log(`Indexed track: ${id}`);
   }
 
-  async searchSongs(
-    query: string,
-    filters: any,
-    sortBy: 'popularity' | 'releaseDate',
-    order: 'asc' | 'desc',
-    page = 1,
-    limit = 10,
-  ) {
+  async searchsong(searchSongDto: SearchSongDto) {
+    const {
+      query,
+      filters,
+      sortBy,
+      order = 'desc',
+      page = 1,
+      limit = 10,
+    } = searchSongDto;
+
+    // if (!query || typeof query !== 'string') {
+    //   throw new BadRequestException('Query must be a non-empty string');
+    // }
+
     const body: any = {
       query: {
         bool: {
@@ -216,36 +228,32 @@ export class ElasticSearchService implements OnModuleInit {
           filter: [],
         },
       },
-      sort: [{ [sortBy]: { order } }],
       from: (page - 1) * limit,
       size: limit,
     };
 
-    if (filters.genre)
+    if (filters?.genre) {
       body.query.bool.filter.push({
         term: { 'genre.keyword': filters.genre },
       });
-    if (filters.artist)
+    }
+    if (filters?.artist) {
       body.query.bool.filter.push({
         term: { 'artist.keyword': filters.artist },
       });
+    }
+    if (sortBy) {
+      body.sort = [{ [sortBy]: { order } }];
+    }
 
-    // const { body, response } = await this.elasticSearchService.search({
-    //   index: this.index,
-    //   body,
-    // });
-    const song = await this.elasticSearchService.search({
+    const songs = await this.elasticSearchService.search({
       index: this.index,
       body,
     });
-    console.log(song);
-    // return {
-    //   results: response.hits.hits.map((hit) => hit._source),
-    //   aggregations: response.aggregations,
-    // };
 
     return {
-      results: song,
+      success: true,
+      results: songs.hits.hits.map((hit) => hit._source),
     };
   }
 
@@ -269,151 +277,4 @@ export class ElasticSearchService implements OnModuleInit {
       index: indexName,
     });
   }
-
-  //   async recommendTracks(userId: string) {
-  //     const userHistory = await this.getUserListeningHistory(userId);
-  //     const genres = userHistory.map((track) => track.genre);
-
-  //     const { body } = await this.elasticsearchService.search({
-  //       index: this.index,
-  //       body: {
-  //         query: {
-  //           terms: { 'genre.keyword': genres },
-  //         },
-  //         size: 10,
-  //       },
-  //     });
-
-  //     return body.hits.hits.map((hit) => hit._source);
-  //   }
-
-  //   private async getUserListeningHistory(userId: string) {
-  //     // Fetch from database or Redis
-  //     return [
-  //       { id: '1', genre: 'pop' },
-  //       { id: '2', genre: 'rock' },
-  //     ];
-  //   }
-
-  //   async getTrendingTracks() {
-  //     const { body } = await this.elasticsearchService.search({
-  //       index: this.index,
-  //       body: {
-  //         size: 0, // No results, just aggregations
-  //         aggs: {
-  //           trending_tracks: {
-  //             terms: { field: "title.keyword", size: 10 }
-  //           },
-  //           trending_artists: {
-  //             terms: { field: "artist.keyword", size: 10 }
-  //           },
-  //           trending_genres: {
-  //             terms: { field: "genre.keyword", size: 10 }
-  //           }
-  //         }
-  //       }
-  //     });
-
-  //     return {
-  //       topTracks: body.aggregations.trending_tracks.buckets,
-  //       topArtists: body.aggregations.trending_artists.buckets,
-  //       topGenres: body.aggregations.trending_genres.buckets
-  //     };
-  //   }
-  //   async recommendTracks(trackId: string) {
-  //     const { body } = await this.elasticsearchService.search({
-  //       index: this.index,
-  //       body: {
-  //         query: {
-  //           more_like_this: {
-  //             fields: ["title", "artist", "lyrics"],
-  //             like: [{ _id: trackId }],
-  //             min_term_freq: 1,
-  //             max_query_terms: 12
-  //           }
-  //         }
-  //       }
-  //     });
-
-  //     return body.hits.hits.map(hit => hit._source);
-  //   }
-
-  //   await this.elasticsearchService.indices.putSettings({
-  //     index: this.index,
-  //     body: {
-  //       index: { number_of_replicas: 2, refresh_interval: "1s" }
-  //     }
-  //   });
-
-  //   async indexTrackWithVector(track: Track) {
-  //     const vector = await this.generateEmbedding(track.title + " " + track.lyrics);
-
-  //     await this.elasticsearchService.index({
-  //       index: this.index,
-  //       id: track.id,
-  //       body: {
-  //         title: track.title,
-  //         artist: track.artist,
-  //         genre: track.genre,
-  //         lyrics: track.lyrics,
-  //         embedding: vector // Store AI-generated vector
-  //       }
-  //     });
-  //   }
-
-  //   async recommendByVector(trackId: string) {
-  //     const { body } = await this.elasticsearchService.get({
-  //       index: this.index,
-  //       id: trackId
-  //     });
-
-  //     const trackVector = body._source.embedding;
-
-  //     const { body: searchResults } = await this.elasticsearchService.search({
-  //       index: this.index,
-  //       body: {
-  //         size: 5, // Get top 5 similar tracks
-  //         query: {
-  //           script_score: {
-  //             query: { match_all: {} },
-  //             script: {
-  //               source: "cosineSimilarity(params.queryVector, 'embedding') + 1.0",
-  //               params: { queryVector: trackVector }
-  //             }
-  //           }
-  //         }
-  //       }
-  //     });
-
-  //     return searchResults.hits.hits.map(hit => hit._source);
-  //   }
-
-  //   async recommendBySearchHistory(userId: string) {
-  //     const { body } = await this.elasticsearchService.search({
-  //       index: 'user_searches',
-  //       body: {
-  //         query: { match: { userId } },
-  //         size: 10,
-  //         sort: [{ timestamp: { order: 'desc' } }]
-  //       }
-  //     });
-
-  //     const recentQueries = body.hits.hits.map(hit => hit._source.query);
-
-  //     // Find songs related to the user's last 5 searches
-  //     const recommendations = await this.elasticsearchService.searchTracks(recentQueries.join(' '));
-
-  //     return recommendations;
-  //   }
-
-  //   async logUserSearch(userId: string, query: string) {
-  //     await this.elasticsearchService.index({
-  //       index: 'user_searches',
-  //       body: {
-  //         userId,
-  //         query,
-  //         timestamp: new Date().toISOString()
-  //       }
-  //     });
-  //   }
 }
