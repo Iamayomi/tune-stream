@@ -12,8 +12,6 @@ export class ElasticSearchService implements OnModuleInit {
   private readonly logger = new Logger(ElasticSearchService.name);
   private readonly index = 'songs';
 
-  //   constructor(private readonly elasticsearchService: ElasticsearchService) {}
-
   constructor(private readonly elasticSearchService: ElasticsearchService) {
     this.logger.log('ElasticSearchService initialized'); // Log here for debugging
   }

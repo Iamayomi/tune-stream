@@ -10,7 +10,6 @@ import { Song } from 'src/module/songs/song.entity';
   imports: [TypeOrmModule.forFeature([Playlist, Song, User])],
   controllers: [PlaylistsController],
   providers: [PlaylistsService],
-  exports: [PlaylistsService]
-
+  exports: [PlaylistsService],
 })
 export class PlaylistsModule {}

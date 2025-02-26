@@ -5,7 +5,6 @@ import { JwtService } from '@nestjs/jwt';
 import { ArtistsService } from 'src/module/artists/artist.service';
 import { PayloadType } from './types/payload.type';
 import { User } from 'src/module/users/user.entity';
-// import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +23,7 @@ export class AuthService {
 
       const payload: PayloadType = { email: user.email, userId: user.id };
 
-      const artist = await this.artistService.findArtist(payload.userId); // 2
+      const artist = await this.artistService.findArtistById(payload.userId); // 2
 
       if (artist) {
         payload.artistId = artist.id;

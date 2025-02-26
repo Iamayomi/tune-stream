@@ -11,26 +11,39 @@ import {
 } from 'typeorm';
 
 import * as bcrypt from 'bcryptjs';
+import * as jwt from 'jsonwebtoken';
 
 import { Exclude } from 'class-transformer';
 import { Artist } from 'src/module/artists/artist.entity';
 import { Playlist } from 'src/module/playlists/playlist.entity';
 import { Subscription } from '../subscription/subscription.entity';
-import { generateUUID } from '../../common/library/helper/utils';
+import {
+  generateUUID,
+  getRandomNumbers,
+} from '../../common/library/helper/utils';
+import { UserRole } from './types';
+import { IUser, IUserMethods } from './interfaces';
+import { timeIn } from '../../common';
 
 @Entity('users')
-export class User {
+export class User implements IUser, IUserMethods {
   // @PrimaryGeneratedColumn('uuid')
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  firstName: string;
+  @Column({ type: 'varchar', nullable: true })
+  fullName: string;
 
-  @Column()
-  lastName: string;
+  @Column({ type: 'text', nullable: true })
+  bio: string;
 
-  @Column()
+  @Column({ nullable: true })
+  profileImage: string;
+
+  @Column({ unique: true, nullable: true })
+  username: string;
+
+  @Column({ type: 'varchar', default: 'user' })
   phone: string;
 
   @Column({ unique: true })
@@ -39,23 +52,23 @@ export class User {
   @Column({ type: 'varchar', default: 'free' })
   subscription: string;
 
-  @Column({ type: 'varchar', default: 'false' })
+  @Column({ type: 'boolean', default: 'false' })
   terms_of_service: boolean;
+
+  @Column('text', { array: true, default: [UserRole.USER] })
+  roles: UserRole[];
 
   @Column()
   @Exclude()
   password: string;
 
-  @Column()
-  apiKey: string;
+  @Column({ type: 'varchar' })
+  api_key: string;
 
-  @Column({ nullable: true })
-  refresh_token?: string;
-
-  @Column({ default: false })
+  @Column({ type: 'boolean', default: false })
   verified_email: boolean;
 
-  @Column({ default: false })
+  @Column({ type: 'boolean', default: false })
   verified_phone: boolean;
 
   @OneToMany(() => Subscription, (subscription) => subscription.user, {
@@ -82,12 +95,40 @@ export class User {
 
   @BeforeInsert()
   async generateAPIkey() {
-    if (!this.apiKey) {
-      this.apiKey = await generateUUID(30);
+    if (!this.api_key) {
+      this.api_key = await generateUUID(30);
     }
   }
 
   async verifyPassword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);
+  }
+
+  async createAccessToken(
+    expiresAt: number | string | undefined,
+  ): Promise<string> {
+    return jwt.sign(
+      {
+        userId: this.id,
+        roles: this.roles,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: expiresAt },
+    );
+  }
+
+  async createEmailVerificationToken(length?: number, exp?: string) {
+    const { code } = getRandomNumbers(length);
+
+    const data = {
+      code,
+      email: this.email,
+    };
+
+    const token = jwt.sign(data, process.env.JWT_SECRET, {
+      expiresIn: `${exp || timeIn.hours[1]}`,
+    });
+
+    return { ...data, token };
   }
 }

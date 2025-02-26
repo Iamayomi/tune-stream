@@ -9,6 +9,7 @@ import { DeleteResult, In, Repository } from 'typeorm';
 import { Song } from 'src/module/songs/song.entity';
 import { User } from 'src/module/users/user.entity';
 import { CreatePlayListDto } from './dto/create-playlist-dto';
+import { sendError } from '../../common/library/errors';
 
 @Injectable()
 export class PlaylistsService {
@@ -46,11 +47,9 @@ export class PlaylistsService {
       relations: ['songs'],
     });
 
-    if (!playlist) {
-      throw new NotFoundException(
-        `Playlist with this ID ${playlistId} not found`,
-      );
-    }
+    if (!playlist)
+      sendError.notfoundError(`Playlist with this ID ${playlistId} not found`);
+
     return playlist;
   }
 

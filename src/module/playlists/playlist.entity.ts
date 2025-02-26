@@ -14,16 +14,12 @@ import { User } from 'src/module/users/user.entity';
 
 @Entity('playlists')
 export class Playlist {
-    
   // @PrimaryGeneratedColumn('uuid')
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   name: string;
-
-  @Column()
-  userId: number
 
   @ManyToOne(() => User, (user) => user.playlists)
   user: User;
