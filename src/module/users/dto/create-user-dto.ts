@@ -12,35 +12,43 @@ import {
   MinLength,
 } from 'class-validator';
 import { Column } from 'typeorm';
+import {
+  CustomValidator,
+  IsPhoneNumberConstraint,
+  IsTrueConstraint,
+} from '../../../common/validator';
 
 export class CreateUserDTO {
   @ApiProperty({
-    example: 'monica',
-    description: 'Provide the first name of the user',
+    example: 'monica joe',
+    description: 'Provide the full name of the user',
   })
   @IsString()
   @IsNotEmpty()
-  firstName: string;
+  fullName: string;
 
-  @ApiProperty({
-    example: 'Adam',
-    description: 'provide the lastName of the user',
-  })
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  lastName: string;
+  bio?: string;
+
+  @IsOptional()
+  @IsString()
+  profileImage?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  premiumUser?: boolean;
 
   @ApiProperty({
     example: '+234806778****',
     description: 'provide the phone number',
   })
   @IsString()
+  @CustomValidator(IsPhoneNumberConstraint, {
+    message: 'Invalid phone number format',
+  })
   @IsNotEmpty()
   phone: string;
-
-  @IsString()
-  @IsOptional()
-  apiKey?: string;
 
   @ApiProperty({
     example: 'monica@gmail.com',
@@ -78,6 +86,9 @@ export class CreateUserDTO {
   })
   @IsBoolean()
   @IsNotEmpty()
+  @CustomValidator(IsTrueConstraint, {
+    message: 'You must accept the terms of service',
+  })
   @Column({ type: 'boolean', default: false })
   terms_of_service: boolean;
 }

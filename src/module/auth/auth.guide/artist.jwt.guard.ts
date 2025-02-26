@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 import { PayloadType } from '../types/payload.type';
 
 @Injectable()
-export class JwtArtistGuard extends AuthGuard('jwt') {
+export class ArtistGuard extends AuthGuard('jwt') {
   canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     return super.canActivate(context);
   }

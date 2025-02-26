@@ -24,6 +24,6 @@ export class ArtistsController {
     @Param('userId', ParseIntPipe) userId: number,
     @Body() artistData: createArtistDTO,
   ) {
-    return this.artistService.createArtistForUser(userId, artistData);
+    return this.artistService.userUpgradeToArtist(userId, artistData);
   }
 }

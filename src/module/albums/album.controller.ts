@@ -14,7 +14,7 @@ import {
 import { AlbumService } from './album.service';
 import { CreateAlbumDTO } from './dto/create-album-dto';
 import { UpdateAlbumDTO } from './dto/update-album-dto';
-import { JwtArtistGuard } from '../auth/auth.guide/artist.jwt.guard';
+import { ArtistGuard } from '../auth/auth.guide/artist.jwt.guard';
 import { JWTAuthGuard } from '../auth/auth.guide/jwt.guard';
 import { DeleteResult, UpdateResult } from 'typeorm';
 
@@ -23,7 +23,7 @@ export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 
   @Post()
-  @UseGuards(JwtArtistGuard)
+  @UseGuards(ArtistGuard)
   async createAlbum(@Body() createAlbumDto: CreateAlbumDTO, @Req() request) {
     // console.log(createAlbumDto)
     return await this.albumService.createAlbum(createAlbumDto);
@@ -42,20 +42,20 @@ export class AlbumController {
   }
 
   @Patch(':albumId/artists/:artistId')
-  @UseGuards(JwtArtistGuard)
+  @UseGuards(ArtistGuard)
   update(
     @Param('albumId', ParseIntPipe) albumId: number,
     @Param('artistId', ParseIntPipe) artistId: number,
-    @Body() updateAlbumDto: UpdateAlbumDTO
+    @Body() updateAlbumDto: UpdateAlbumDTO,
   ): Promise<UpdateResult> {
     return this.albumService.updateAlbumById(albumId, artistId, updateAlbumDto);
   }
 
   @Delete(':albumId/artists/:artistId')
-  @UseGuards(JwtArtistGuard)
+  @UseGuards(ArtistGuard)
   async delete(
     @Param('albumId', ParseIntPipe) albumId: number,
-    @Param('artistId', ParseIntPipe) artistId: number
+    @Param('artistId', ParseIntPipe) artistId: number,
   ): Promise<DeleteResult> {
     return await this.albumService.deleteAlbumById(albumId, artistId);
   }

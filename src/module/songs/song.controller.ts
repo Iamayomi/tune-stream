@@ -14,10 +14,7 @@ import {
   Put,
   Query,
   Req,
-  UnauthorizedException,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { DeleteResult, UpdateResult } from 'typeorm';
@@ -28,7 +25,7 @@ import { UpdateSongDTO } from './dto/update-song-dto';
 
 import { Song } from './song.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import { JwtArtistGuard } from '../auth/auth.guide/artist.jwt.guard';
+import { ArtistGuard } from '../auth/auth.guide/artist.jwt.guard';
 import { JWTAuthGuard } from '../auth/auth.guide/jwt.guard';
 import { CurrentUser } from 'src/common/decorator/decorator';
 import { sendError } from '../../common/library/errors';
@@ -40,7 +37,7 @@ export class SongsController {
 
   @ApiBearerAuth('JWT-auth')
   @Post()
-  @UseGuards(JwtArtistGuard)
+  @UseGuards(ArtistGuard)
   create(@Body() createSongDTO: CreateSongDTO, @Req() request): Promise<Song> {
     return this.songServices.createSong(createSongDTO);
   }
@@ -93,7 +90,7 @@ export class SongsController {
 
   @ApiBearerAuth('JWT-auth')
   @Patch(':songId/artists/:artistId')
-  @UseGuards(JwtArtistGuard)
+  @UseGuards(ArtistGuard)
   update(
     @Param('songId', ParseIntPipe) songId: number,
     @Param('artistId', ParseIntPipe) artistId: number,
@@ -110,7 +107,7 @@ export class SongsController {
 
   @ApiBearerAuth('JWT-auth')
   @Delete(':songId/artists/:artistId')
-  @UseGuards(JwtArtistGuard)
+  @UseGuards(ArtistGuard)
   async remove(
     @Param('songId', ParseIntPipe) songId: number,
     @Param('artistId', ParseIntPipe) artistId: number,

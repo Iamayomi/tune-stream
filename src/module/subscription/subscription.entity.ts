@@ -14,7 +14,7 @@ export class Subscription {
   subscriptionId: string;
 
   @Column({ type: 'enum', enum: ['free', 'monthly', 'annual'] })
-  plan: 'monthly' | 'annual';
+  plan: 'free' | 'monthly' | 'annual';
 
   @CreateDateColumn({ type: 'timestamptz' })
   subscribedAt: Date;

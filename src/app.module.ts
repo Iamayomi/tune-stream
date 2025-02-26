@@ -31,7 +31,7 @@ import { AlbumsModule } from './module/albums/album.module';
 
 import { dataSourceOptions } from './common/database/data-source';
 
-import { SeedModule } from './module/seed/seed.module';
+// import { SeedModule } from './module/seed/seed.module';
 
 import { AppController } from './app.controller';
 
@@ -49,7 +49,7 @@ import { SearchModule } from './module/search/search.module';
     ArtistsModule,
     PlaylistsModule,
     AuthModule,
-    SeedModule,
+    // SeedModule,
     AlbumsModule,
     SearchModule,
   ],

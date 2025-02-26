@@ -17,7 +17,7 @@ import { Playlist } from '../playlists/playlist.entity';
 import { sendError } from '../../common/library/errors';
 
 @Controller('users')
-export class UsersController {
+export class UserController {
   constructor(private readonly userService: UserService) {}
 
   /**
