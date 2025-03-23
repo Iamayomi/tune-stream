@@ -4,43 +4,49 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 import { ServeStaticModule } from '@nestjs/serve-static';
 
 import { join } from 'path';
 
-import { LoggerMiddleware } from './common';
+import { ResponseInterceptor } from './library';
+
+import { LoggerMiddleware } from './library';
 // import { SongsController } from './songs/songs.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 // import { DataSource } from 'typeorm';
-import { SongsModule } from './module/songs/song.module';
+import { SongsModule } from './songs/song.module';
 // import { Song } from './module/songs/song.entity';
 
-import { UserModule } from './module/users/user.module';
+import { UserModule } from './users/user.module';
 // import { User } from './module/users/user.entity';
 
-import { ArtistsModule } from './module/artists/artist.module';
+import { ArtistsModule } from './artists/artist.module';
 // import { Artist } from './module/artists/artist.entity';
 
-import { PlaylistsModule } from './module/playlists/playlist.module';
+import { PlaylistsModule } from './playlists/playlist.module';
 // import { Playlist } from './module/playlists/playlist.entity';
 
-import { AuthModule } from './module/auth/auth.module';
+import { AuthModule } from './users/auth/auth.module';
 
-import { AlbumsModule } from './module/albums/album.module';
+import { AlbumsModule } from './albums/album.module';
 
-import { dataSourceOptions } from './common/database/data-source';
+import { dataSourceOptions } from './library/database/data-source';
 
 // import { SeedModule } from './module/seed/seed.module';
 
 import { AppController } from './app.controller';
 
-import { SearchModule } from './module/search/search.module';
+import { SearchModule } from './search/search.module';
+import { MailModule } from './library/mailer/mailer.module';
+import { AppConfigModule } from './library/config/config.module';
+import { CacheModule } from './library/cache/cache.module';
 
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: join(process.cwd(), 'src', 'public'), // Path to your static files directory
+      rootPath: join(process.cwd(), 'src', '../public'), // Path to your static files directory
       serveRoot: '/public',
     }),
     TypeOrmModule.forRoot(dataSourceOptions),
@@ -52,9 +58,17 @@ import { SearchModule } from './module/search/search.module';
     // SeedModule,
     AlbumsModule,
     SearchModule,
+    MailModule,
+    AppConfigModule,
+    CacheModule,
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   // constructor(private dataSource: DataSource) {
