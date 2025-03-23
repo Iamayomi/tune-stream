@@ -6,28 +6,30 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import * as bcrypt from 'bcryptjs';
+
 import { LoginDTO } from '../auth/dto';
 import { UserService } from 'src/users/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { ArtistsService } from 'src/artists/artist.service';
 import { PayloadType } from './types/payload.type';
-import { User } from 'src/users/user.entity';
 import {
   JWT_ACCESS_TOKEN_EXP,
   JWT_ACCESS_TOKEN_SECRET,
-  JWT_REFRESH_TOKEN_EXP,
   REFRESH_TOKEN,
   SESSION_USER,
   TIME_IN,
   VERIFY_EMAIL,
   emailVerificationResendTemplate,
-  emailVerificationTemplate,
   getRandomNumbers,
+  resetPasswordTemplate,
 } from 'src/library';
 import { MailService } from 'src/library/mailer/mailer.service';
 import { VerificationCodeDTO } from './dto';
 import { CacheService } from 'src/library/cache/cache.service';
 import { ConfigService } from '@nestjs/config';
+import { User } from '../user.entity';
+import { ResetPasswordDTO } from './dto/reset-password-dto';
 
 @Injectable()
 export class AuthService {
@@ -95,16 +97,7 @@ export class AuthService {
     token: string,
     @Response() res,
   ) {
-    const decoded = await this.jwtService
-      .verifyAsync<{ email: string }>(token)
-      .then((token) => token)
-      .catch((err) => {
-        if (err.name === 'TokenExpiredError')
-          throw new UnauthorizedException(
-            'Token expired, please log in again.',
-          );
-        throw new UnauthorizedException('Invalid token.');
-      });
+    const decoded = await this.jwtService.verifyAsync<{ email: string }>(token);
 
     const storedCode = await this.cache.get(VERIFY_EMAIL(decoded.email));
 
@@ -131,16 +124,7 @@ export class AuthService {
   }
 
   public async resendEmailVericationCode(token: string, @Response() res) {
-    const decoded = await this.jwtService
-      .verifyAsync<{ email: string }>(token)
-      .then((token) => token)
-      .catch((err) => {
-        if (err.name === 'TokenExpiredError')
-          throw new UnauthorizedException(
-            'Token expired, please log in again.',
-          );
-        throw new UnauthorizedException('Invalid token.');
-      });
+    const decoded = await this.jwtService.verifyAsync<{ email: string }>(token);
 
     const user = await this.userService.findByEmail(decoded.email);
 
@@ -164,6 +148,90 @@ export class AuthService {
     res.setHeader('Authorization', access_token);
 
     return await this.userService.sendEmailResponse(user.email);
+  }
+
+  public async forgotPassword(data: any, @Response() res) {
+    const { email } = data;
+    const user = await this.userService.findByEmail(email);
+
+    if (!user) throw new NotFoundException('Email does not exist');
+
+    const access_token = await this.jwtService.signAsync({
+      sub: user.userId,
+      email: user.email,
+    });
+
+    const { code } = await getRandomNumbers();
+
+    await this.cache.set(VERIFY_EMAIL(user.email), code, TIME_IN.minutes[5]);
+
+    const mailOptions = resetPasswordTemplate(user.fullName, code);
+
+    await this.mailService.viaNodemailer({ ...mailOptions, to: user.email });
+
+    res.setHeader('Authorization', access_token);
+
+    return await this.userService.forgotPasswordResponse(user.email);
+  }
+
+  public async verifyPasswordCode(
+    code: VerificationCodeDTO,
+    token: string,
+    @Response() res,
+  ) {
+    const decoded = await this.jwtService.verifyAsync<{ email: string }>(token);
+
+    const storedCode = await this.cache.get(VERIFY_EMAIL(decoded.email));
+
+    if (!storedCode) {
+      throw new BadGatewayException('Password verification code has expired');
+    }
+
+    if (storedCode.toString() !== code.verificationCode) {
+      throw new UnauthorizedException('Invalid verification code');
+    }
+
+    await this.cache.delete(VERIFY_EMAIL(decoded.email));
+
+    const access_token = await this.jwtService.signAsync({
+      email: decoded.email,
+    });
+
+    res.setHeader('Authorization', access_token);
+
+    return {
+      message: 'Code verified successfully',
+    };
+  }
+
+  public async resetPassword(
+    password: ResetPasswordDTO,
+    token: string,
+    @Response() res,
+  ) {
+    const decoded = await this.jwtService.verifyAsync<{ email: string }>(token);
+
+    if (
+      password.new_password.toString() !==
+      password.confirm_newpassword.toString()
+    ) {
+      throw new UnauthorizedException('Password does not match');
+    }
+
+    await this.userService.resetUserPassword(
+      decoded.email,
+      await bcrypt.hash(password.confirm_newpassword, 10),
+    );
+
+    const access_token = await this.jwtService.signAsync({
+      email: decoded.email,
+    });
+
+    res.setHeader('Authorization', access_token);
+
+    return {
+      message: 'Password Reset Successfully',
+    };
   }
 
   async validateUserByApiKey(apiKey: string): Promise<User> {

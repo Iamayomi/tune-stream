@@ -90,6 +90,15 @@ export class UserService {
     };
   }
 
+  /** Create user by data */
+  public async forgotPasswordResponse(
+    email: string,
+  ): Promise<Partial<SendEmailResponse>> {
+    return {
+      message: `A code that was sent to ${obscureEmail(email)} it valid for 5 mins!`,
+    };
+  }
+
   /** Finds a user by their email address */
   public async findByEmail(email: string): Promise<User> {
     return await this.userRepository.findOneBy({ email });
@@ -105,6 +114,14 @@ export class UserService {
     await this.userRepository.update(
       { email },
       { refresh_token: refresh_token },
+    );
+  }
+
+  /** update user password */
+  public async resetUserPassword(email: string, confirm_newpassword: string) {
+    await this.userRepository.update(
+      { email },
+      { password: confirm_newpassword },
     );
   }
 

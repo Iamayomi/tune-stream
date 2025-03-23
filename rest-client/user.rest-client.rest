@@ -8,8 +8,8 @@ POST  http://localhost:8080/api/v1/auth/login
 Content-Type: application/json
 
 {
-    "email": "yomidesherif2019@gmail.com",
-    "password": "Test123#@"
+  "email": "ayomidesherif2019@gmail.com",
+  "password": "Testing26377#!@"
 }
 
 #### CREATE A NEW User
@@ -30,13 +30,12 @@ DELETE  http://localhost:9200/songs
 Content-Type: application/json
 
 
-#### SEND REQUEST TO VERIFY EMAIL
-POST  http://localhost:8080/api/v1/auth/verify-email
+#### SEND REQUEST TO FORGOT PASSWORD
+POST http://localhost:8080/api/v1/auth/forgot-password
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImF5b21pZGVzaGVyaWYyMDE5QGdtYWlsLmNvbSIsImlhdCI6MTc0MjY4NTAxNCwiZXhwIjoxNzQyOTQ0MjE0fQ.JqTjd-y6mJXexJT7RuC1xgAU-9ZY5hYVqqkaXeiPyUI
 
 {
-  "verificationCode": "891915"
+  "email": "ayomidesherif2019@gmail.com"
 }
 
 
@@ -44,3 +43,23 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImF5b21pZ
 GET http://localhost:8080/api/v1/auth/resend-email-code
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImF5b21pZGVzaGVyaWYyMDE5QGdtYWlsLmNvbSIsImlhdCI6MTc0MjY4NTAxNCwiZXhwIjoxNzQyOTQ0MjE0fQ.JqTjd-y6mJXexJT7RuC1xgAU-9ZY5hYVqqkaXeiPyUI
+
+
+#### SEND REQUEST TO VERIFY FORGOT PASSWORD CODE
+POST  http://localhost:8080/api/v1/auth/forgot-password-code
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImF5b21pZGVzaGVyaWYyMDE5QGdtYWlsLmNvbSIsImlhdCI6MTc0MjY4NTAxNCwiZXhwIjoxNzQyOTQ0MjE0fQ.JqTjd-y6mJXexJT7RuC1xgAU-9ZY5hYVqqkaXeiPyUI
+
+{
+  "verificationCode": "332161"
+}
+
+#### SEND REQUEST TO RESET PASSWORD
+PATCH http://localhost:8080/api/v1/auth/reset-password
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImF5b21pZGVzaGVyaWYyMDE5QGdtYWlsLmNvbSIsImlhdCI6MTc0MjY4NTAxNCwiZXhwIjoxNzQyOTQ0MjE0fQ.JqTjd-y6mJXexJT7RuC1xgAU-9ZY5hYVqqkaXeiPyUI
+
+{
+  "new_password": "Testing26377#!@",
+  "confirm_newpassword": "Testing26377#!@"
+}

@@ -334,7 +334,7 @@ export const resetPasswordTemplate = (
                       <h1>Dear ${username},</h1>
                       <p>
                         You requested to reset your password on
-                        <strong>HireUs Logistics&trade;.</strong> Use the 4-digit code below to
+                        <strong>TumeStream&trade;.</strong> Use the 4-digit code below to
                         initiate a password reset.
                       </p>
                       <h3>${code}</h3>

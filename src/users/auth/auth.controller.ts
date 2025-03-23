@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Patch,
   Post,
   Req,
   Res,
@@ -16,6 +17,7 @@ import { Message, ParsedJWTCookie } from 'src/library/decorator';
 import { LoginDTO, CreateUserDTO, VerificationCodeDTO } from './dto';
 import { NODE_ENV, TIME_IN } from 'src/library';
 import { ConfigService } from '@nestjs/config';
+import { ResetPasswordDTO } from './dto/reset-password-dto';
 
 @Controller('auth')
 export class AuthController {
@@ -52,7 +54,10 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @Body() loginDTO: LoginDTO,
   ) {
-    const { refresh_token } = await this.authService.userLogin(loginDTO, res);
+    const { refresh_token, user } = await this.authService.userLogin(
+      loginDTO,
+      res,
+    );
 
     // Set refresh token
     res.cookie('refresh_token', refresh_token, {
@@ -61,6 +66,8 @@ export class AuthController {
       sameSite: 'none',
       maxAge: TIME_IN.days[7],
     });
+
+    return user;
   }
 
   /**
@@ -86,6 +93,44 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     return this.authService.resendEmailVericationCode(token, res);
+  }
+
+  /**
+   * @route {POST} /api/v1/auth/forgot-password
+   * @access public */
+  @ApiOperation({ summary: 'user forgot password' })
+  @Post('forgot-password')
+  forgotPassword(
+    @Res({ passthrough: true }) res: Response,
+    @Body() email: string,
+  ) {
+    return this.authService.forgotPassword(email, res);
+  }
+
+  /**
+   * @route {POST} /api/v1/auth/forgot-password-code
+   * @access public */
+  @ApiOperation({ summary: 'verify forgot password code' })
+  @Post('forgot-password-code')
+  verifyForgotPasswordCode(
+    @ParsedJWTCookie() token: string,
+    @Res({ passthrough: true }) res: Response,
+    @Body() verificationCode: VerificationCodeDTO,
+  ) {
+    return this.authService.verifyPasswordCode(verificationCode, token, res);
+  }
+
+  /**
+   * @route {POST} /api/v1/auth/reset-password
+   * @access public */
+  @ApiOperation({ summary: 'Reset password' })
+  @Patch('reset-password')
+  resetPassword(
+    @ParsedJWTCookie() token: string,
+    @Res({ passthrough: true }) res: Response,
+    @Body() password: ResetPasswordDTO,
+  ) {
+    return this.authService.resetPassword(password, token, res);
   }
 
   /**
