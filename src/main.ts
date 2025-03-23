@@ -1,22 +1,31 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
+import helmet from 'helmet';
 
-import * as dotenv from 'dotenv';
-
-dotenv.config();
-import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { HttpStatus, ValidationPipe } from '@nestjs/common';
 
 import * as bodyParser from 'body-parser';
-import { HttpExceptionFilter } from './common';
-import { corsOptions } from './common';
-import { swaggerOptions } from '../src/common';
+import { AppModule } from './app.module';
+
+import {
+  AllExceptionsFilter,
+  PORT,
+  corsOptions,
+  swaggerOptions,
+} from './library';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   //  Set global prefix for routes
   app.setGlobalPrefix('/api/v1/');
+
+  const { httpAdapter } = app.get(HttpAdapterHost);
+
+  // Set global filters
+
+  app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
 
   const document = SwaggerModule.createDocument(app, swaggerOptions);
 
@@ -26,12 +35,12 @@ async function bootstrap() {
     new ValidationPipe({
       transform: true,
       whitelist: true,
-      forbidNonWhitelisted: true,
+      errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
     }),
   );
 
   // security
-  // app.use(helmet());
+  app.use(helmet());
 
   app.enableCors(corsOptions);
 
@@ -42,11 +51,9 @@ async function bootstrap() {
   app.use(bodyParser.urlencoded({ extended: true }));
 
   // app.use(morgan('dev'));
+  const config = app.get(ConfigService);
 
-  // Set global filters
-  app.useGlobalFilters(new HttpExceptionFilter());
-
-  await app.listen(false || process.env.PORT);
+  await app.listen(config.get(PORT, 5000));
 
   // if (module.hot) {
   //   module.hot.accept();

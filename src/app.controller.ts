@@ -6,7 +6,6 @@ import { join } from 'path';
 export class AppController {
   @Get()
   home(@Res() res: Response) {
-    return res.sendFile(join(process.cwd(), "src", 'views/home.html'));
-
+    return res.sendFile(join(process.cwd(), 'src', '../views/home.html'));
   }
 }

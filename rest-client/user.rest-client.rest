@@ -4,24 +4,25 @@ GET http://localhost:8080/api/v1/users/profile
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5vdEBnbWFpbC5jb20iLCJ1c2VySWQiOjEsImlhdCI6MTczNTM4NzQ4MSwiZXhwIjoxNzM1NDczODgxfQ.6SlVtKAGykfS-zTqfYsOh2MdoV5wzalaNHbBNx1p38c
 
 #### LOGIN A USER
-POST  http://localhost:8080/auth/login
+POST  http://localhost:8080/api/v1/auth/login
 Content-Type: application/json
 
 {
-    "email": "monica@gmail.com",
-    "password": "test123#@"
+    "email": "yomidesherif2019@gmail.com",
+    "password": "Test123#@"
 }
 
 #### CREATE A NEW User
-POST http://localhost:8080/auth/register
+POST http://localhost:8080/api/v1/auth/register
 Content-Type: application/json
 
 {
-  "firstName": "monica",
-  "lastName": "Adam",
-  "email": "monica@gmail.com",
+  "fullName": "Amodu monica",
+  "email": "ayomidesherif2019@gmail.com",
+  "phone": "+243903789393",
   "subscription": "free",
-  "password": "test123#@"
+  "password": "Test123#@",
+  "terms_of_service": true
 }
 
 #### CREATE A NEW User
@@ -29,4 +30,17 @@ DELETE  http://localhost:9200/songs
 Content-Type: application/json
 
 
+#### SEND REQUEST TO VERIFY EMAIL
+POST  http://localhost:8080/api/v1/auth/verify-email
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImF5b21pZGVzaGVyaWYyMDE5QGdtYWlsLmNvbSIsImlhdCI6MTc0MjY4NTAxNCwiZXhwIjoxNzQyOTQ0MjE0fQ.JqTjd-y6mJXexJT7RuC1xgAU-9ZY5hYVqqkaXeiPyUI
 
+{
+  "verificationCode": "891915"
+}
+
+
+#### SEND REQUEST TO RESEND VERIFICATION EMAIL CODE
+GET http://localhost:8080/api/v1/auth/resend-email-code
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImF5b21pZGVzaGVyaWYyMDE5QGdtYWlsLmNvbSIsImlhdCI6MTc0MjY4NTAxNCwiZXhwIjoxNzQyOTQ0MjE0fQ.JqTjd-y6mJXexJT7RuC1xgAU-9ZY5hYVqqkaXeiPyUI
