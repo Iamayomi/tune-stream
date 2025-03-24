@@ -7,7 +7,6 @@ import {
 import { BaseExceptionFilter } from '@nestjs/core';
 import { Response } from 'express';
 import { Error } from 'mongoose';
-import { MongoServerError } from 'mongodb';
 import { JsonWebTokenError, TokenExpiredError } from '@nestjs/jwt';
 import { QueryFailedError } from 'typeorm';
 
