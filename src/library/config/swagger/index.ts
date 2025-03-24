@@ -36,7 +36,7 @@ export const swaggerOptions = new DocumentBuilder()
   )
   .build();
 
-// export function setupSwagger(app: INestApplication, options: any) {
-//   const document = SwaggerModule.createDocument(app, options);
-//   SwaggerModule.setup('api/v1/docs', app, document);
-// }
+export const setupSwagger = function (app: INestApplication, options: any) {
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api/v1/docs', app, document);
+};

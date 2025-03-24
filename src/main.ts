@@ -12,6 +12,7 @@ import {
   AllExceptionsFilter,
   PORT,
   corsOptions,
+  setupSwagger,
   swaggerOptions,
 } from './library';
 
@@ -27,9 +28,11 @@ async function bootstrap() {
 
   app.useGlobalFilters(new AllExceptionsFilter(httpAdapter));
 
-  const document = SwaggerModule.createDocument(app, swaggerOptions);
+  // const document = SwaggerModule.createDocument(app, swaggerOptions);
 
-  SwaggerModule.setup('api/v1/docs', app, document);
+  // SwaggerModule.setup('api/v1/docs', app, document);
+
+  setupSwagger(app, swaggerOptions);
 
   app.useGlobalPipes(
     new ValidationPipe({
