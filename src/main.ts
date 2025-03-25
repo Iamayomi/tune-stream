@@ -17,7 +17,9 @@ import {
 } from './library';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
 
   //  Set global prefix for routes
   app.setGlobalPrefix('/api/v1/');
