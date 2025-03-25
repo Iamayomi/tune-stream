@@ -13,12 +13,13 @@ import { UserService } from 'src/users/user.service';
 import { AuthService } from 'src/users/auth/auth.service';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { Message, ParsedJWTCookie } from 'src/library/decorator';
+import { Message, ParsedJWTCookie, ProtectUser } from 'src/library/decorator';
 import { LoginDTO, CreateUserDTO, VerificationCodeDTO } from './dto';
 import { NODE_ENV, TIME_IN } from 'src/library';
 import { ConfigService } from '@nestjs/config';
 import { ResetPasswordDTO } from './dto/reset-password-dto';
 
+@Message()
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -31,6 +32,7 @@ export class AuthController {
    * @route {POST} /api/v1/auth/register
    * @access public */
   @ApiOperation({ summary: 'Register new user' })
+  @ApiBearerAuth('JWT-auth')
   @ApiResponse({
     status: 201,
     description: 'It will return the user in the response',
@@ -74,6 +76,7 @@ export class AuthController {
    * @route {POST} /api/v1/auth/verify-email
    * @access public */
   @ApiOperation({ summary: 'verify user email' })
+  @ApiBearerAuth('JWT-auth')
   @Post('verify-email')
   verifyEmail(
     @ParsedJWTCookie() token: string,
@@ -87,6 +90,7 @@ export class AuthController {
    * @route {POST} /api/v1/auth/verify-email
    * @access public */
   @ApiOperation({ summary: 'verify user email' })
+  @ApiBearerAuth('JWT-auth')
   @Get('resend-email-code')
   resendEmailVerificationCode(
     @ParsedJWTCookie() token: string,
@@ -99,6 +103,7 @@ export class AuthController {
    * @route {POST} /api/v1/auth/forgot-password
    * @access public */
   @ApiOperation({ summary: 'user forgot password' })
+  @ApiBearerAuth('JWT-auth')
   @Post('forgot-password')
   forgotPassword(
     @Res({ passthrough: true }) res: Response,
@@ -111,6 +116,7 @@ export class AuthController {
    * @route {POST} /api/v1/auth/forgot-password-code
    * @access public */
   @ApiOperation({ summary: 'verify forgot password code' })
+  @ApiBearerAuth('JWT-auth')
   @Post('forgot-password-code')
   verifyForgotPasswordCode(
     @ParsedJWTCookie() token: string,
@@ -124,6 +130,7 @@ export class AuthController {
    * @route {POST} /api/v1/auth/reset-password
    * @access public */
   @ApiOperation({ summary: 'Reset password' })
+  @ApiBearerAuth('JWT-auth')
   @Patch('reset-password')
   resetPassword(
     @ParsedJWTCookie() token: string,
@@ -139,9 +146,9 @@ export class AuthController {
    * @access protected
    */
   @ApiOperation({ summary: 'fetch a user profile' })
+  @ProtectUser()
   @ApiBearerAuth('JWT-auth')
   @Get('profile')
-  @UseGuards(AuthGuard('jwt'))
   getProfile(@Req() request) {
     delete request.user.password;
     return {

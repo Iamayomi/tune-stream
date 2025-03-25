@@ -14,6 +14,7 @@ import { UserService } from './user.service';
 import { Playlist } from '../playlists/playlist.entity';
 import { ProtectUser } from 'src/library/decorator';
 
+@ProtectUser()
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -26,7 +27,6 @@ export class UserController {
   @ApiOperation({ summary: 'Get user profile' })
   @ApiBearerAuth('JWT-auth')
   @Get('profile')
-  @ProtectUser()
   getProfile(
     @Req()
     request,
@@ -44,7 +44,6 @@ export class UserController {
    */
   @ApiOperation({ summary: 'Get user playlists' })
   @Get(':userId/playlists')
-  @ProtectUser()
   async findAll(
     @Param('userId', ParseIntPipe) userId: number,
   ): Promise<Playlist[]> {
