@@ -14,7 +14,6 @@ import { ResponseInterceptor } from './library';
 
 import { LoggerMiddleware } from './library';
 // import { SongsController } from './songs/songs.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
 // import { DataSource } from 'typeorm';
 import { SongsModule } from './songs/song.module';
 // import { Song } from './module/songs/song.entity';
@@ -32,8 +31,6 @@ import { AuthModule } from './users/auth/auth.module';
 
 import { AlbumsModule } from './albums/album.module';
 
-import { dataSourceOptions } from './library/database/data-source';
-
 // import { SeedModule } from './module/seed/seed.module';
 
 import { AppController } from './app.controller';
@@ -42,6 +39,7 @@ import { SearchModule } from './search/search.module';
 import { MailModule } from './library/mailer/mailer.module';
 import { AppConfigModule } from './library/config/config.module';
 import { CacheModule } from './library/cache/cache.module';
+import { DatabaseModule } from './library/database/database.module';
 
 @Module({
   imports: [
@@ -49,7 +47,7 @@ import { CacheModule } from './library/cache/cache.module';
       rootPath: join(process.cwd(), 'src', '../public'), // Path to your static files directory
       serveRoot: '/public',
     }),
-    TypeOrmModule.forRoot(dataSourceOptions),
+    DatabaseModule,
     SongsModule,
     UserModule,
     ArtistsModule,
