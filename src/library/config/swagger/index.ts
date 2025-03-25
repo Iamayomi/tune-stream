@@ -20,7 +20,7 @@ export const swaggerOptions = new DocumentBuilder()
     'http://www.apache.org/licenses/LICENSE-2.0.html', // License URL
   )
   .addServer(`http://localhost:${PORT}/`, 'Local environment')
-  // .addServer('https://staging.yourapi.com/', 'Staging')
+  .addServer('https://tunestream.koyeb.app/', 'Staging')
   // .addServer('https://production.yourapi.com/', 'Production')
   .addBearerAuth(
     // Enable Bearer Auth here
