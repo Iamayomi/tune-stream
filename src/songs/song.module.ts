@@ -8,10 +8,13 @@ import { Album } from '../albums/album.entity';
 import { AlbumService } from '../albums/album.service';
 import { AlbumsModule } from '../albums/album.module';
 import { ElasticSearchService } from '../search/search.service';
-import { SearchModule } from '../search/search.module';
+// import { SearchModule } from '../search/search.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Song, Album, Artist]), SearchModule],
+  imports: [
+    TypeOrmModule.forFeature([Song, Album, Artist]),
+    // SearchModule
+  ],
   controllers: [SongsController],
   providers: [
     //////// 1. standard providers

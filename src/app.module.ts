@@ -35,7 +35,7 @@ import { AlbumsModule } from './albums/album.module';
 
 import { AppController } from './app.controller';
 
-import { SearchModule } from './search/search.module';
+// import { SearchModule } from './search/search.module';
 import { MailModule } from './library/mailer/mailer.module';
 import { AppConfigModule } from './library/config/config.module';
 import { CacheModule } from './library/cache/cache.module';
@@ -55,7 +55,7 @@ import { DatabaseModule } from './library/database/database.module';
     AuthModule,
     // SeedModule,
     AlbumsModule,
-    SearchModule,
+    // SearchModule,
     MailModule,
     AppConfigModule,
     CacheModule,
