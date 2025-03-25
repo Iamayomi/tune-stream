@@ -38,8 +38,8 @@ export class SongsService {
     // @InjectRepository(Album)
     // private albumRepository: Repository<Album>,
 
-    @Inject(ElasticSearchService) // Explicitly inject ElasticSearchService
-    private readonly elasticSearch: ElasticSearchService,
+    // @Inject(ElasticSearchService) // Explicitly inject ElasticSearchService
+    // private readonly elasticSearch: ElasticSearchService,
   ) {}
 
   async createSong(songDTO: CreateSongDTO): Promise<Song> {
@@ -68,11 +68,11 @@ export class SongsService {
     }
     await this.songRepository.save(song);
 
-    await this.elasticSearch.indexDocument(
-      this.index,
-      String(song.songId),
-      song,
-    );
+    // await this.elasticSearch.indexDocument(
+    //   this.index,
+    //   String(song.songId),
+    //   song,
+    // );
 
     this.logger.log(`Song created: ${JSON.stringify(song)}`);
 
@@ -134,7 +134,7 @@ export class SongsService {
   }
 
   async searchSong(searchSongDto: SearchSongDto) {
-    return await this.elasticSearch.searchsong(searchSongDto);
+    // return await this.elasticSearch.searchsong(searchSongDto);
   }
 
   async pagination(options: IPaginationOptions): Promise<Pagination<Song>> {
