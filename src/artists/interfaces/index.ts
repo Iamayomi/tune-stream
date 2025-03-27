@@ -5,10 +5,13 @@ import { Artist } from '../artist.entity';
 
 export interface IArtist {
   /** artist's id **/
-  artistId: number;
+  id: number;
 
   /** album's artists **/
-  artist: Artist;
+  // artist: Artist;
+
+  /** artists bio **/
+  bio: string;
 
   /** artist's stageName **/
   stageName: string;
@@ -18,6 +21,12 @@ export interface IArtist {
 
   /** artists's albums **/
   albums: Album[];
+
+  /** artists's monthly listeners **/
+  monthlyListeners: number;
+
+  /** artists's followers **/
+  followers: User[];
 
   /** user artists's **/
   user: User;

@@ -4,7 +4,7 @@ import { Playlist } from 'src/playlists/playlist.entity';
 
 export interface ISong {
   /** song's id **/
-  songId: number;
+  id: number;
 
   /** song's title **/
   title: string;
@@ -18,14 +18,20 @@ export interface ISong {
   /** song's lyrics **/
   lyrics: string;
 
+  /** audio url **/
+  audioUrl: string;
+
   /** song's url coverImg **/
   coverImage: string;
+
+  /** song's play count **/
+  playCount: number;
 
   /** song's popularity **/
   popularity: number;
 
   /** song's genre **/
-  genre: string;
+  genre: string[];
 
   /** song's artists **/
   artists: Artist[];

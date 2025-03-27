@@ -53,7 +53,7 @@ export class UserService {
 
     const access_token = await this.jwtService.signAsync(
       {
-        sub: user.userId,
+        sub: user.id,
         email: user.email,
       },
       {
@@ -67,7 +67,7 @@ export class UserService {
     await this.cache.set(VERIFY_EMAIL(user.email), code, TIME_IN.minutes[5]);
 
     await this.cache.set(
-      SESSION_USER(`${user.userId}`),
+      SESSION_USER(`${user.id}`),
       access_token,
       TIME_IN.hours[1],
     );
@@ -127,7 +127,7 @@ export class UserService {
 
   /** Finds a user by id */
   async findById(userId: number): Promise<User> {
-    const user = await this.userRepository.findOneBy({ userId });
+    const user = await this.userRepository.findOneBy({ id: userId });
 
     if (!user) throw new Error('Could not find user');
 
@@ -142,7 +142,7 @@ export class UserService {
   /** Finds a user by playlist id */
   async findUserPlaylistsById(userId: number): Promise<Playlist[]> {
     return await this.playlistRepository.find({
-      where: { playlistId: userId },
+      where: { id: userId },
     });
   }
 }

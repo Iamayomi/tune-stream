@@ -4,6 +4,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToMany,
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
@@ -11,12 +12,11 @@ import {
 } from 'typeorm';
 
 import * as bcrypt from 'bcryptjs';
-import * as jwt from 'jsonwebtoken';
 
 import { Exclude, Expose } from 'class-transformer';
 import { Artist } from 'src/artists/artist.entity';
 import { Playlist } from 'src/playlists/playlist.entity';
-import { Subscription } from '../subscription/subscription.entity';
+import { Subscription } from '../subscriptions/subscription.entity';
 import {
   generateUUID,
   getRandomAvatarUrl,
@@ -24,13 +24,15 @@ import {
 } from '../library/utils';
 import { UserRole } from './types';
 import { IUser, IUserMethods } from './interfaces';
-import { TIME_IN } from '../library/config/constants';
+import { Song } from 'src/songs/song.entity';
+import { Album } from 'src/albums/album.entity';
+import { Comment } from 'src/comments/comment.entity';
 
 @Entity('users')
 export class User implements IUser, IUserMethods {
   // @PrimaryGeneratedColumn('uuid')
   @PrimaryGeneratedColumn()
-  userId: number;
+  id: number;
 
   @Column({ type: 'varchar', nullable: true })
   fullName: string;
@@ -39,7 +41,7 @@ export class User implements IUser, IUserMethods {
   bio: string;
 
   @Column({ nullable: true, default: getRandomAvatarUrl() })
-  profileImage: string;
+  profileUrl: string;
 
   @Column({ unique: true, nullable: true })
   username: string;
@@ -77,11 +79,23 @@ export class User implements IUser, IUserMethods {
   })
   subscriptions: Subscription[];
 
-  @OneToMany(() => Playlist, (playlist) => playlist.user)
+  @OneToMany(() => Playlist, (playlist) => playlist.creator)
   playlists: Playlist[];
 
   @OneToOne(() => Artist, (artist) => artist.user)
   artist: Artist;
+
+  @ManyToMany(() => Song, (song) => song.likedByUsers)
+  likedSongs: Song[];
+
+  @ManyToMany(() => Album, (album) => album.followers)
+  followedAlbums: Album[];
+
+  @ManyToMany(() => Artist, (artist) => artist.followers)
+  followedArtists: Artist[];
+
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 
   @Column({ unique: true, nullable: true })
   refresh_token: string;

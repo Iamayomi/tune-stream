@@ -7,12 +7,16 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { decoded } from '../types';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from 'src/users/user.service';
+import { UserService } from '../../users/user.service';
+import { CacheService } from '../cache/cache.service';
+import { SESSION_USER } from '../config';
 
 @Injectable()
 export class AuthenticationGuard extends AuthGuard('jwt') {
   constructor(
-    private userService: UserService,
+    // private userService: UserService,
+    private cache: CacheService,
+
     private jwtService: JwtService,
   ) {
     super();
@@ -20,7 +24,7 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
 
-    const authHeader: any = request.headers.authorization;
+    const authHeader: string = request.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       throw new UnauthorizedException('Invalid or missing token');
@@ -29,23 +33,16 @@ export class AuthenticationGuard extends AuthGuard('jwt') {
     // Extract the token
     const token: string = authHeader.split(' ')[1];
 
-    let decoded: decoded | void = await this.jwtService
-      .verifyAsync<decoded>(token)
-      .then((token) => token)
-      .catch((err) => {
-        if (err.name === 'TokenExpiredError')
-          throw new UnauthorizedException(
-            'Token expired, please log in again.',
-          );
-        throw new UnauthorizedException('Invalid token.');
-      });
+    const decoded: decoded = await this.jwtService.verifyAsync<decoded>(token);
 
-    if (!decoded || !decoded.sub || !decoded.email)
+    if (!decoded || !decoded.userId || !decoded.email)
       throw new UnauthorizedException('Session expired, please log in again.');
 
-    const user = await this.userService.findById(+decoded.sub);
+    const user =
+      (await this.cache.get(SESSION_USER(`${decoded.userId}`))) ?? decoded;
 
     request.user = user;
+
     return true;
   }
 }

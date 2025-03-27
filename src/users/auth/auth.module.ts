@@ -4,7 +4,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UserModule } from 'src/users/user.module';
-// import { JWTStrategy } from './auth.jwt.strategy';
+import { JWTStrategy } from './auth.jwt.strategy';
 import { ArtistsModule } from 'src/artists/artist.module';
 import { JWT_ACCESS_TOKEN_EXP, JWT_ACCESS_TOKEN_SECRET } from '../../library';
 import { MailModule } from 'src/library/mailer/mailer.module';
@@ -29,7 +29,7 @@ import { MailModule } from 'src/library/mailer/mailer.module';
   ],
   providers: [
     AuthService,
-    // JWTStrategy,
+    JWTStrategy,
     // ApiKeyStrategy
   ],
   controllers: [AuthController],

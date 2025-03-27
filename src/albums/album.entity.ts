@@ -8,12 +8,15 @@ import {
   ManyToOne,
   JoinColumn,
   JoinTable,
+  ManyToMany,
 } from 'typeorm';
 import { Song } from '../songs/song.entity';
 import { Artist } from '../artists/artist.entity';
+import { User } from 'src/users/user.entity';
+import { IAlbum } from './interfaces';
 
 @Entity('albums')
-export class Album {
+export class Album implements IAlbum {
   //   @PrimaryGeneratedColumn('uuid')
   @PrimaryGeneratedColumn()
   id: number;
@@ -35,6 +38,13 @@ export class Album {
 
   @OneToMany(() => Song, (song) => song.album, { cascade: true })
   tracks: Song[];
+
+  @ManyToMany(() => User, (user) => user.followedAlbums)
+  @JoinTable()
+  followers: User[];
+
+  @Column({ default: 0 })
+  totalFollowers: number;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -8,7 +8,10 @@ import { Playlist } from './playlist.entity';
 import { DeleteResult, In, Repository } from 'typeorm';
 import { Song } from 'src/songs/song.entity';
 import { User } from 'src/users/user.entity';
-import { CreatePlayListDto } from './dto/create-playlist-dto';
+import {
+  AddSongToPlaylist,
+  CreatePlayListDto,
+} from './dto/create-playlist-dto';
 
 @Injectable()
 export class PlaylistsService {
@@ -23,42 +26,63 @@ export class PlaylistsService {
     private userRepository: Repository<User>,
   ) {}
 
-  async createPlaylist(playlistDTO: CreatePlayListDto): Promise<Playlist> {
-    const { name, songs, user } = playlistDTO;
+  async createPlaylist(
+    userId: number,
+    playlistDTO: CreatePlayListDto,
+  ): Promise<Playlist> {
+    const { name, songs, isPublic } = playlistDTO;
     const playlist = new Playlist();
 
     playlist.name = name;
 
     const song = await this.songsRepository.find({
-      where: { songId: In(songs) },
+      where: { id: In(songs) },
     });
 
     playlist.songs = song;
 
-    const users = await this.userRepository.findOneBy({ userId: user });
+    const user = await this.userRepository.findOneBy({ id: userId });
 
-    playlist.user = users;
+    playlist.creator = user;
+
+    playlist.isPublic = isPublic ?? false;
 
     return await this.playlistRepository.save(playlist);
   }
 
-  async getPlaylistById(playlistId: number): Promise<Playlist> {
+  public async getUserPlaylistById(userId: number): Promise<Playlist> {
     const playlist = await this.playlistRepository.findOne({
-      where: { playlistId },
+      where: { creator: { id: userId } },
       relations: ['songs'],
     });
 
     if (!playlist)
       throw new NotFoundException(
-        `Playlist with this ID ${playlistId} not found`,
+        `User Playlist with this ID ${userId} not found`,
       );
 
     return playlist;
   }
 
-  async deletePlaylistById(playlistId: number): Promise<DeleteResult> {
+  public async addSongToPlaylist(addSongToPlaylist: AddSongToPlaylist) {
+    const { playlistId, songId } = addSongToPlaylist;
     const playlist = await this.playlistRepository.findOne({
-      where: { playlistId },
+      where: { id: playlistId },
+      relations: ['tracks'],
+    });
+    const song = await this.songsRepository.findOne({ where: { id: songId } });
+
+    if (!playlist || !song) {
+      throw new NotFoundException('Playlist or Track not found');
+    }
+
+    playlist.songs.push(song);
+    return this.playlistRepository.save(playlist);
+  }
+
+  public async deletePlaylistById(playlistId: number): Promise<DeleteResult> {
+    const playlist = await this.playlistRepository.findOne({
+      where: { id: playlistId },
     });
 
     if (!playlist) {

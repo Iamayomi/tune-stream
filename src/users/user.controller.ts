@@ -14,7 +14,7 @@ import { UserService } from './user.service';
 import { Playlist } from '../playlists/playlist.entity';
 import { ProtectUser } from 'src/library/decorator';
 
-@ProtectUser()
+// @ProtectUser()
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -35,6 +35,11 @@ export class UserController {
       msg: 'authenticated with api key',
       user: request.user,
     };
+  }
+
+  @Get(':userId')
+  async getMe(@Param('userId', ParseIntPipe) userId: number) {
+    return await this.userService.findById(userId);
   }
 
   /**

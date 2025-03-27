@@ -2,7 +2,6 @@ import * as fs from 'fs';
 import { INestApplication } from '@nestjs/common';
 import { SwaggerModule } from '@nestjs/swagger';
 import { DocumentBuilder } from '@nestjs/swagger';
-import { PORT } from '../constants';
 
 const description = `🎵 **TuneStream API** provides a seamless music streaming experience, enabling users to discover, play, and manage their favorite songs, albums, and playlists.`;
 
@@ -19,8 +18,8 @@ export const swaggerOptions = new DocumentBuilder()
     'Apache 2.0', // License Name
     'http://www.apache.org/licenses/LICENSE-2.0.html', // License URL
   )
-  .addServer(`http://localhost:${PORT}/`, 'Local environment')
-  .addServer('https://tunestream.koyeb.app/', 'Staging')
+  .addServer(`http://localhost:8080/`, 'Local environment')
+  // .addServer('https://tunestream.koyeb.app/', 'Staging')
   // .addServer('https://production.yourapi.com/', 'Production')
   .addBearerAuth(
     // Enable Bearer Auth here

@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Observable } from 'rxjs';
-import { PayloadType } from 'src/users/auth/types/payload.type';
+import { PayloadType } from '../../library/types/index';
 
 @Injectable()
 export class ArtistGuard extends AuthGuard('jwt') {

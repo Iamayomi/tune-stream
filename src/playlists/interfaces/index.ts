@@ -8,11 +8,14 @@ export interface IPlaylist {
   /** playlist's name **/
   name: string;
 
-  /** user reference to playlist**/
-  user: User;
+  /** user creator to playlist**/
+  creator: User;
 
   /** playlist's songs **/
   songs: Song[];
+
+  /** is playlist public**/
+  isPublic: Boolean;
 
   /** playlist's date created **/
   createdAt: Date;
