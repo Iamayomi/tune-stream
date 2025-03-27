@@ -5,7 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Playlist } from './playlist.entity';
 import { User } from 'src/users/user.entity';
 import { Song } from 'src/songs/song.entity';
-import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Playlist, Song, User])],

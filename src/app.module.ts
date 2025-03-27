@@ -40,6 +40,9 @@ import { MailModule } from './library/mailer/mailer.module';
 import { AppConfigModule } from './library/config/config.module';
 import { CacheModule } from './library/cache/cache.module';
 import { DatabaseModule } from './library/database/database.module';
+import { LikeModule } from './likes/like.module';
+import { FollowModule } from './follows/follow.module';
+import { CommentModule } from './comments/comment.module';
 
 @Module({
   imports: [
@@ -59,6 +62,9 @@ import { DatabaseModule } from './library/database/database.module';
     MailModule,
     AppConfigModule,
     CacheModule,
+    LikeModule,
+    FollowModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [

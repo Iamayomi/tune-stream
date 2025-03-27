@@ -12,10 +12,10 @@ import { LoginDTO } from '../auth/dto';
 import { UserService } from 'src/users/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { ArtistsService } from 'src/artists/artist.service';
-import { PayloadType } from './types/payload.type';
+import { PayloadType } from '../../library/types';
 import {
-  JWT_ACCESS_TOKEN_EXP,
-  JWT_ACCESS_TOKEN_SECRET,
+  JWT_REFRESH_TOKEN_EXP,
+  JWT_REFRESH_TOKEN_SECRET,
   REFRESH_TOKEN,
   SESSION_USER,
   TIME_IN,
@@ -55,31 +55,31 @@ export class AuthService {
     // if (!user.verified_phone)
     //   throw new UnauthorizedException('Phone not verified');
 
-    const payload: PayloadType = { email: user.email, userId: user.userId };
+    const payload: PayloadType = { email: user.email, userId: user.id };
 
-    const artist = await this.artistService.findArtistById(payload.userId);
+    const artist = await this.artistService.findArtistById(user.id);
 
     if (artist) {
-      payload.artistId = artist.artistId;
+      payload.artistId = artist.id;
     }
 
     const access_token = this.jwtService.sign(payload);
 
     const refresh_token = this.jwtService.sign(payload, {
-      secret: this.configService.get<string>(JWT_ACCESS_TOKEN_SECRET),
-      expiresIn: this.configService.get<string>(JWT_ACCESS_TOKEN_EXP),
+      secret: this.configService.get<string>(JWT_REFRESH_TOKEN_SECRET),
+      expiresIn: this.configService.get<string>(JWT_REFRESH_TOKEN_EXP),
     });
 
     await this.userService.updateUserRefreshToken(data.email, refresh_token);
 
     await this.cache.set(
-      SESSION_USER(user.userId.toString()),
+      SESSION_USER(user.id.toString()),
       user.toJSON(),
       TIME_IN.days[7],
     );
 
     await this.cache.set(
-      REFRESH_TOKEN(user.userId.toString()),
+      REFRESH_TOKEN(user.id.toString()),
       refresh_token,
       TIME_IN.days[7],
     );
@@ -128,7 +128,7 @@ export class AuthService {
 
     const user = await this.userService.findByEmail(decoded.email);
 
-    const user_cache = await this.cache.get(SESSION_USER(`${user.userId}`));
+    const user_cache = await this.cache.get(SESSION_USER(`${user.id}`));
 
     if (!user_cache) {
       throw new NotFoundException('User session not found');
@@ -157,7 +157,7 @@ export class AuthService {
     if (!user) throw new NotFoundException('Email does not exist');
 
     const access_token = await this.jwtService.signAsync({
-      sub: user.userId,
+      sub: user.id,
       email: user.email,
     });
 

@@ -94,6 +94,12 @@ export type TimeInMilliseconds<T extends string | number | symbol> = {
 };
 
 export interface decoded {
-  sub: string;
+  userId: number;
   email: string;
+}
+
+export interface PayloadType {
+  email: string;
+  userId: number;
+  artistId?: number;
 }

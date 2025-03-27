@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Inject,
   Injectable,
   Logger,
@@ -21,6 +22,7 @@ import { Album } from '../albums/album.entity';
 import { AlbumService } from '../albums/album.service';
 
 import { SearchSongDto } from './dto/search-song-dto';
+import { User } from 'src/users/user.entity';
 
 @Injectable()
 export class SongsService {
@@ -34,9 +36,6 @@ export class SongsService {
 
     @InjectRepository(Artist)
     private artistRepository: Repository<Artist>,
-
-    // @InjectRepository(Album)
-    // private albumRepository: Repository<Album>,
 
     // @Inject(ElasticSearchService) // Explicitly inject ElasticSearchService
     // private readonly elasticSearch: ElasticSearchService,
@@ -52,7 +51,7 @@ export class SongsService {
     song.releaseDate = songDTO.releaseDate;
 
     song.artists = await this.artistRepository.find({
-      where: { artistId: In(songDTO.artists) },
+      where: { id: In(songDTO.artists) },
     });
     songDTO.album === undefined ? true : false;
 
@@ -80,7 +79,7 @@ export class SongsService {
   }
 
   async findSongById(songId: number): Promise<Song> {
-    const song = await this.songRepository.findOneBy({ songId });
+    const song = await this.songRepository.findOneBy({ id: songId });
 
     if (!song)
       throw new NotFoundException(`Song with this ID ${songId} not found`);
@@ -94,14 +93,14 @@ export class SongsService {
     updateSongData: UpdateSongDTO,
   ): Promise<UpdateResult> {
     const artist = await this.artistRepository.findOne({
-      where: { artistId: artistId },
+      where: { id: artistId },
       relations: ['songs'],
     });
 
     if (!artist)
       throw new NotFoundException(`Artist with this ID ${artistId} not found`);
 
-    const song = artist.songs.find((song) => song.songId === songId);
+    const song = artist.songs.find((song) => song.id === songId);
 
     if (!song)
       throw new NotFoundException(`Song with this ID ${songId} not found`);
@@ -114,14 +113,14 @@ export class SongsService {
     artistId: number,
   ): Promise<DeleteResult> {
     const artist = await this.artistRepository.findOne({
-      where: { artistId: artistId },
+      where: { id: artistId },
       relations: ['songs'],
     });
 
     if (!artist)
       throw new NotFoundException(`Artist with this ID ${artistId} not found`);
 
-    const song = artist.songs.find((song) => song.songId === songId);
+    const song = artist.songs.find((song) => song.id === songId);
 
     if (!song)
       throw new NotFoundException(`Song with this ID ${songId} not found`);

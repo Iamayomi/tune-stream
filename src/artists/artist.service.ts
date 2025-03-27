@@ -23,21 +23,24 @@ export class ArtistsService {
     private readonly userService: UserService,
   ) {}
 
-  async findArtistById(userId: number): Promise<Artist> {
-    return await this.artistRepository.findOneBy({ artistId: userId });
+  public async findArtistById(userId: number): Promise<Artist> {
+    return await this.artistRepository.findOneBy({ user: { id: userId } });
   }
 
-  async userUpgradeToArtist(
+  public async userUpgradeToArtist(
     userId: number,
     artistData: createArtistDTO,
   ): Promise<Artist> {
     const findArtist = await this.findArtistById(userId);
 
-    const user = await this.userService.findById(findArtist.user.userId);
+    if (findArtist)
+      throw new BadRequestException('This Artist has already exist');
 
-    if (user.roles.includes(UserRole.ARTIST)) {
-      throw new BadRequestException('User is already an artist');
-    }
+    const user = await this.userService.findById(userId);
+
+    // if (user.roles.includes(UserRole.ARTIST)) {
+    //   throw new BadRequestException('User is already an artist');
+    // }
 
     user.roles.push(UserRole.ARTIST);
 

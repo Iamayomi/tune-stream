@@ -2,13 +2,11 @@ import {
   Body,
   Controller,
   Delete,
-  ForbiddenException,
   Get,
   Param,
   ParseIntPipe,
   Post,
-  UnauthorizedException,
-  UseGuards,
+  Request,
 } from '@nestjs/common';
 
 import { AuthGuard } from '@nestjs/passport';
@@ -29,9 +27,12 @@ export class PlaylistsController {
   @ProtectUser()
   async create(
     @Body() playlistDTO: CreatePlayListDto,
-    @Body('user') userId: number,
+    @Request() req: any,
   ): Promise<Playlist> {
-    return await this.playlistService.createPlaylist(playlistDTO);
+    return await this.playlistService.createPlaylist(
+      req.user.userId,
+      playlistDTO,
+    );
   }
 
   @ApiBearerAuth('JWT-auth')
@@ -41,7 +42,7 @@ export class PlaylistsController {
     @Param('playlistId', ParseIntPipe) playlistId: number,
     @Param('userId', ParseIntPipe) userId: number,
   ): Promise<Playlist> {
-    return await this.playlistService.getPlaylistById(playlistId);
+    return await this.playlistService.getUserPlaylistById(playlistId);
   }
 
   @ApiBearerAuth('JWT-auth')

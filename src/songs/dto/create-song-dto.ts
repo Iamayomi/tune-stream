@@ -51,6 +51,10 @@ export class CreateSongDTO {
   @IsDateString()
   readonly releaseDate: Date;
 
+  @ApiProperty({
+    example: 'afrobeats',
+    description: 'Provide the genre',
+  })
   @IsString()
   @IsNotEmpty()
   readonly genre: string;

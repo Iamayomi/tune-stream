@@ -1,5 +1,6 @@
 import { Artist } from 'src/artists/artist.entity';
 import { Song } from 'src/songs/song.entity';
+import { User } from 'src/users/user.entity';
 
 export interface IAlbum {
   /** album's id **/
@@ -22,6 +23,9 @@ export interface IAlbum {
 
   /** album's artists **/
   artist: Artist;
+
+  /** album's followers **/
+  followers: User[];
 
   /** album's date created **/
   createdAt: Date;

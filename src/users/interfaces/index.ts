@@ -1,11 +1,13 @@
+import { Album } from 'src/albums/album.entity';
 import { UserRole } from '../types';
 import { Artist } from 'src/artists/artist.entity';
 import { Playlist } from 'src/playlists/playlist.entity';
-import { Subscription } from 'src/subscription/subscription.entity';
+import { Song } from 'src/songs/song.entity';
+import { Subscription } from 'src/subscriptions/subscription.entity';
 
 export interface IUser {
   /** User's id **/
-  userId: number;
+  id: number;
 
   /** User's fullname **/
   fullName: string;
@@ -14,7 +16,7 @@ export interface IUser {
   bio: string;
 
   /** user avatar url **/
-  profileImage: string;
+  profileUrl: string;
 
   /** User's username **/
   username: string;
@@ -47,6 +49,15 @@ export interface IUser {
 
   /** user's playlist **/
   playlists: Playlist[];
+
+  /** user's songs likes **/
+  likedSongs: Song[];
+
+  /** user's album followed **/
+  followedAlbums: Album[];
+
+  /** user's Artist followed **/
+  followedArtists: Artist[];
 
   /** user's artist **/
   artist: Artist;

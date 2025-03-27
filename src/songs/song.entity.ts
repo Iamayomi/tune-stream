@@ -13,12 +13,15 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Album } from '../albums/album.entity';
+import { User } from 'src/users/user.entity';
+import { ISong } from './interfaces';
+import { Comment } from 'src/comments/comment.entity';
 
 @Entity('songs')
-export class Song {
+export class Song implements ISong {
   // @PrimaryGeneratedColumn('uuid')
   @PrimaryGeneratedColumn()
-  songId: number;
+  id: number;
 
   @Column()
   title: string;
@@ -35,11 +38,17 @@ export class Song {
   @Column({ type: 'varchar' })
   coverImage: string;
 
-  @Column()
+  @Column({ default: 0 })
   popularity: number;
 
-  @Column({ type: 'varchar', length: 100, default: 'Other' })
-  genre: string;
+  @Column({ default: 0 })
+  playCount: number;
+
+  @Column({ nullable: true })
+  audioUrl: string;
+
+  @Column({ type: 'simple-array', nullable: true })
+  genre: string[];
 
   @ManyToMany(() => Artist, (artist) => artist.songs, { cascade: true })
   @JoinTable({ name: 'songs_artists' })
@@ -51,6 +60,16 @@ export class Song {
 
   @ManyToOne(() => Album, (album) => album.tracks, { onDelete: 'CASCADE' })
   album?: Album;
+
+  @ManyToMany(() => User, (user) => user.likedSongs)
+  @JoinTable()
+  likedByUsers: User[];
+
+  @OneToMany(() => Comment, (comment) => comment.song)
+  comments: Comment[];
+
+  @Column({ default: 0 })
+  totalLikes: number;
 
   @CreateDateColumn()
   createdAt: Date;

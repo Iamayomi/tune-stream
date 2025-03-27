@@ -35,7 +35,7 @@ export class SongsController {
   @ApiBearerAuth('JWT-auth')
   @Post()
   @ProtectArtist()
-  create(@Body() createSongDTO: CreateSongDTO, @Req() request): Promise<Song> {
+  create(@Body() createSongDTO: CreateSongDTO): Promise<Song> {
     return this.songServices.createSong(createSongDTO);
   }
 

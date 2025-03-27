@@ -30,7 +30,7 @@ export class AlbumService {
 
     // check if album exist
     const findAlbum = await this.albumRepository.findOne({
-      where: { title, artist: { artistId: artist } },
+      where: { title, artist: { id: artist } },
     });
 
     if (findAlbum) {
@@ -40,7 +40,7 @@ export class AlbumService {
     album.title = title;
     album.releaseDate = releaseDate;
     album.artist = await this.artistRepository.findOneBy({
-      artistId: artist,
+      id: artist,
     });
 
     album.genre = genre;
@@ -110,7 +110,7 @@ export class AlbumService {
     artistId: number,
   ): Promise<DeleteResult> {
     const artist = await this.artistRepository.findOne({
-      where: { artistId },
+      where: { id: artistId },
       relations: ['albums'],
     });
 

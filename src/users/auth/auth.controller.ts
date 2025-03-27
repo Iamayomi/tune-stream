@@ -32,7 +32,6 @@ export class AuthController {
    * @route {POST} /api/v1/auth/register
    * @access public */
   @ApiOperation({ summary: 'Register new user' })
-  @ApiBearerAuth('JWT-auth')
   @ApiResponse({
     status: 201,
     description: 'It will return the user in the response',
