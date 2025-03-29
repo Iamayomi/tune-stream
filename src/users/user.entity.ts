@@ -27,6 +27,7 @@ import { IUser, IUserMethods } from './interfaces';
 import { Song } from 'src/songs/song.entity';
 import { Album } from 'src/albums/album.entity';
 import { Comment } from 'src/comments/comment.entity';
+import { Notification } from 'src/notification/notification.entity';
 
 @Entity('users')
 export class User implements IUser, IUserMethods {
@@ -97,8 +98,17 @@ export class User implements IUser, IUserMethods {
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
 
+  @OneToMany(() => Notification, (notification) => notification.user)
+  notifications: Notification[];
+
   @Column({ unique: true, nullable: true })
   refresh_token: string;
+
+  @Column({ nullable: true })
+  firebaseToken: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  firebaseTokenUpdatedAt: Date;
 
   @CreateDateColumn()
   createdAt: Date;
