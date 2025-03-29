@@ -21,6 +21,11 @@ export const accounts = {
   USER: 'user',
 };
 
+export const NOTIFICATION_CONFIG = {
+  MAX_NOTIFICATIONS_PER_USER: 100,
+  NOTIFICATION_RETENTION_DAYS: 30,
+};
+
 export const PROFILE_IMGS_NAME_LIST = [
   'Garfield',
   'Tinkerbell',

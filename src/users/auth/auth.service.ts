@@ -44,6 +44,7 @@ export class AuthService {
 
   /** Login user returns */
   public async userLogin(data: LoginDTO, @Response() res) {
+    console.log(data);
     const user = await this.userService.findByEmail(data.email);
 
     if (!user || !(await user.verifyPassword(data.password)))

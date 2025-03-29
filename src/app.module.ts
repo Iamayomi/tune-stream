@@ -1,41 +1,17 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-
 import { ServeStaticModule } from '@nestjs/serve-static';
-
 import { join } from 'path';
 
 import { ResponseInterceptor } from './library';
-
 import { LoggerMiddleware } from './library';
-// import { SongsController } from './songs/songs.controller';
-// import { DataSource } from 'typeorm';
 import { SongsModule } from './songs/song.module';
-// import { Song } from './module/songs/song.entity';
-
 import { UserModule } from './users/user.module';
-// import { User } from './module/users/user.entity';
-
 import { ArtistsModule } from './artists/artist.module';
-// import { Artist } from './module/artists/artist.entity';
-
 import { PlaylistsModule } from './playlists/playlist.module';
-// import { Playlist } from './module/playlists/playlist.entity';
-
 import { AuthModule } from './users/auth/auth.module';
-
 import { AlbumsModule } from './albums/album.module';
-
-// import { SeedModule } from './module/seed/seed.module';
-
 import { AppController } from './app.controller';
-
-// import { SearchModule } from './search/search.module';
 import { MailModule } from './library/mailer/mailer.module';
 import { AppConfigModule } from './library/config/config.module';
 import { CacheModule } from './library/cache/cache.module';
@@ -43,9 +19,11 @@ import { DatabaseModule } from './library/database/database.module';
 import { LikeModule } from './likes/like.module';
 import { FollowModule } from './follows/follow.module';
 import { CommentModule } from './comments/comment.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
+    NotificationModule,
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'src', '../public'), // Path to your static files directory
       serveRoot: '/public',
