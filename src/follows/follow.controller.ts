@@ -5,8 +5,6 @@ import { FollowService } from './follow.service';
 import { Message, ProtectUser } from 'src/library/decorator';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
-@ApiBearerAuth('JWT-auth')
-@ProtectUser()
 @Controller('follow')
 export class FollowController {
   constructor(private followService: FollowService) {}
@@ -22,6 +20,8 @@ export class FollowController {
     description: 'It will return the user liked songs response',
   })
   @Message('User follow Artist successfully')
+  @ApiBearerAuth('JWT-auth')
+  @ProtectUser()
   @Post('artist/:artistId')
   public async followArtist(@Param('artistId') artistId: number, @Req() req) {
     return this.followService.followArtist(req.user.id, artistId);

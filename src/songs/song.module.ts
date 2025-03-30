@@ -6,14 +6,14 @@ import { Song } from './song.entity';
 import { Artist } from 'src/artists/artist.entity';
 import { Album } from '../albums/album.entity';
 import { AlbumService } from '../albums/album.service';
-import { AlbumsModule } from '../albums/album.module';
-import { ElasticSearchService } from '../search/search.service';
+// import { ElasticSearchService } from '../search/search.service';
+import { NotificationModule } from 'src/notification/notification.module';
 // import { SearchModule } from '../search/search.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Song, Album, Artist]),
-    // SearchModule
+    NotificationModule,
   ],
   controllers: [SongsController],
   providers: [
@@ -23,8 +23,8 @@ import { ElasticSearchService } from '../search/search.service';
     AlbumService,
     // ElasticSearchService
     // {
-    //   provide: ElasticSearchService,
-    //   useClass: ElasticSearchService,
+    //   provide: NotificationService,
+    //   useClass: NotificationService,
     // },
 
     //////// 2. value providers

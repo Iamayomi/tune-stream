@@ -10,10 +10,14 @@ import {
 import { NotificationService } from './notification.service';
 import { Notification } from './notification.entity';
 import { FilterNotificationDto } from './dto';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { ProtectUser } from 'src/library/decorator';
 
+@ApiBearerAuth('JWT-auth')
+@ProtectUser()
 @Controller('notifications')
 export class NotificationController {
-  constructor(private notificationsService: NotificationService) {}
+  constructor(private notificationService: NotificationService) {}
 
   @Get(':userId')
   public async getUserNotifications(
@@ -21,7 +25,7 @@ export class NotificationController {
     @Query()
     filterDto: FilterNotificationDto,
   ): Promise<Notification[]> {
-    return this.notificationsService.getUserNotifications(userId, filterDto);
+    return this.notificationService.getUserNotifications(userId, filterDto);
   }
 
   @Get(':userId/unread-count')
@@ -29,7 +33,7 @@ export class NotificationController {
     @Param('userId') userId: number,
   ): Promise<{ count: number }> {
     const count =
-      await this.notificationsService.getUnreadNotificationCount(userId);
+      await this.notificationService.getUnreadNotificationCount(userId);
     return { count };
   }
 
@@ -37,20 +41,20 @@ export class NotificationController {
   async markNotificationAsRead(
     @Param('notificationId') notificationId: number,
   ): Promise<Notification> {
-    return this.notificationsService.markNotificationAsRead(notificationId);
+    return this.notificationService.markNotificationAsRead(notificationId);
   }
 
   @Patch(':userId/read-all')
   async markAllNotificationsAsRead(
     @Param('userId') userId: number,
   ): Promise<void> {
-    return this.notificationsService.markAllNotificationsAsRead(userId);
+    return this.notificationService.markAllNotificationsAsRead(userId);
   }
 
   @Delete(':notificationId')
   async deleteNotification(
     @Param('notificationId') notificationId: number,
   ): Promise<void> {
-    return this.notificationsService.deleteNotification(notificationId);
+    return this.notificationService.deleteNotification(notificationId);
   }
 }

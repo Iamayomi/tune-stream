@@ -24,6 +24,9 @@ export class CreateNotificationDto {
   @IsNumber()
   @IsNotEmpty()
   userId: number;
+
+  @IsOptional()
+  data?: any;
 }
 
 export class FilterNotificationDto {

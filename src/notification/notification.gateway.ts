@@ -44,11 +44,6 @@ export class NotificationGateway
   }
 
   @SubscribeMessage('create-notification')
-  handleTest(@MessageBody() data: any, @ConnectedSocket() client: Socket) {
-    this.logger.log(`Test handler triggered with: ${JSON.stringify(data)}`);
-    client.emit('test-response', 'Handler works!');
-  }
-  @SubscribeMessage('create-notification')
   handleCreateNotification(
     @MessageBody() dto: CreateNotificationDto,
     @ConnectedSocket() client: Socket,
@@ -82,6 +77,6 @@ export class NotificationGateway
     this.logger.log(
       `Message Broachcast in /notification from ${client.id}: ${notification}`,
     );
-    this.server.emit('notification', notification);
+    this.server.emit('new-notification', notification);
   }
 }

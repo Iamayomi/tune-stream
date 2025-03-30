@@ -17,8 +17,8 @@ export class ArtistsService {
     @InjectRepository(Artist)
     private artistRepository: Repository<Artist>,
 
-    @InjectRepository(User)
-    private userRepository: Repository<User>,
+    // @InjectRepository(User)
+    // private userRepository: Repository<User>,
 
     private readonly userService: UserService,
   ) {}
