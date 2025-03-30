@@ -6,23 +6,22 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ElasticSearchService } from '../search/search.service';
-import { CreateSongDTO } from './dto/create-song-dto';
-import { DeleteResult, In, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Song } from './song.entity';
-import { UpdateSongDTO } from './dto/update-song-dto';
 import {
   IPaginationOptions,
   Pagination,
   paginate,
 } from 'nestjs-typeorm-paginate';
+// import { ElasticSearchService } from '../search/search.service';
+import { CreateSongDTO } from './dto/create-song-dto';
+import { DeleteResult, In, Repository, UpdateResult } from 'typeorm';
+import { Song } from './song.entity';
+import { UpdateSongDTO } from './dto/update-song-dto';
 import { Artist } from 'src/artists/artist.entity';
-import { Album } from '../albums/album.entity';
 import { AlbumService } from '../albums/album.service';
-
 import { SearchSongDto } from './dto/search-song-dto';
-import { User } from 'src/users/user.entity';
+import { NotificationService } from 'src/notification/notification.service';
+import { NotificationType } from 'src/notification/type';
 
 @Injectable()
 export class SongsService {
@@ -37,22 +36,29 @@ export class SongsService {
     @InjectRepository(Artist)
     private artistRepository: Repository<Artist>,
 
+    private notificationService: NotificationService,
+
     // @Inject(ElasticSearchService) // Explicitly inject ElasticSearchService
     // private readonly elasticSearch: ElasticSearchService,
   ) {}
 
-  async createSong(songDTO: CreateSongDTO): Promise<Song> {
+  public async createSong(songDTO: CreateSongDTO): Promise<Song> {
+    const artist = await this.artistRepository.find({
+      where: { id: In(songDTO.artists) },
+      relations: ['user', 'followers'],
+    });
+
+    if (artist.length === 0) {
+      throw new NotFoundException('Artist not found');
+    }
+
     const song = new Song();
     song.title = songDTO.title;
-    song.artists = songDTO.artists;
     song.coverImage = songDTO.coverImage;
     song.duration = songDTO.duration;
     song.lyrics = songDTO.lyrics;
     song.releaseDate = songDTO.releaseDate;
-
-    song.artists = await this.artistRepository.find({
-      where: { id: In(songDTO.artists) },
-    });
+    song.artists = artist;
     songDTO.album === undefined ? true : false;
 
     if (songDTO.album) {
@@ -65,7 +71,9 @@ export class SongsService {
 
       song.album = album;
     }
-    await this.songRepository.save(song);
+    const songSaved = await this.songRepository.save(song);
+
+    await this.notifyFollowers(songSaved, artist);
 
     // await this.elasticSearch.indexDocument(
     //   this.index,
@@ -73,12 +81,38 @@ export class SongsService {
     //   song,
     // );
 
-    this.logger.log(`Song created: ${JSON.stringify(song)}`);
+    // this.logger.log(`Song created: ${JSON.stringify(song)}`);
 
-    return song;
+    return songSaved;
   }
 
-  async findSongById(songId: number): Promise<Song> {
+  private async notifyFollowers(song: Song, artist: Artist[]) {
+    //  Notify artist
+    const user = artist.map((val) => val);
+
+    user.map((user) => {
+      this.notificationService.createNotification({
+        type: NotificationType.NEW_MUSIC,
+        message: `Your Song ${song.title} has been created successfully`,
+        userId: user.user.id,
+        data: song,
+      });
+    });
+
+    //  Notify artist followers
+    const followers = artist.find((fol) => fol.followers);
+    const folUser = user.find((val) => val);
+    followers.followers.map((fol) => {
+      this.notificationService.createNotification({
+        type: NotificationType.NEW_MUSIC,
+        message: `${folUser} just release a new song: ${song.title} `,
+        userId: fol.id,
+        data: song,
+      });
+    });
+  }
+
+  public async findSongById(songId: number): Promise<Song> {
     const song = await this.songRepository.findOneBy({ id: songId });
 
     if (!song)

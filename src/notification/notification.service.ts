@@ -12,6 +12,7 @@ export class NotificationService {
   constructor(
     @InjectRepository(Notification)
     private notificationRepository: Repository<Notification>,
+
     @InjectRepository(User)
     private userRepository: Repository<User>,
 
@@ -34,7 +35,6 @@ export class NotificationService {
     dto: CreateNotificationDto,
   ): Promise<Notification> {
     // Verify user exists
-
     const user = await this.userRepository.findOneBy({ id: dto.userId });
 
     if (!user) {

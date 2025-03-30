@@ -32,6 +32,9 @@ export class Notification {
   @JoinColumn({ name: 'userId' })
   user: User;
 
+  @Column({ type: 'jsonb', nullable: true })
+  data?: Record<string, string>;
+
   @Column({ type: 'integer', nullable: false })
   userId: number;
 }
