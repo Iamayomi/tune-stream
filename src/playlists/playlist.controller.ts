@@ -5,16 +5,19 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
-  Request,
+  Req,
 } from '@nestjs/common';
-
-import { AuthGuard } from '@nestjs/passport';
+import { Request } from 'express';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
 import { DeleteResult } from 'typeorm';
 import { PlaylistsService } from './playlist.service';
-import { CreatePlayListDto } from './dto/create-playlist-dto';
+import {
+  AddSongToPlaylist,
+  CreatePlayListDto,
+} from './dto/create-playlist-dto';
 import { Playlist } from './playlist.entity';
 import { ProtectUser } from 'src/library/decorator';
 
@@ -23,15 +26,25 @@ export class PlaylistsController {
   constructor(private playlistService: PlaylistsService) {}
 
   @ApiBearerAuth('JWT-auth')
-  @Post()
   @ProtectUser()
-  async create(
+  @Post()
+  async createPlaylist(
+    @Req() req,
     @Body() playlistDTO: CreatePlayListDto,
-    @Request() req: any,
   ): Promise<Playlist> {
-    return await this.playlistService.createPlaylist(
-      req.user.userId,
-      playlistDTO,
+    return await this.playlistService.createPlaylist(req.user.id, playlistDTO);
+  }
+
+  @ApiBearerAuth('JWT-auth')
+  @ProtectUser()
+  @Patch(':userId')
+  async updateSongPlaylist(
+    @Body() addSongToPlaylist: AddSongToPlaylist,
+    @Param('userId', ParseIntPipe) userId: number,
+  ): Promise<Playlist> {
+    return await this.playlistService.addSongToPlaylist(
+      userId,
+      addSongToPlaylist,
     );
   }
 

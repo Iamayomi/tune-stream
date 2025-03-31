@@ -73,7 +73,7 @@ export class SongsService {
     }
     const songSaved = await this.songRepository.save(song);
 
-    await this.notifyFollowers(songSaved, artist);
+    await this.songNotification(songSaved, artist);
 
     // await this.elasticSearch.indexDocument(
     //   this.index,
@@ -86,14 +86,19 @@ export class SongsService {
     return songSaved;
   }
 
-  private async notifyFollowers(song: Song, artist: Artist[]) {
+  private async songNotification(song: Song, artist: Artist[]) {
     //  Notify artist
     const user = artist.map((val) => val);
+
+    const artistMsg =
+      artist.length <= 1
+        ? `Your Song ${song.title} has been created successfully`
+        : `Your Collaboration Song title ${song.title} has been created successfully`;
 
     user.map((user) => {
       this.notificationService.createNotification({
         type: NotificationType.NEW_MUSIC,
-        message: `Your Song ${song.title} has been created successfully`,
+        message: artistMsg,
         userId: user.user.id,
         data: song,
       });
@@ -101,11 +106,13 @@ export class SongsService {
 
     //  Notify artist followers
     const followers = artist.find((fol) => fol.followers);
+
     const folUser = user.find((val) => val);
+
     followers.followers.map((fol) => {
       this.notificationService.createNotification({
         type: NotificationType.NEW_MUSIC,
-        message: `${folUser} just release a new song: ${song.title} `,
+        message: `${folUser} just release a new song: ${song.title}`,
         userId: fol.id,
         data: song,
       });

@@ -12,6 +12,8 @@ import {
   AddSongToPlaylist,
   CreatePlayListDto,
 } from './dto/create-playlist-dto';
+import { NotificationType } from 'src/notification/type';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class PlaylistsService {
@@ -24,9 +26,11 @@ export class PlaylistsService {
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
+    private notificationService: NotificationService,
   ) {}
 
-  async createPlaylist(
+  public async createPlaylist(
     userId: number,
     playlistDTO: CreatePlayListDto,
   ): Promise<Playlist> {
@@ -39,6 +43,9 @@ export class PlaylistsService {
       where: { id: In(songs) },
     });
 
+    if (song.length === 0)
+      throw new NotFoundException(`Song with this ID ${songs} not found`);
+
     playlist.songs = song;
 
     const user = await this.userRepository.findOneBy({ id: userId });
@@ -46,8 +53,28 @@ export class PlaylistsService {
     playlist.creator = user;
 
     playlist.isPublic = isPublic ?? false;
+    const playist = await this.playlistRepository.save(playlist);
 
-    return await this.playlistRepository.save(playlist);
+    await this.playlistNotification(
+      playist,
+      user,
+      `Your playist ${playlist.name} has been created successfully`,
+    );
+    return playist;
+  }
+
+  private async playlistNotification(
+    playlist: Playlist,
+    user: User,
+    message: string,
+  ) {
+    //  Notify user
+    this.notificationService.createNotification({
+      type: NotificationType.PLAYLIST_UPDATE,
+      message,
+      userId: user.id,
+      data: playlist,
+    });
   }
 
   public async getUserPlaylistById(userId: number): Promise<Playlist> {
@@ -64,19 +91,35 @@ export class PlaylistsService {
     return playlist;
   }
 
-  public async addSongToPlaylist(addSongToPlaylist: AddSongToPlaylist) {
-    const { playlistId, songId } = addSongToPlaylist;
+  public async addSongToPlaylist(
+    userId: number,
+    addSongToPlaylist: AddSongToPlaylist,
+  ) {
+    const { playlistId, songs } = addSongToPlaylist;
+
+    // const user = await this.userRepository.findOne({
+    //   where: { id: userId },
+    //   relations: ['playlists'],
+    // });
+
+    // console.log(user.playlists);
+    // if (!user) throw new NotFoundException('User not found');
+
+    // console.log(user);
+
     const playlist = await this.playlistRepository.findOne({
       where: { id: playlistId },
-      relations: ['tracks'],
+      relations: ['songs'],
     });
-    const song = await this.songsRepository.findOne({ where: { id: songId } });
+
+    const song = await this.songsRepository.find({ where: { id: In(songs) } });
 
     if (!playlist || !song) {
-      throw new NotFoundException('Playlist or Track not found');
+      throw new NotFoundException('Playlist or Song not found');
     }
 
-    playlist.songs.push(song);
+    playlist.songs.push(...song);
+
     return this.playlistRepository.save(playlist);
   }
 
