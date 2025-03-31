@@ -9,14 +9,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 import { UserService } from 'src/users/user.service';
 import { AuthService } from 'src/users/auth/auth.service';
-import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Message, ParsedJWTCookie, ProtectUser } from 'src/library/decorator';
 import { LoginDTO, CreateUserDTO, VerificationCodeDTO } from './dto';
 import { NODE_ENV, TIME_IN } from 'src/library';
-import { ConfigService } from '@nestjs/config';
 import { ResetPasswordDTO } from './dto/reset-password-dto';
 
 @Message()

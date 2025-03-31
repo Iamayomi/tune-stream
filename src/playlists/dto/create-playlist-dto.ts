@@ -1,4 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { Optional } from '@nestjs/common';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 import {
   IsArray,
   IsBoolean,
@@ -13,7 +14,7 @@ export class CreatePlayListDto {
   @IsNotEmpty()
   readonly name: string;
 
-  @ApiProperty({ example: '1', description: 'add song to playlist' })
+  @ApiProperty({ example: [1], description: 'add song to playlist' })
   @IsNotEmpty()
   @IsArray()
   @IsNumber({}, { each: true })
@@ -23,13 +24,9 @@ export class CreatePlayListDto {
   @IsBoolean()
   readonly isPublic: boolean;
 }
-
-export class AddSongToPlaylist {
+export class AddSongToPlaylist extends PartialType(CreatePlayListDto) {
+  @ApiProperty({ example: '1', description: 'playlist id' })
   @IsNumber()
-  @IsNotEmpty()
-  playlistId: number;
-
-  @IsNumber()
-  @IsNotEmpty()
-  readonly songId: number;
+  @Optional()
+  playlistId?: number;
 }
