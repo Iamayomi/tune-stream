@@ -10,6 +10,8 @@ import { User } from 'src/users/user.entity';
 import { Repository } from 'typeorm';
 import { LikeSongDTO } from './dto/like.dto';
 import { LikeSong } from './interface';
+import { NotificationService } from 'src/notification/notification.service';
+import { NotificationType } from 'src/notification/type';
 
 @Injectable()
 export class LikeService {
@@ -19,6 +21,8 @@ export class LikeService {
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
+    private notificationService: NotificationService,
   ) {}
 
   /**
@@ -43,7 +47,7 @@ export class LikeService {
 
     const song = await this.songRepository.findOne({
       where: { id: songId },
-      relations: ['likedByUsers'],
+      relations: ['likedByUsers', 'artists.user'],
     });
 
     if (!user || !song) {
@@ -68,11 +72,29 @@ export class LikeService {
     await this.userRepository.save(user);
     await this.songRepository.save(song);
 
+    await this.likeNotification(
+      song,
+      `${user.fullName} just like your song ${song.title} `,
+    );
+
     return {
       trackId: song.id,
       totalLikes: song.totalLikes,
       isLiked: true,
     };
+  }
+
+  private async likeNotification(song: Song, message: string) {
+    //  Notify Artist
+    const arrId = song.artists.map((val) => val);
+
+    arrId.find((artist) => {
+      this.notificationService.createNotification({
+        type: NotificationType.FRIEND_ACTIVITY,
+        message,
+        userId: artist.user.id,
+      });
+    });
   }
 
   /**
