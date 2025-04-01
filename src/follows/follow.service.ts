@@ -9,6 +9,8 @@ import { Artist } from 'src/artists/artist.entity';
 import { User } from 'src/users/user.entity';
 import { Repository } from 'typeorm';
 import { FollowAlbum, FollowArtist } from './interface';
+import { NotificationService } from 'src/notification/notification.service';
+import { NotificationType } from 'src/notification/type';
 
 @Injectable()
 export class FollowService {
@@ -21,6 +23,8 @@ export class FollowService {
 
     @InjectRepository(Album)
     private albumRepository: Repository<Album>,
+
+    private notificationService: NotificationService,
   ) {}
 
   /**
@@ -44,7 +48,7 @@ export class FollowService {
 
     const artist = await this.artistRepository.findOne({
       where: { id: artistId },
-      relations: ['followers'],
+      relations: ['followers', 'user'],
     });
 
     if (!user || !artist) {
@@ -69,11 +73,22 @@ export class FollowService {
     await this.userRepository.save(user);
     await this.artistRepository.save(artist);
 
+    await this.followNotification(artist, `${user.fullName} just follow you`);
+
     return {
       artistId: artist.id,
       totalFollowers: artist.totalFollowers,
       isFollowing: true,
     };
+  }
+
+  private async followNotification(artist: Artist, message: string) {
+    //  Notify Artist
+    this.notificationService.createNotification({
+      type: NotificationType.FRIEND_ACTIVITY,
+      message,
+      userId: artist.user.id,
+    });
   }
 
   /**
@@ -137,7 +152,7 @@ export class FollowService {
   ): Promise<FollowAlbum> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['followedAlbums'],
+      relations: ['artist', 'followedAlbums'],
     });
 
     const album = await this.albumRepository.findOne({
@@ -166,6 +181,11 @@ export class FollowService {
     // Save changes
     await this.userRepository.save(user);
     await this.albumRepository.save(album);
+
+    await this.followNotification(
+      user.artist,
+      `${user.fullName} just follow your album`,
+    );
 
     return {
       albumId: album.id,

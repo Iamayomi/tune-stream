@@ -97,30 +97,34 @@ export class PlaylistsService {
   ) {
     const { playlistId, songs } = addSongToPlaylist;
 
-    // const user = await this.userRepository.findOne({
-    //   where: { id: userId },
-    //   relations: ['playlists'],
-    // });
-
-    // console.log(user.playlists);
-    // if (!user) throw new NotFoundException('User not found');
-
-    // console.log(user);
-
     const playlist = await this.playlistRepository.findOne({
       where: { id: playlistId },
-      relations: ['songs'],
+      relations: ['songs', 'creator'],
     });
+
+    if (!playlist) {
+      throw new NotFoundException('Playlist not found');
+    }
+    if (!(playlist.creator.id === userId))
+      throw new NotFoundException('User with this playlist not found');
 
     const song = await this.songsRepository.find({ where: { id: In(songs) } });
 
-    if (!playlist || !song) {
+    if (!song) {
       throw new NotFoundException('Playlist or Song not found');
     }
 
     playlist.songs.push(...song);
 
-    return this.playlistRepository.save(playlist);
+    const playists = await this.playlistRepository.save(playlist);
+
+    await this.playlistNotification(
+      playists,
+      playlist.creator,
+      `Songs added has been added to your playlist successfully`,
+    );
+
+    return playists;
   }
 
   public async deletePlaylistById(playlistId: number): Promise<DeleteResult> {
