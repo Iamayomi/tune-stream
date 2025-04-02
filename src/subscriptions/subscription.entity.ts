@@ -6,15 +6,26 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 import { User } from '../users/user.entity';
+import { BILLING_CYCLE, SUBSCRIPTION_PLAN } from './type';
+import { ISubscription } from './interface';
 
 @Entity('subscription')
-export class Subscription {
-  //   @PrimaryGeneratedColumn('uuid')
+export class Subscription implements ISubscription {
   @PrimaryGeneratedColumn()
-  subscriptionId: string;
+  id: number;
 
-  @Column({ type: 'enum', enum: ['free', 'monthly', 'annual'] })
-  plan: 'free' | 'monthly' | 'annual';
+  @Column({
+    type: 'enum',
+    enum: SUBSCRIPTION_PLAN,
+    unique: true,
+  })
+  plan: SUBSCRIPTION_PLAN;
+
+  @Column({ type: 'decimal', default: 0.0, scale: 2 })
+  price: number;
+
+  @Column({ type: 'boolean', default: false })
+  isAdSupported: boolean;
 
   @CreateDateColumn({ type: 'timestamptz' })
   subscribedAt: Date;
@@ -23,11 +34,20 @@ export class Subscription {
   expiresAt: Date;
 
   @Column({ type: 'boolean', default: false })
-  active: boolean;
+  isActive: boolean;
 
   @Column({ type: 'varchar', nullable: true })
   discount: string;
 
+  @Column({ type: 'integer', default: 1 })
+  maxUsers: number;
+
+  @Column({ type: 'varchar', enum: BILLING_CYCLE })
+  billingCycle: BILLING_CYCLE;
+
+  @Column({ type: 'text', nullable: true })
+  description: string;
+
   @ManyToOne(() => User, (user) => user.subscription, { onDelete: 'CASCADE' })
-  user: User;
+  ownerUsererId: User;
 }

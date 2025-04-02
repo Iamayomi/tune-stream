@@ -74,7 +74,7 @@ export class LikeService {
 
     await this.likeNotification(
       song,
-      `${user.fullName} just like your song ${song.title} `,
+      `${user.username} just like your song ${song.title} `,
     );
 
     return {

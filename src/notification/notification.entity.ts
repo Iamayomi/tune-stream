@@ -7,9 +7,10 @@ import {
 } from 'typeorm';
 import { NotificationType } from './type';
 import { User } from 'src/users/user.entity';
+import { INotification } from './interface';
 
 @Entity('notifications')
-export class Notification {
+export class Notification implements INotification {
   @PrimaryGeneratedColumn()
   id: number;
 

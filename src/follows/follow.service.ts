@@ -73,7 +73,7 @@ export class FollowService {
     await this.userRepository.save(user);
     await this.artistRepository.save(artist);
 
-    await this.followNotification(artist, `${user.fullName} just follow you`);
+    await this.followNotification(artist, `${user.username} just follow you`);
 
     return {
       artistId: artist.id,

@@ -20,6 +20,7 @@ import { LikeModule } from './likes/like.module';
 import { FollowModule } from './follows/follow.module';
 import { CommentModule } from './comments/comment.module';
 import { NotificationModule } from './notification/notification.module';
+import { SubscriptionModule } from './subscriptions/subscription.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { NotificationModule } from './notification/notification.module';
     ArtistsModule,
     PlaylistsModule,
     AuthModule,
+    SubscriptionModule,
     // SeedModule,
     AlbumsModule,
     // SearchModule,
@@ -57,7 +59,7 @@ export class AppModule implements NestModule {
   //   console.log('database_name', dataSource.driver.database);
   // }
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes('*');
+    consumer.apply(LoggerMiddleware).forRoutes('');
     // consumer.apply(LoggerMiddleware).forRoutes('songs'); option 1.
     // consumer.apply(LoggerMiddleware).forRoutes({path: 'songs', method: RequestMethod.POST}); // option 2.
     // consumer.apply(LoggerMiddleware).forRoutes(SongsController); // option 3.

@@ -45,7 +45,8 @@ export interface IUser {
   /** Phone verification status. If phone is not verified, their accounts cannot be accessed */
   verified_phone: boolean;
 
-  subscriptions: Subscription[];
+  /** user subscription */
+  subscriptions: Subscription;
 
   /** user's playlist **/
   playlists: Playlist[];
