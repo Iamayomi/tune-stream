@@ -4,8 +4,8 @@ import { join } from 'path';
 
 @Controller()
 export class AppController {
-  // @Get()
-  // home(@Res() res: Response) {
-  //   return res.sendFile(join(process.cwd(), 'src', '../views/home.html'));
-  // }
+  @Get()
+  home(@Res() res: Response) {
+    return res.sendFile(join(process.cwd(), 'src', '../views/home.html'));
+  }
 }

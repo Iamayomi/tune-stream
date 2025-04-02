@@ -35,10 +35,6 @@ export class CreateUserDTO {
   @IsString()
   profileImage?: string;
 
-  @IsOptional()
-  @IsBoolean()
-  premiumUser?: boolean;
-
   @ApiProperty({
     example: '+234806778****',
     description: 'provide the phone number',
@@ -58,10 +54,6 @@ export class CreateUserDTO {
   @IsNotEmpty()
   @Column({ unique: true })
   email: string;
-
-  @ApiProperty({ example: 'free', description: 'Subscription type' })
-  @IsString()
-  subscription: 'free' | 'premium';
 
   @ApiProperty({
     example: 'test123#@',

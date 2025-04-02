@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 import {
   IsUUID,
   IsEmail,
@@ -6,17 +6,52 @@ import {
   IsBoolean,
   IsDateString,
   IsEnum,
+  IsNumber,
+  Max,
+  Min,
+  IsString,
 } from 'class-validator';
+import { BILLING_CYCLE, SUBSCRIPTION_PLAN } from '../type';
 
 export class SubscriptionDto {
-  @ApiProperty({ example: '550e8400-e29b-41d4-a716-446655440000' })
-  @IsUUID()
-  subscriptionId: string;
+  @ApiProperty({ example: 'free', enum: SUBSCRIPTION_PLAN })
+  @IsEnum(SUBSCRIPTION_PLAN)
+  plan: SUBSCRIPTION_PLAN;
 
-  @ApiProperty({ example: 'free', enum: ['free', 'monthly', 'annual'] })
-  @IsEnum(['free', 'monthly', 'annual'])
-  plan: 'free' | 'monthly' | 'annual';
+  @ApiProperty({ example: 3.5, required: false })
+  @IsNumber()
+  @Min(0.0)
+  price: number;
 
+  @ApiProperty({
+    example: '',
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  description: string;
+
+  @ApiProperty({ example: true, required: false })
+  @IsBoolean()
+  @IsOptional()
+  isAdSupported?: boolean;
+
+  @ApiProperty({ example: 3, required: false })
+  @IsNumber()
+  @Min(1)
+  @Max(10)
+  maxUser: number;
+
+  @ApiProperty({ example: 'BLACKFRIDAY2025', required: false })
+  @IsOptional()
+  discount?: string;
+
+  @ApiProperty({ example: 'month', required: false })
+  @IsEnum(BILLING_CYCLE)
+  billingCycle: BILLING_CYCLE;
+}
+
+export class UpdateUserSubscriptionDto extends PartialType(SubscriptionDto) {
   @ApiProperty({ example: '2024-02-22T12:00:00Z', required: false })
   @IsOptional()
   @IsDateString()
@@ -27,21 +62,11 @@ export class SubscriptionDto {
   @IsDateString()
   expiresAt?: string;
 
-  @ApiProperty({ example: true })
+  @ApiProperty({ example: true, required: false })
   @IsBoolean()
-  active: boolean;
+  isActive: boolean;
 
-  @ApiProperty({ example: 'BLACKFRIDAY2024', required: false })
-  @IsOptional()
-  discount?: string;
-}
-
-export class UpdateUserSubscriptionDto {
-  @ApiProperty({ example: 'user@example.com' })
-  @IsEmail()
-  email: string;
-
-  @ApiProperty({ type: SubscriptionDto, required: false })
-  @IsOptional()
-  subscription?: SubscriptionDto;
+  @ApiProperty({ example: '2', required: false })
+  @IsString()
+  ownerUsererId: string;
 }

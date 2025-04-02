@@ -1,7 +1,7 @@
 import { Album } from 'src/albums/album.entity';
 import { Song } from 'src/songs/song.entity';
 import { User } from 'src/users/user.entity';
-import { Artist } from '../artist.entity';
+// import { Artist } from '../artist.entity';
 
 export interface IArtist {
   /** artist's id **/

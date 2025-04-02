@@ -13,15 +13,11 @@ import {
 
 import * as bcrypt from 'bcryptjs';
 
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude } from 'class-transformer';
 import { Artist } from 'src/artists/artist.entity';
 import { Playlist } from 'src/playlists/playlist.entity';
 import { Subscription } from '../subscriptions/subscription.entity';
-import {
-  generateUUID,
-  getRandomAvatarUrl,
-  getRandomNumbers,
-} from '../library/utils';
+import { generateUUID, getRandomAvatarUrl } from '../library/utils';
 import { UserRole } from './types';
 import { IUser, IUserMethods } from './interfaces';
 import { Song } from 'src/songs/song.entity';
@@ -75,10 +71,10 @@ export class User implements IUser, IUserMethods {
   @Column({ type: 'boolean', default: false })
   verified_phone: boolean;
 
-  @OneToMany(() => Subscription, (subscription) => subscription.user, {
+  @OneToMany(() => Subscription, (subscription) => subscription.ownerUsererId, {
     cascade: true,
   })
-  subscriptions: Subscription[];
+  subscriptions: Subscription;
 
   @OneToMany(() => Playlist, (playlist) => playlist.creator)
   playlists: Playlist[];
