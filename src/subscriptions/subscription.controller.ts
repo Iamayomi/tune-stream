@@ -6,13 +6,16 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Req,
 } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { DeleteResult } from 'typeorm';
 
 import { SubscriptionService } from './subscription.service';
 import { SubscriptionDto } from './dto';
 import { Subscription } from './subscription.entity';
+import { IntiatePaymentDto } from 'src/payments/dto';
+import { ProtectUser } from 'src/library/decorator';
 
 @Controller('subscriptions')
 export class SubscriptionController {
@@ -41,5 +44,17 @@ export class SubscriptionController {
     @Param('planId', ParseIntPipe) planId: number,
   ): Promise<DeleteResult> {
     return this.subscriptionService.delPan(planId);
+  }
+
+  @ApiOperation({ summary: 'initiate subscription payment' })
+  @ApiBearerAuth('JWT-auth')
+  @ProtectUser()
+  @Post(':subscriptionId/initiate-payment')
+  async initiateUserSubscriptionPayment(
+    @Req() req,
+    @Param('subscriptionId', ParseIntPipe) subscriptionId: number,
+  ) {
+    // : Promise<PaymentOrderResponse>
+    return this.subscriptionService.intiateUserSubscribe(req, subscriptionId);
   }
 }

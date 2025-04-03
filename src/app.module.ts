@@ -21,6 +21,7 @@ import { FollowModule } from './follows/follow.module';
 import { CommentModule } from './comments/comment.module';
 import { NotificationModule } from './notification/notification.module';
 import { SubscriptionModule } from './subscriptions/subscription.module';
+import { PaymentModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { SubscriptionModule } from './subscriptions/subscription.module';
     LikeModule,
     FollowModule,
     CommentModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [

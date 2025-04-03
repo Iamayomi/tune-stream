@@ -49,8 +49,8 @@ export class User implements IUser, IUserMethods {
   @Column({ unique: true })
   email: string;
 
-  @Column({ type: 'varchar', default: 'free' })
-  subscription: string;
+  // @Column({ type: 'varchar', default: 'free' })
+  // subscription: string;
 
   @Column({ type: 'boolean', default: 'false' })
   terms_of_service: boolean;
@@ -71,9 +71,10 @@ export class User implements IUser, IUserMethods {
   @Column({ type: 'boolean', default: false })
   verified_phone: boolean;
 
-  @OneToMany(() => Subscription, (subscription) => subscription.ownerUsererId, {
+  @OneToOne(() => Subscription, (subscription) => subscription.user, {
     cascade: true,
   })
+  @JoinColumn()
   subscriptions: Subscription;
 
   @OneToMany(() => Playlist, (playlist) => playlist.creator)
