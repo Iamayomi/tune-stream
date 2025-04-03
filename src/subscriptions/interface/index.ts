@@ -36,5 +36,5 @@ export interface ISubscription {
   billingCycle: BILLING_CYCLE;
 
   /** subscription's user's owner id */
-  ownerUsererId: User;
+  user: User;
 }

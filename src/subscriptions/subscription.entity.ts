@@ -4,6 +4,7 @@ import {
   Column,
   ManyToOne,
   CreateDateColumn,
+  OneToOne,
 } from 'typeorm';
 import { User } from '../users/user.entity';
 import { BILLING_CYCLE, SUBSCRIPTION_PLAN } from './type';
@@ -48,6 +49,6 @@ export class Subscription implements ISubscription {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @ManyToOne(() => User, (user) => user.subscription, { onDelete: 'CASCADE' })
-  ownerUsererId: User;
+  @OneToOne(() => User, (user) => user.subscriptions, { onDelete: 'CASCADE' })
+  user: User;
 }

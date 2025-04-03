@@ -14,7 +14,7 @@ import {
 import { BILLING_CYCLE, SUBSCRIPTION_PLAN } from '../type';
 
 export class SubscriptionDto {
-  @ApiProperty({ example: 'free', enum: SUBSCRIPTION_PLAN })
+  @ApiProperty({ example: 'Free', enum: SUBSCRIPTION_PLAN })
   @IsEnum(SUBSCRIPTION_PLAN)
   plan: SUBSCRIPTION_PLAN;
 
