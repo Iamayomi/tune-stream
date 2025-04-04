@@ -2,7 +2,6 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
   CreateDateColumn,
   OneToOne,
 } from 'typeorm';
@@ -34,11 +33,11 @@ export class Subscription implements ISubscription {
   @Column({ type: 'timestamptz', nullable: true })
   expiresAt: Date;
 
-  @Column({ type: 'boolean', default: false })
-  isActive: boolean;
+  @Column({ type: 'varchar', default: 'exp' })
+  status: 'active' | 'expired' | 'cancelled';
 
-  @Column({ type: 'varchar', nullable: true })
-  discount: string;
+  @Column({ type: 'decimal', default: 0.0, scale: 2 })
+  discount: number;
 
   @Column({ type: 'integer', default: 1 })
   maxUsers: number;

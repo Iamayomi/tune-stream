@@ -4,6 +4,7 @@ import { Artist } from 'src/artists/artist.entity';
 import { Playlist } from 'src/playlists/playlist.entity';
 import { Song } from 'src/songs/song.entity';
 import { Subscription } from 'src/subscriptions/subscription.entity';
+import { SUBSCRIPTION_PLAN } from 'src/subscriptions/type';
 
 export interface IUser {
   /** User's id **/
@@ -20,6 +21,15 @@ export interface IUser {
 
   /** User's username **/
   username: string;
+
+  /** User's suscription **/
+  subscription: SUBSCRIPTION_PLAN;
+
+  /** User's premium bool **/
+  isPremium: boolean;
+
+  /** User's promodeCode **/
+  promoCode: string;
 
   /** User's phone number **/
   phone: string;
@@ -46,7 +56,7 @@ export interface IUser {
   verified_phone: boolean;
 
   /** user subscription */
-  subscriptions: Subscription;
+  subscriptions: Partial<Subscription>;
 
   /** user's playlist **/
   playlists: Playlist[];

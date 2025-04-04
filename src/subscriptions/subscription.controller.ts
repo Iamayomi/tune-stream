@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Query,
   Req,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
@@ -49,12 +50,24 @@ export class SubscriptionController {
   @ApiOperation({ summary: 'initiate subscription payment' })
   @ApiBearerAuth('JWT-auth')
   @ProtectUser()
-  @Post(':subscriptionId/initiate-payment')
+  @Post('plans/:subscriptionId/initiate-payment')
   async initiateUserSubscriptionPayment(
     @Req() req,
     @Param('subscriptionId', ParseIntPipe) subscriptionId: number,
   ) {
     // : Promise<PaymentOrderResponse>
     return this.subscriptionService.intiateUserSubscribe(req, subscriptionId);
+  }
+
+  @Get('success')
+  async handleSuccess(@Query('token') orderId: string) {
+    return await this.subscriptionService.verifyUserSubscriptionPayment(
+      orderId,
+    );
+  }
+
+  @Get('cancel')
+  handleCancel() {
+    return { message: 'Payment was canceled' };
   }
 }

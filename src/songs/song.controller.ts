@@ -27,6 +27,7 @@ import { Song } from './song.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { SearchSongDto } from './dto/search-song-dto';
 import { ProtectUser, ProtectArtist } from 'src/library/decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('songs')
 export class SongsController {

@@ -22,6 +22,7 @@ import { CommentModule } from './comments/comment.module';
 import { NotificationModule } from './notification/notification.module';
 import { SubscriptionModule } from './subscriptions/subscription.module';
 import { PaymentModule } from './payments/payments.module';
+import { UploadService } from './upload/upload.service';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { PaymentModule } from './payments/payments.module';
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,
     },
+    UploadService,
   ],
 })
 export class AppModule implements NestModule {

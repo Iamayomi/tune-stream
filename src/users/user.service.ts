@@ -19,6 +19,7 @@ import {
 } from 'src/library';
 import { ConfigService } from '@nestjs/config';
 import { CacheService } from 'src/library/cache/cache.service';
+import { SUBSCRIPTION_PLAN } from 'src/subscriptions/type';
 
 @Injectable()
 export class UserService {
@@ -126,7 +127,7 @@ export class UserService {
   }
 
   /** Finds a user by id */
-  async findById(userId: number): Promise<User> {
+  public async findById(userId: number): Promise<User> {
     const user = await this.userRepository.findOneBy({ id: userId });
 
     if (!user) throw new Error('Could not find user');
@@ -135,14 +136,21 @@ export class UserService {
   }
 
   /** Finds a user by api key */
-  async findByApiKey(api_key: string): Promise<User> {
+  public async findByApiKey(api_key: string): Promise<User> {
     return this.userRepository.findOneBy({ api_key: api_key });
   }
 
   /** Finds a user by playlist id */
-  async findUserPlaylistsById(userId: number): Promise<Playlist[]> {
+  public async findUserPlaylistsById(userId: number): Promise<Playlist[]> {
     return await this.playlistRepository.find({
       where: { id: userId },
     });
+  }
+  /** downgrade user to free */
+  public async downgradeToFree(user: User) {
+    user.isPremium = false;
+    user.subscription = SUBSCRIPTION_PLAN.FREE;
+    user.subscriptions = null;
+    await this.userRepository.save(user);
   }
 }

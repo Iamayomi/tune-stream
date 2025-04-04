@@ -24,6 +24,7 @@ import { Song } from 'src/songs/song.entity';
 import { Album } from 'src/albums/album.entity';
 import { Comment } from 'src/comments/comment.entity';
 import { Notification } from 'src/notification/notification.entity';
+import { SUBSCRIPTION_PLAN } from 'src/subscriptions/type';
 
 @Entity('users')
 export class User implements IUser, IUserMethods {
@@ -49,8 +50,18 @@ export class User implements IUser, IUserMethods {
   @Column({ unique: true })
   email: string;
 
-  // @Column({ type: 'varchar', default: 'free' })
-  // subscription: string;
+  @Column({ type: 'varchar', nullable: true })
+  promoCode: string;
+
+  @Column({ type: 'boolean', default: false })
+  isPremium: boolean;
+
+  @Column({
+    type: 'enum',
+    enum: SUBSCRIPTION_PLAN,
+    default: 'Free',
+  })
+  subscription: SUBSCRIPTION_PLAN;
 
   @Column({ type: 'boolean', default: 'false' })
   terms_of_service: boolean;
@@ -75,7 +86,7 @@ export class User implements IUser, IUserMethods {
     cascade: true,
   })
   @JoinColumn()
-  subscriptions: Subscription;
+  subscriptions: Partial<Subscription>;
 
   @OneToMany(() => Playlist, (playlist) => playlist.creator)
   playlists: Playlist[];
