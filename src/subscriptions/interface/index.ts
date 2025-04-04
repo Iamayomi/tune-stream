@@ -20,11 +20,11 @@ export interface ISubscription {
   /** subscription's date expired */
   expiresAt: Date;
 
-  /** subscription's active */
-  isActive: boolean;
+  /** subscription's status */
+  status: 'active' | 'expired' | 'cancelled';
 
   /** subscription's discount */
-  discount: string;
+  discount: number;
 
   /** subscription's users max */
   maxUsers: number;

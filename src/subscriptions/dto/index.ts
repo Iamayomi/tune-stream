@@ -42,11 +42,12 @@ export class SubscriptionDto {
   @Max(10)
   maxUser: number;
 
-  @ApiProperty({ example: 'BLACKFRIDAY2025', required: false })
-  @IsOptional()
-  discount?: string;
+  @ApiProperty({ example: 0.5, required: false })
+  @IsNumber()
+  @Min(0.0)
+  discount?: number;
 
-  @ApiProperty({ example: 'month', required: false })
+  @ApiProperty({ example: 'monthly', required: false })
   @IsEnum(BILLING_CYCLE)
   billingCycle: BILLING_CYCLE;
 }

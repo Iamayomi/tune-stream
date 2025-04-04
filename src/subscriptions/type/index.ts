@@ -6,6 +6,6 @@ export enum SUBSCRIPTION_PLAN {
 }
 
 export enum BILLING_CYCLE {
-  MONTH = 'month',
-  YEAR = 'year',
+  MONTH = 'monthly',
+  YEAR = 'yearly',
 }
