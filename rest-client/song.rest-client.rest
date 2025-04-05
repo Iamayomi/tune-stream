@@ -18,16 +18,17 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImpvaG5AZ
 GET http://localhost:8080/api/v1/songs/14
 
 #### CREATE A NEW SONG
-POST http://localhost:8080/songs
+POST http://localhost:8080/api/v1/songs/upload/song
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbmljYUBnbWFpbC5jb20iLCJ1c2VySWQiOjUsImlhdCI6MTczOTE1MjQ1NywiZXhwIjoxNzM5MjM4ODU3fQ.oIOTeP2S0LNSnjvxcm8aR_37q-4U98n2lSQecutaks0
+Content-Type: multipart/form-data
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1vbmljYUBnbWFpbC5jb20iLCJ1c2VySWQiOjEzNiwiYXJ0aXN0SWQiOjIsImlhdCI6MTc0Mzg1MzIyNSwiZXhwIjoxNzQ0NDU4MDI1fQ.q7DXQpjk-kX5N4oxP0O53sMHRRC3siRVkOUui6WW6Gg
 
 {
     "title": "reckless",
     "artists": [1],
     "releaseDate" : "2022-08-29",
     "duration" :"02:34",
-    "album": 1,
+    "genre": "afrobeat",
     "coverImage": "http://pic.png",
     "lyrics": "by, you're my adrenaline. Brought out this other side of me You don't"
 }

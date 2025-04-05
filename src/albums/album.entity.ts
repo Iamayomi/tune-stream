@@ -34,7 +34,10 @@ export class Album implements IAlbum {
   genre: string;
 
   @Column({ type: 'varchar', nullable: true })
-  coverImage: string;
+  coverImgUrl: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  imagePublicId: string;
 
   @OneToMany(() => Song, (song) => song.album, { cascade: true })
   tracks: Song[];

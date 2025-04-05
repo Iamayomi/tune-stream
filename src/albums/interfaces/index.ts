@@ -16,10 +16,13 @@ export interface IAlbum {
   releaseDate: Date;
 
   /** album's url coverImg **/
-  coverImage: string;
+  coverImgUrl: string;
 
   /** album's genre **/
   genre: string;
+
+  /** album's public image **/
+  imagePublicId: string;
 
   /** album's artists **/
   artist: Artist;

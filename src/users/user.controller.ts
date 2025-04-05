@@ -4,20 +4,34 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
+  Post,
   Req,
-  UnauthorizedException,
-  UseGuards,
+  Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 
-import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { Playlist } from '../playlists/playlist.entity';
 import { ProtectUser } from 'src/library/decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { UpdateUserDto } from './types/dto/update-user.dto';
+import { CloudinaryService } from 'src/library/cloudinary/cloudinary.service';
 
 // @ProtectUser()
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   /**
    * Get user's profile
@@ -53,5 +67,41 @@ export class UserController {
     @Param('userId', ParseIntPipe) userId: number,
   ): Promise<Playlist[]> {
     return await this.userService.findUserPlaylistsById(userId);
+  }
+
+  @Patch('profile')
+  @ApiBearerAuth('JWT-auth')
+  @ProtectUser()
+  @UseInterceptors(FileInterceptor('image'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UpdateUserDto })
+  async uploadProfileImage(
+    @Req() req,
+    @UploadedFile() image: Express.Multer.File,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    let uploadedImage = null;
+    const user = req.user;
+
+    const public_id = `user_img_${Date.now()}`;
+
+    if (image) {
+      uploadedImage = await this.cloudinaryService.uploadFile(image.buffer, {
+        folder: 'users/profile',
+        resource_type: 'image',
+        public_id,
+      });
+      // await bcrypt.hash(password.confirm_newpassword, 10),
+      if (user.imagePublicId) {
+        await this.cloudinaryService.deleteFile(user.imagePublicId);
+      }
+
+      const userData = {
+        profileUrl: uploadedImage?.secure_url,
+        imagePublicId: uploadedImage?.public_id,
+        ...updateUserDto,
+      };
+      return await this.userService.updateUser(req.user.id, userData);
+    }
   }
 }

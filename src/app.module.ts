@@ -22,7 +22,8 @@ import { CommentModule } from './comments/comment.module';
 import { NotificationModule } from './notification/notification.module';
 import { SubscriptionModule } from './subscriptions/subscription.module';
 import { PaymentModule } from './payments/payments.module';
-import { UploadService } from './upload/upload.service';
+
+import { CloudinaryModule } from './library/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { UploadService } from './upload/upload.service';
     FollowModule,
     CommentModule,
     PaymentModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [
@@ -55,7 +57,6 @@ import { UploadService } from './upload/upload.service';
       provide: APP_INTERCEPTOR,
       useClass: ResponseInterceptor,
     },
-    UploadService,
   ],
 })
 export class AppModule implements NestModule {

@@ -43,6 +43,9 @@ export interface IUser {
   /** Roles */
   roles: UserRole[];
 
+  /** User' image public id **/
+  imagePublicId: string;
+
   /** User's login password **/
   password: string;
 

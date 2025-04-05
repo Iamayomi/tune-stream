@@ -1,3 +1,5 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
   IsDateString,
@@ -7,29 +9,45 @@ import {
 } from 'class-validator';
 
 export class CreateAlbumDTO {
+  @ApiProperty({
+    example: 'More love',
+    description: 'Provide the album title',
+  })
   @IsString()
   @IsNotEmpty()
   readonly title: string;
 
-  @IsString()
-  @IsNotEmpty()
-  readonly coverImage: string;
-
+  @ApiProperty({
+    example: 'afrobeats',
+    description: 'Provide the album genre',
+  })
   @IsString()
   @IsNotEmpty()
   readonly genre: string;
 
-  // @IsArray()
-  @IsNotEmpty()
+  @ApiProperty({
+    example: 2,
+    description: 'Provide the artist id',
+  })
+  @Type(() => Number)
   @IsNumber()
+  @IsNotEmpty()
   readonly artist: number;
 
-  @IsArray()
+  @ApiPropertyOptional({
+    example: '2022-08-29',
+    description: 'Provide album releaseDate',
+  })
   @IsNotEmpty()
-  // @IsNumber({}, { each: true })
-  readonly tracks: any[];
-
+  @IsDateString()
   @IsString()
   @IsDateString()
-  readonly releaseDate: Date;
+  readonly releaseDate?: Date;
+
+  @ApiProperty({
+    type: 'string',
+    format: 'binary',
+    description: 'Cover image (jpg/png)',
+  })
+  cover?: any;
 }

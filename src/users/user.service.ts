@@ -2,7 +2,7 @@ import { ConflictException, Injectable, Response } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
-import { CreateUserDTO, LoginDTO } from './auth/dto';
+import { CreateUserDTO } from './auth/dto';
 import { Playlist } from '../playlists/playlist.entity';
 import { MailService } from '../library/mailer/mailer.service';
 import { JwtService } from '@nestjs/jwt';
@@ -20,6 +20,8 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { CacheService } from 'src/library/cache/cache.service';
 import { SUBSCRIPTION_PLAN } from 'src/subscriptions/type';
+import { CloudinaryService } from 'src/library/cloudinary/cloudinary.service';
+import { UpdateUserDto } from './types/dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -138,6 +140,10 @@ export class UserService {
   /** Finds a user by api key */
   public async findByApiKey(api_key: string): Promise<User> {
     return this.userRepository.findOneBy({ api_key: api_key });
+  }
+
+  public async updateUser(userId: number, updateUserDto: UpdateUserDto) {
+    return await this.userRepository.update({ id: userId }, updateUserDto);
   }
 
   /** Finds a user by playlist id */

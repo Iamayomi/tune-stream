@@ -4,29 +4,65 @@ import {
   Post,
   Body,
   Param,
-  Put,
   Delete,
   UseGuards,
-  Req,
   ParseIntPipe,
   Patch,
+  UploadedFiles,
+  UseInterceptors,
+  ConflictException,
+  UploadedFile,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDTO } from './dto/create-album-dto';
 import { UpdateAlbumDTO } from './dto/update-album-dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
-import { ProtectUser } from 'src/library/decorator';
+import { ProtectArtist, ProtectUser } from 'src/library/decorator';
 import { ArtistGuard } from 'src/library/guards/artist.jwt.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CloudinaryService } from 'src/library/cloudinary/cloudinary.service';
+import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
 
 @Controller('albums')
 export class AlbumController {
-  constructor(private readonly albumService: AlbumService) {}
+  constructor(
+    private readonly albumService: AlbumService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
+  @ApiBearerAuth('JWT-auth')
+  @ProtectArtist()
   @Post()
-  @UseGuards(ArtistGuard)
-  async createAlbum(@Body() createAlbumDto: CreateAlbumDTO, @Req() request) {
-    // console.log(createAlbumDto)
-    return await this.albumService.createAlbum(createAlbumDto);
+  @UseInterceptors(FileInterceptor('cover'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: 'Upload audio and cover image',
+    type: CreateAlbumDTO, // <-- we'll define this next
+  })
+  async uploadSong(
+    @UploadedFile() cover: Express.Multer.File,
+    @Body() createAlbumDTO: CreateAlbumDTO,
+  ) {
+    const public_id = `album_img_${Date.now()}`;
+
+    if (!cover) {
+      throw new ConflictException(' cover files is required');
+    }
+
+    const uploadedCover = await this.cloudinaryService.uploadFile(
+      cover.buffer,
+      {
+        folder: 'albums/covers',
+        resource_type: 'image',
+        public_id,
+      },
+    );
+
+    return await this.albumService.createAlbum(
+      createAlbumDTO,
+      uploadedCover.secure_url,
+      uploadedCover.public_id,
+    );
   }
 
   @Get()

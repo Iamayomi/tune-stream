@@ -22,7 +22,7 @@ export interface ISong {
   audioUrl: string;
 
   /** song's url coverImg **/
-  coverImage: string;
+  coverImgUrl: string;
 
   /** song's play count **/
   playCount: number;

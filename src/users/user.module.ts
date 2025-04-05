@@ -8,11 +8,13 @@ import { MailModule } from '../library/mailer/mailer.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { JWT_ACCESS_TOKEN_EXP, JWT_ACCESS_TOKEN_SECRET } from 'src/library';
+import { CloudinaryModule } from 'src/library/cloudinary/cloudinary.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Playlist]),
     MailModule,
+    CloudinaryModule,
     JwtModule.registerAsync({
       useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>(JWT_ACCESS_TOKEN_SECRET),

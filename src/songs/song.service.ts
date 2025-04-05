@@ -13,7 +13,6 @@ import {
   paginate,
 } from 'nestjs-typeorm-paginate';
 // import { ElasticSearchService } from '../search/search.service';
-import { CreateSongDTO } from './dto/create-song-dto';
 import { DeleteResult, In, Repository, UpdateResult } from 'typeorm';
 import { Song } from './song.entity';
 import { UpdateSongDTO } from './dto/update-song-dto';
@@ -22,6 +21,7 @@ import { AlbumService } from '../albums/album.service';
 import { SearchSongDto } from './dto/search-song-dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { NotificationType } from 'src/notification/type';
+import { UploadSongDto } from './dto/create-song-dto';
 
 @Injectable()
 export class SongsService {
@@ -42,7 +42,11 @@ export class SongsService {
     // private readonly elasticSearch: ElasticSearchService,
   ) {}
 
-  public async createSong(songDTO: CreateSongDTO): Promise<Song> {
+  public async createSong(
+    songDTO: UploadSongDto,
+    audioUrl: string,
+    coverImgUrl: string,
+  ): Promise<Song> {
     const artist = await this.artistRepository.find({
       where: { id: In(songDTO.artists) },
       relations: ['user', 'followers'],
@@ -54,7 +58,8 @@ export class SongsService {
 
     const song = new Song();
     song.title = songDTO.title;
-    song.coverImage = songDTO.coverImage;
+    song.coverImgUrl = coverImgUrl;
+    song.audioUrl = audioUrl;
     song.duration = songDTO.duration;
     song.lyrics = songDTO.lyrics;
     song.releaseDate = songDTO.releaseDate;

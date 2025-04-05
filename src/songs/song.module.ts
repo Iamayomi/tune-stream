@@ -8,11 +8,13 @@ import { Album } from '../albums/album.entity';
 import { AlbumService } from '../albums/album.service';
 // import { ElasticSearchService } from '../search/search.service';
 import { NotificationModule } from 'src/notification/notification.module';
+import { CloudinaryModule } from 'src/library/cloudinary/cloudinary.module';
 // import { SearchModule } from '../search/search.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Song, Album, Artist]),
+    CloudinaryModule,
     NotificationModule,
   ],
   controllers: [SongsController],
@@ -21,6 +23,7 @@ import { NotificationModule } from 'src/notification/notification.module';
 
     SongsService,
     AlbumService,
+
     // ElasticSearchService
     // {
     //   provide: NotificationService,

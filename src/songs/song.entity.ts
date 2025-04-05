@@ -36,7 +36,7 @@ export class Song implements ISong {
   lyrics: string;
 
   @Column({ type: 'varchar' })
-  coverImage: string;
+  coverImgUrl: string;
 
   @Column({ default: 0 })
   popularity: number;
