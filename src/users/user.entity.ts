@@ -56,6 +56,9 @@ export class User implements IUser, IUserMethods {
   @Column({ type: 'boolean', default: false })
   isPremium: boolean;
 
+  @Column({ type: 'varchar', nullable: true })
+  imagePublicId: string;
+
   @Column({
     type: 'enum',
     enum: SUBSCRIPTION_PLAN,

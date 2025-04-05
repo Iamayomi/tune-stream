@@ -1,4 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
   IsDateString,
@@ -9,7 +10,7 @@ import {
   IsString,
 } from 'class-validator';
 
-export class CreateSongDTO {
+export class UploadSongDto {
   @ApiProperty({
     example: 'try me',
     description: 'Provide the song title',
@@ -18,30 +19,39 @@ export class CreateSongDTO {
   @IsNotEmpty()
   readonly title: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: '1',
     description: 'Provide the album id ',
   })
-  @IsNumber()
   @IsOptional()
-  album?: number;
+  @Type(() => Number)
+  @IsNumber()
+  readonly album?: number;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
+    type: [Number],
     example: [1],
-    description: 'Provide the artist id ',
+    description: 'List of artist IDs',
   })
-  @IsNotEmpty()
   @IsArray()
-  @IsNumber({}, { each: true })
-  readonly artists: any;
-
-  @ApiProperty({
-    example: 'http://pic.png',
-    description: 'Provide the cover image',
+  @Transform(({ value }) => {
+    // Handle cases where value might be sent as a string
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value);
+      } catch (e) {
+        return [Number(value)];
+      }
+    }
+    // Handle case where value might be a single number
+    if (typeof value === 'number') {
+      return [value];
+    }
+    return value;
   })
-  @IsString()
-  @IsNotEmpty()
-  readonly coverImage: string;
+  @Type(() => Number)
+  @IsNumber({}, { each: true })
+  artists?: number[];
 
   @ApiProperty({
     example: '2022-08-29',
@@ -67,13 +77,14 @@ export class CreateSongDTO {
   @IsMilitaryTime()
   readonly duration: Date;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 5,
     description: 'Provide the song popularity',
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsNumber()
-  popularity: number;
+  @Type(() => Number)
+  popularity?: number;
 
   @ApiProperty({
     example:
@@ -83,4 +94,18 @@ export class CreateSongDTO {
   @IsString()
   @IsOptional()
   readonly lyrics: string;
+
+  @ApiProperty({
+    type: 'string',
+    format: 'binary',
+    description: 'Audio file (mp3, etc.)',
+  })
+  audio: any;
+
+  @ApiProperty({
+    type: 'string',
+    format: 'binary',
+    description: 'Cover image (jpg/png)',
+  })
+  cover: any;
 }

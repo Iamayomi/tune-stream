@@ -24,9 +24,12 @@ export class AlbumService {
     private songRepository: Repository<Song>,
   ) {}
 
-  public async createAlbum(createAlbumDto: CreateAlbumDTO): Promise<Album> {
-    const { title, tracks, releaseDate, artist, genre, coverImage } =
-      createAlbumDto;
+  public async createAlbum(
+    createAlbumDto: CreateAlbumDTO,
+    coverImgUrl: string,
+    public_id: string,
+  ): Promise<Album> {
+    const { title, releaseDate, artist, genre } = createAlbumDto;
 
     // check if album exist
     const findAlbum = await this.albumRepository.findOne({
@@ -36,6 +39,7 @@ export class AlbumService {
     if (findAlbum) {
       throw new NotFoundException(`Album has already exist`);
     }
+
     let album = new Album();
     album.title = title;
     album.releaseDate = releaseDate;
@@ -44,33 +48,10 @@ export class AlbumService {
     });
 
     album.genre = genre;
-    album.coverImage = coverImage;
+    album.coverImgUrl = coverImgUrl;
 
-    album = await this.albumRepository.save(album);
+    album.imagePublicId = public_id;
 
-    album.tracks = await Promise.all(
-      tracks.map(async (songDto) => {
-        const artist = await this.artistRepository.findBy(songDto.artist);
-
-        if (!artist) {
-          throw new NotFoundException(`Artist for track not found`);
-        }
-
-        const song = this.songRepository.create({
-          artists: artist,
-          title: songDto.title,
-          duration: songDto.duration,
-          lyrics: songDto.lyrics,
-          coverImage: songDto.coverImage,
-          releaseDate,
-          album,
-        });
-
-        return this.songRepository.save(song);
-      }),
-    );
-
-    // Save album and songs in one operation
     return this.albumRepository.save(album);
   }
 

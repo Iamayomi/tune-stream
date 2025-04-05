@@ -21,6 +21,10 @@ class EnvironmentVariables {
   PAYPAL_CLIENT_ID: string;
   PAYPAL_CLIENT_SECRET: string;
   PAYPAL_API_URL: string;
+
+  CLOUDINARY_CLOUD_NAME: string;
+  CLOUDINARY_API_KEY: string;
+  CLOUDINARY_API_SECRET: string;
 }
 
 export function validate(config: Record<string, unknown>) {

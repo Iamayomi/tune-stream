@@ -45,6 +45,7 @@
     "@nestjs/websockets": "^11.0.12",
     "axios": "^1.8.4",
     "bcryptjs": "^3.0.2",
+    "buffer-to-stream": "^1.0.0",
     "cache-manager": "^6.3.2",
     "cacheable": "^1.8.8",
     "class-transformer": "^0.5.1",
