@@ -16,6 +16,7 @@ import { Album } from '../albums/album.entity';
 import { User } from 'src/users/user.entity';
 import { ISong } from './interfaces';
 import { Comment } from 'src/comments/comment.entity';
+import { SongGenre } from './types';
 
 @Entity('songs')
 export class Song implements ISong {
@@ -47,8 +48,8 @@ export class Song implements ISong {
   @Column({ nullable: true })
   audioUrl: string;
 
-  @Column({ type: 'simple-array', nullable: true })
-  genre: string[];
+  @Column({ type: 'varchar', enum: SongGenre, nullable: true })
+  genre: SongGenre;
 
   @ManyToMany(() => Artist, (artist) => artist.songs, { cascade: true })
   @JoinTable({ name: 'songs_artists' })

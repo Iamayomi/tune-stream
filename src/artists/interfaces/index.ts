@@ -14,7 +14,7 @@ export interface IArtist {
   bio: string;
 
   /** artist's stageName **/
-  stageName: string;
+  name: string;
 
   /** artist's songs **/
   songs: Song[];

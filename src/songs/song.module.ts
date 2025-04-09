@@ -6,14 +6,13 @@ import { Song } from './song.entity';
 import { Artist } from 'src/artists/artist.entity';
 import { Album } from '../albums/album.entity';
 import { AlbumService } from '../albums/album.service';
-// import { ElasticSearchService } from '../search/search.service';
 import { NotificationModule } from 'src/notification/notification.module';
 import { CloudinaryModule } from 'src/library/cloudinary/cloudinary.module';
-// import { SearchModule } from '../search/search.module';
+import { Playlist } from 'src/playlists/playlist.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Song, Album, Artist]),
+    TypeOrmModule.forFeature([Song, Album, Artist, Playlist]),
     CloudinaryModule,
     NotificationModule,
   ],
