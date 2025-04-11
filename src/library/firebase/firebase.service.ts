@@ -13,13 +13,18 @@ export class FirebaseService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
   ) {
-    const fbPrivateKeyPath = path.join(
-      process.cwd(),
-      'tunestream_private_key.json',
-    );
+    // const fbPrivateKeyPath = path.join(
+    //   process.cwd(),
+    //   'tunestream_private_key.json',
+    // );
+    console.log(process.env.FIREBASE_JSON);
     const serviceAccount = JSON.parse(
-      fs.readFileSync(fbPrivateKeyPath, 'utf8'),
+      process.env.FIREBASE_JSON,
     ) as ServiceAccount;
+
+    // const serviceAccount = JSON.parse(
+    //   fs.readFileSync(fbPrivateKeyPath, 'utf8'),
+    // ) as ServiceAccount;
     // Initialize Firebase Admin SDK (if not already initialized)
     if (!admin.apps.length) {
       admin.initializeApp({
