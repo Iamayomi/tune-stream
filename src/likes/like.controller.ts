@@ -10,10 +10,11 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 import { LikeService } from './like.service';
-import { Message, ProtectUser } from 'src/library/decorator';
+import { Message, GuardRoute } from 'src/library/decorator';
+import { RoleAllowed } from 'src/library/decorator/role-allowed';
+import { Roles } from 'src/library/types';
 
 @ApiBearerAuth('JWT-auth')
-@ProtectUser()
 @Controller('like')
 export class LikeController {
   constructor(private likeService: LikeService) {}
@@ -27,6 +28,8 @@ export class LikeController {
     description: 'It will return the liked song in the response',
   })
   @Message('User like song successfully')
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Post('song/:songId')
   public async likeSong(@Param('songId') songId: number, @Req() req) {
     return this.likeService.likeSong(req.user.id, songId);
@@ -41,6 +44,8 @@ export class LikeController {
     description: 'It will return the unlike song in the response',
   })
   @Message('Song unlike')
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Delete('song/:songId')
   public async unlikeSong(@Param('songId') songId: number, @Req() req) {
     return this.likeService.unlikeSong(req.user.id, songId);
@@ -55,6 +60,8 @@ export class LikeController {
     description: 'It will return the user liked songs response',
   })
   @Message('Song like fetch successfully')
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Get('songs')
   public async getUserLikedSongs(@Req() req) {
     return this.likeService.getUserLikedSongs(req.user.id);
@@ -69,6 +76,8 @@ export class LikeController {
     description: 'It will return the song liked status response',
   })
   @Message('Song like status fetch successfully')
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Get('song/:songId/status')
   public async checkSongLikedStatus(
     @Param('songId') songId: number,

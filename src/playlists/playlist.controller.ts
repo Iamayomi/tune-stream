@@ -19,14 +19,17 @@ import {
   CreatePlayListDto,
 } from './dto/create-playlist-dto';
 import { Playlist } from './playlist.entity';
-import { ProtectUser } from 'src/library/decorator';
+import { GuardRoute } from 'src/library/decorator';
+import { RoleAllowed } from 'src/library/decorator/role-allowed';
+import { Roles } from 'src/library/types';
 
 @Controller('playlists')
 export class PlaylistsController {
   constructor(private playlistService: PlaylistsService) {}
 
   @ApiBearerAuth('JWT-auth')
-  @ProtectUser()
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Post()
   async createPlaylist(
     @Req() req,
@@ -36,7 +39,8 @@ export class PlaylistsController {
   }
 
   @ApiBearerAuth('JWT-auth')
-  @ProtectUser()
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Patch(':userId')
   async updateSongPlaylist(
     @Body() addSongToPlaylist: AddSongToPlaylist,
@@ -50,7 +54,8 @@ export class PlaylistsController {
 
   @ApiBearerAuth('JWT-auth')
   @Get(':playlistId/users/:userId')
-  @ProtectUser()
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   async findOne(
     @Param('playlistId', ParseIntPipe) playlistId: number,
     @Param('userId', ParseIntPipe) userId: number,
@@ -60,7 +65,8 @@ export class PlaylistsController {
 
   @ApiBearerAuth('JWT-auth')
   @Delete(':playlistId/users/:userId')
-  @ProtectUser()
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   async delete(
     @Param('playlistId', ParseIntPipe) playlistId: number,
     @Param('userId', ParseIntPipe) userId: number,

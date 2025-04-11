@@ -20,10 +20,12 @@ import {
 } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { Playlist } from '../playlists/playlist.entity';
-import { ProtectUser } from 'src/library/decorator';
+import { GuardRoute } from 'src/library/decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateUserDto } from './types/dto/update-user.dto';
 import { CloudinaryService } from 'src/library/cloudinary/cloudinary.service';
+import { RoleAllowed } from 'src/library/decorator/role-allowed';
+import { Roles } from 'src/library/types';
 
 // @ProtectUser()
 @Controller('users')
@@ -38,8 +40,11 @@ export class UserController {
    * @route {GET} /api/v1/user/profile
    * @access protected
    */
+
   @ApiOperation({ summary: 'Get user profile' })
   @ApiBearerAuth('JWT-auth')
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Get('profile')
   getProfile(
     @Req()
@@ -71,10 +76,11 @@ export class UserController {
 
   @Patch('profile')
   @ApiBearerAuth('JWT-auth')
-  @ProtectUser()
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: UpdateUserDto })
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   async uploadProfileImage(
     @Req() req,
     @UploadedFile() image: Express.Multer.File,

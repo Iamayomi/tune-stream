@@ -10,7 +10,7 @@ import {
 import { CommentService } from './comment.service';
 import { Comment } from './comment.entity';
 
-import { Message, ProtectUser } from 'src/library/decorator';
+import { Message, GuardRoute } from 'src/library/decorator';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -18,6 +18,8 @@ import {
   ApiParam,
   ApiResponse,
 } from '@nestjs/swagger';
+import { Roles } from 'src/library/types';
+import { RoleAllowed } from 'src/library/decorator/role-allowed';
 
 @ApiBearerAuth('JWT-auth')
 @Controller('comment')
@@ -52,8 +54,9 @@ export class CommentController {
       required: ['content'],
     },
   })
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Post(':songId')
-  @ProtectUser()
   @Message('user comment succesfully')
   public async createComment(
     @Param('songId') songId: number,
@@ -71,7 +74,6 @@ export class CommentController {
    * @returns {Promise<Comment[]>} - A list of comments for the song.
    */
 
-  @ProtectUser()
   @ApiOperation({ summary: 'Get all comments for a song' })
   @ApiResponse({ status: 200, description: 'Successfully retrieved comments' })
   @ApiResponse({ status: 404, description: 'Song not found' })
@@ -80,8 +82,9 @@ export class CommentController {
     type: 'number',
     description: 'The ID of the song',
   })
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Get(':songId')
-  @ProtectUser()
   public async getSongComments(
     @Param('songId') songId: number,
   ): Promise<Comment[]> {
@@ -108,8 +111,9 @@ export class CommentController {
     type: 'number',
     description: 'The ID of the comment to delete',
   })
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Delete(':commentId')
-  @ProtectUser()
   public async deleteComment(
     @Param('commentId') commentId: number,
     @Req() req,

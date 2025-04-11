@@ -16,13 +16,17 @@ import { SubscriptionService } from './subscription.service';
 import { SubscriptionDto } from './dto';
 import { Subscription } from './subscription.entity';
 import { IntiatePaymentDto } from 'src/payments/dto';
-import { ProtectUser } from 'src/library/decorator';
+import { GuardRoute } from 'src/library/decorator';
+import { RoleAllowed } from 'src/library/decorator/role-allowed';
+import { Roles } from 'src/library/types';
 
 @Controller('subscriptions')
 export class SubscriptionController {
   constructor(private subscriptionService: SubscriptionService) {}
 
-  //   @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('JWT-auth')
+  @RoleAllowed(Roles.ADMIN)
+  @GuardRoute()
   @Post('plans')
   async create(@Body() data: SubscriptionDto): Promise<Subscription> {
     return this.subscriptionService.createSubcription(data);
@@ -40,6 +44,8 @@ export class SubscriptionController {
     return this.subscriptionService.getAPlan(planId);
   }
 
+  @RoleAllowed(Roles.ADMIN)
+  @GuardRoute()
   @Delete('plans/:planId')
   async delPlan(
     @Param('planId', ParseIntPipe) planId: number,
@@ -49,7 +55,8 @@ export class SubscriptionController {
 
   @ApiOperation({ summary: 'initiate subscription payment' })
   @ApiBearerAuth('JWT-auth')
-  @ProtectUser()
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Post('plans/:subscriptionId/initiate-payment')
   async initiateUserSubscriptionPayment(
     @Req() req,

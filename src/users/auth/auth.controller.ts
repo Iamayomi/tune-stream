@@ -13,10 +13,12 @@ import { ConfigService } from '@nestjs/config';
 import { UserService } from 'src/users/user.service';
 import { AuthService } from 'src/users/auth/auth.service';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { Message, ParsedJWTCookie, ProtectUser } from 'src/library/decorator';
+import { Message, ParsedJWTCookie, GuardRoute } from 'src/library/decorator';
 import { LoginDTO, CreateUserDTO, VerificationCodeDTO } from './dto';
 import { NODE_ENV, TIME_IN } from 'src/library';
 import { ResetPasswordDTO } from './dto/reset-password-dto';
+import { Roles } from 'src/library/types';
+import { RoleAllowed } from 'src/library/decorator/role-allowed';
 
 @Message()
 @Controller('auth')
@@ -127,8 +129,8 @@ export class AuthController {
   /**
    * @route {POST} /api/v1/auth/reset-password
    * @access public */
-  @ApiOperation({ summary: 'Reset password' })
   @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'Reset password' })
   @Patch('reset-password')
   resetPassword(
     @ParsedJWTCookie() token: string,
@@ -143,9 +145,10 @@ export class AuthController {
    * @route {GET} /api/v1/user/profile
    * @access protected
    */
-  @ApiOperation({ summary: 'fetch a user profile' })
-  @ProtectUser()
   @ApiBearerAuth('JWT-auth')
+  @ApiOperation({ summary: 'fetch a user profile' })
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Get('profile')
   getProfile(@Req() request) {
     delete request.user.password;

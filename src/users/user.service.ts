@@ -58,6 +58,7 @@ export class UserService {
       {
         sub: user.id,
         email: user.email,
+        role: ['user'],
       },
       {
         secret: this.configService.get<string>(JWT_ACCESS_TOKEN_SECRET),

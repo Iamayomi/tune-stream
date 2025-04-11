@@ -63,6 +63,10 @@ export class UploadSongDto {
   @IsDateString()
   readonly releaseDate: Date;
 
+  @ApiProperty({
+    example: 'afrobeats',
+    description: 'Provide the genre',
+  })
   @IsEnum(SongGenre)
   @IsString()
   @IsNotEmpty()

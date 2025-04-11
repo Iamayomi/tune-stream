@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { createArtistDTO } from './dto/create-artist.dto';
-import { UserRole } from '../users/types';
+import { Roles } from '../library/types';
 import { UserService } from '../users/user.service';
 
 @Injectable()
@@ -17,8 +17,8 @@ export class ArtistsService {
     @InjectRepository(Artist)
     private artistRepository: Repository<Artist>,
 
-    // @InjectRepository(User)
-    // private userRepository: Repository<User>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
 
     private readonly userService: UserService,
   ) {}
@@ -42,7 +42,9 @@ export class ArtistsService {
     //   throw new BadRequestException('User is already an artist');
     // }
 
-    user.roles.push(UserRole.ARTIST);
+    user.roles.push(Roles.ARTIST);
+
+    await this.userRepository.save(user);
 
     // Create the artist associated with the user
     const artist = this.artistRepository.create({
