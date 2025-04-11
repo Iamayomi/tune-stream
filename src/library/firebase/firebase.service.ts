@@ -17,7 +17,6 @@ export class FirebaseService {
     //   process.cwd(),
     //   'tunestream_private_key.json',
     // );
-    console.log(process.env.FIREBASE_JSON);
     const serviceAccount = JSON.parse(
       process.env.FIREBASE_JSON,
     ) as ServiceAccount;
