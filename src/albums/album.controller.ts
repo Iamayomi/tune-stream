@@ -17,11 +17,12 @@ import { AlbumService } from './album.service';
 import { CreateAlbumDTO } from './dto/create-album-dto';
 import { UpdateAlbumDTO } from './dto/update-album-dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
-import { ProtectArtist, ProtectUser } from 'src/library/decorator';
-import { ArtistGuard } from 'src/library/guards/artist.jwt.guard';
+import { GuardRoute } from 'src/library/decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from 'src/library/cloudinary/cloudinary.service';
 import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { RoleAllowed } from 'src/library/decorator/role-allowed';
+import { Roles } from 'src/library/types';
 
 @Controller('albums')
 export class AlbumController {
@@ -31,14 +32,15 @@ export class AlbumController {
   ) {}
 
   @ApiBearerAuth('JWT-auth')
-  @ProtectArtist()
-  @Post()
   @UseInterceptors(FileInterceptor('cover'))
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     description: 'Upload audio and cover image',
     type: CreateAlbumDTO, // <-- we'll define this next
   })
+  @RoleAllowed(Roles.ARTIST)
+  @GuardRoute()
+  @Post()
   async uploadSong(
     @UploadedFile() cover: Express.Multer.File,
     @Body() createAlbumDTO: CreateAlbumDTO,
@@ -65,20 +67,23 @@ export class AlbumController {
     );
   }
 
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Get()
-  @ProtectUser()
   async findAll() {
     return await this.albumService.findAllAlbum();
   }
 
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Get(':id')
-  @ProtectUser()
   async findOne(@Param('id') id: number) {
     return await this.albumService.findAlbumById(id);
   }
 
+  @RoleAllowed(Roles.ARTIST, Roles.ADMIN)
+  @GuardRoute()
   @Patch(':albumId/artists/:artistId')
-  @UseGuards(ArtistGuard)
   update(
     @Param('albumId', ParseIntPipe) albumId: number,
     @Param('artistId', ParseIntPipe) artistId: number,
@@ -87,8 +92,9 @@ export class AlbumController {
     return this.albumService.updateAlbumById(albumId, artistId, updateAlbumDto);
   }
 
+  @RoleAllowed(Roles.ADMIN)
+  @GuardRoute()
   @Delete(':albumId/artists/:artistId')
-  @UseGuards(ArtistGuard)
   async delete(
     @Param('albumId', ParseIntPipe) albumId: number,
     @Param('artistId', ParseIntPipe) artistId: number,

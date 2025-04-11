@@ -11,14 +11,17 @@ import { NotificationService } from './notification.service';
 import { Notification } from './notification.entity';
 import { FilterNotificationDto } from './dto';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { ProtectUser } from 'src/library/decorator';
+import { GuardRoute } from 'src/library/decorator';
+import { Roles } from 'src/library/types';
+import { RoleAllowed } from 'src/library/decorator/role-allowed';
 
 @ApiBearerAuth('JWT-auth')
-@ProtectUser()
 @Controller('notifications')
 export class NotificationController {
   constructor(private notificationService: NotificationService) {}
 
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Get(':userId')
   public async getUserNotifications(
     @Param('userId') userId: number,
@@ -28,6 +31,8 @@ export class NotificationController {
     return this.notificationService.getUserNotifications(userId, filterDto);
   }
 
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Get(':userId/unread-count')
   public async getUnreadNotificationCount(
     @Param('userId') userId: number,
@@ -37,6 +42,8 @@ export class NotificationController {
     return { count };
   }
 
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Patch(':notificationId/read')
   async markNotificationAsRead(
     @Param('notificationId') notificationId: number,
@@ -44,6 +51,8 @@ export class NotificationController {
     return this.notificationService.markNotificationAsRead(notificationId);
   }
 
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Patch(':userId/read-all')
   async markAllNotificationsAsRead(
     @Param('userId') userId: number,
@@ -51,6 +60,8 @@ export class NotificationController {
     return this.notificationService.markAllNotificationsAsRead(userId);
   }
 
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Delete(':notificationId')
   async deleteNotification(
     @Param('notificationId') notificationId: number,

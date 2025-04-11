@@ -101,5 +101,12 @@ export interface decoded {
 export interface PayloadType {
   email: string;
   userId: number;
+  roles: Roles[];
   artistId?: number;
+}
+
+export enum Roles {
+  USER = 'user',
+  ADMIN = 'admin',
+  ARTIST = 'artist',
 }

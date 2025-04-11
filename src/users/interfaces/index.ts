@@ -1,5 +1,5 @@
 import { Album } from 'src/albums/album.entity';
-import { UserRole } from '../types';
+import { Roles } from '../../library/types';
 import { Artist } from 'src/artists/artist.entity';
 import { Playlist } from 'src/playlists/playlist.entity';
 import { Song } from 'src/songs/song.entity';
@@ -41,7 +41,7 @@ export interface IUser {
   terms_of_service: boolean;
 
   /** Roles */
-  roles: UserRole[];
+  roles: Roles[];
 
   /** User' image public id **/
   imagePublicId: string;

@@ -2,11 +2,12 @@ import { Controller, Delete, Get, Param, Post, Req } from '@nestjs/common';
 import { Request } from 'express';
 
 import { FollowService } from './follow.service';
-import { Message, ProtectUser } from 'src/library/decorator';
+import { Message, GuardRoute } from 'src/library/decorator';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { RoleAllowed } from 'src/library/decorator/role-allowed';
+import { Roles } from 'src/library/types';
 
 @ApiBearerAuth('JWT-auth')
-@ProtectUser()
 @Controller('follow')
 export class FollowController {
   constructor(private followService: FollowService) {}
@@ -22,6 +23,8 @@ export class FollowController {
     description: 'It will return the user liked songs response',
   })
   @Message('User follow Artist successfully')
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Post('artist/:artistId')
   public async followArtist(@Param('artistId') artistId: number, @Req() req) {
     return this.followService.followArtist(req.user.id, artistId);
@@ -36,6 +39,8 @@ export class FollowController {
     description: 'It will return the user liked songs response',
   })
   @Message('User unfollow Artist successfully')
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Delete('artist/:artistId')
   public async unfollowArtist(@Param('artistId') artistId: number, @Req() req) {
     return this.followService.unfollowArtist(req.user.id, artistId);
@@ -50,6 +55,8 @@ export class FollowController {
     description: 'It will return the user liked songs response',
   })
   @Message('User follow Artist successfully')
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Get('artists')
   public async getUserFollowedArtists(@Req() req) {
     return this.followService.getUserFollowedArtists(req.user.id);
@@ -64,6 +71,8 @@ export class FollowController {
     description: 'It will return the user liked songs response',
   })
   @Message('User follow Artist successfully')
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Get('artist/:artistId/status')
   public async checkArtistFollowStatus(
     @Param('artistId') artistId: number,
@@ -83,6 +92,8 @@ export class FollowController {
     description: 'It will return the user liked songs response',
   })
   @Message('User follow Album successfully')
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Post('album/:albumId')
   public async followAlbum(@Param('albumId') albumId: number, @Req() req) {
     return this.followService.followAlbum(req.user.id, albumId);
@@ -97,6 +108,8 @@ export class FollowController {
     description: 'It will return the user liked songs response',
   })
   @Message('User unfollow Album successfully')
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Delete('album/:albumId')
   public async unfollowAlbum(@Param('albumId') albumId: number, @Req() req) {
     return this.followService.unfollowAlbum(req.user.id, albumId);
@@ -110,6 +123,8 @@ export class FollowController {
     status: 200,
     description: 'It will return the user liked songs response',
   })
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Get('albums')
   public async getUserFollowedAlbums(@Req() req) {
     return this.followService.getUserFollowedAlbums(req.user.id);
@@ -124,6 +139,8 @@ export class FollowController {
     description: 'It will return the user liked songs response',
   })
   @Get('album/:albumId/status')
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   public async checkAlbumFollowStatus(
     @Param('albumId') albumId: number,
     @Req() req,

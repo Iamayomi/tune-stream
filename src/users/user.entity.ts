@@ -18,7 +18,7 @@ import { Artist } from 'src/artists/artist.entity';
 import { Playlist } from 'src/playlists/playlist.entity';
 import { Subscription } from '../subscriptions/subscription.entity';
 import { generateUUID, getRandomAvatarUrl } from '../library/utils';
-import { UserRole } from './types';
+import { Roles } from '../library/types';
 import { IUser, IUserMethods } from './interfaces';
 import { Song } from 'src/songs/song.entity';
 import { Album } from 'src/albums/album.entity';
@@ -71,8 +71,8 @@ export class User implements IUser, IUserMethods {
   @Column({ type: 'boolean', default: 'false' })
   terms_of_service: boolean;
 
-  @Column('text', { array: true, default: [UserRole.USER] })
-  roles: UserRole[];
+  @Column('text', { array: true, default: [Roles.USER] })
+  roles: Roles[];
 
   @Column()
   @Exclude()

@@ -35,9 +35,11 @@ import { UpdateSongDTO } from './dto/update-song-dto';
 import { Song } from './song.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { SearchDto } from './dto/search-dto';
-import { ProtectUser, ProtectArtist } from 'src/library/decorator';
+import { GuardRoute } from 'src/library/decorator';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from 'src/library/cloudinary/cloudinary.service';
+import { RoleAllowed } from 'src/library/decorator/role-allowed';
+import { Roles } from 'src/library/types';
 
 @Controller('songs')
 export class SongsController {
@@ -47,8 +49,6 @@ export class SongsController {
   ) {}
 
   @ApiBearerAuth('JWT-auth')
-  @ProtectArtist()
-  @Post('upload')
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'audio', maxCount: 1 },
@@ -60,6 +60,9 @@ export class SongsController {
     description: 'Upload audio and cover image',
     type: UploadSongDto, // <-- we'll define this next
   })
+  @RoleAllowed(Roles.ARTIST)
+  @GuardRoute()
+  @Post('upload')
   async uploadSong(
     @UploadedFiles()
     files: {
@@ -94,8 +97,6 @@ export class SongsController {
   }
 
   @ApiBearerAuth('JWT-auth')
-  @Get('search')
-  @ProtectUser()
   @ApiOperation({
     summary: 'Search for songs with filters, sorting, and pagination',
   })
@@ -104,13 +105,14 @@ export class SongsController {
     description: 'Search results for songs, artists, albums',
     type: [Song], // assuming Song is your response entity
   })
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
+  @Get('search')
   async searchsongs(@Query() searchDto: SearchDto) {
     return await this.songServices.search(searchDto);
   }
 
   @ApiBearerAuth('JWT-auth')
-  @Get()
-  @ProtectUser()
   @ApiOperation({
     summary: 'finds for songs with filters, sorting, and pagination',
   })
@@ -120,14 +122,18 @@ export class SongsController {
       'Song results for songs with filters, sorting, and pagination ',
     type: [Song], // assuming Song is your response entity
   })
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
+  @Get()
   async findSongs(@Query() searchDto: SearchDto) {
     return await this.songServices.findSongs(searchDto);
   }
 
   @ApiBearerAuth('JWT-auth')
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Get(':songId')
-  @ProtectUser()
-  findOne(
+  async findOneSong(
     @Param(
       'songId',
       new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
@@ -138,9 +144,10 @@ export class SongsController {
   }
 
   @ApiBearerAuth('JWT-auth')
+  @RoleAllowed(Roles.ARTIST)
+  @GuardRoute()
   @Patch(':songId/artists/:artistId')
-  @ProtectArtist()
-  update(
+  async updateSong(
     @Param('songId', ParseIntPipe) songId: number,
     @Param('artistId', ParseIntPipe) artistId: number,
     @Body() updateSongDTO: UpdateSongDTO,
@@ -149,8 +156,9 @@ export class SongsController {
   }
 
   @ApiBearerAuth('JWT-auth')
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Delete(':songId/artists/:artistId')
-  @ProtectArtist()
   async remove(
     @Param('songId', ParseIntPipe) songId: number,
     @Param('artistId', ParseIntPipe) artistId: number,

@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthenticationGuard } from '../guards/auth.guard';
-import { ArtistGuard } from '../guards/artist.jwt.guard';
+import { RolesGuard } from '../guards/roles.guard';
 
 export const ParsedJWTCookie = createParamDecorator(
   (key: string = 'jwt', ctx: ExecutionContext) => {
@@ -30,10 +30,10 @@ export const MESSAGE = 'message';
 export const Message = (message: string = 'Success') =>
   SetMetadata('message', message);
 
-export const ProtectUser = () => {
-  return applyDecorators(UseGuards(AuthenticationGuard));
+export const GuardRoute = () => {
+  return applyDecorators(UseGuards(AuthenticationGuard, RolesGuard));
 };
 
-export const ProtectArtist = () => {
-  return applyDecorators(UseGuards(ArtistGuard));
-};
+// export const ProtectArtist = () => {
+//   return applyDecorators(UseGuards(AuthenticationGuard, ArtistGuard));
+// };

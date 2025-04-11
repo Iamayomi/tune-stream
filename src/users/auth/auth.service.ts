@@ -55,7 +55,11 @@ export class AuthService {
     // if (!user.verified_phone)
     //   throw new UnauthorizedException('Phone not verified');
 
-    const payload: PayloadType = { email: user.email, userId: user.id };
+    const payload: PayloadType = {
+      email: user.email,
+      userId: user.id,
+      roles: user.roles,
+    };
 
     const artist = await this.artistService.findArtistById(user.id);
 
