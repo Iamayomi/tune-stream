@@ -56,6 +56,7 @@ export class User implements IUser, IUserMethods {
   @Column({ type: 'boolean', default: false })
   isPremium: boolean;
 
+  @Exclude()
   @Column({ type: 'varchar', nullable: true })
   imagePublicId: string;
 
@@ -66,6 +67,7 @@ export class User implements IUser, IUserMethods {
   })
   subscription: SUBSCRIPTION_PLAN;
 
+  @Exclude()
   @Column({ type: 'boolean', default: 'false' })
   terms_of_service: boolean;
 
@@ -115,9 +117,11 @@ export class User implements IUser, IUserMethods {
   @Column({ unique: true, nullable: true })
   refresh_token: string;
 
+  @Exclude()
   @Column({ nullable: true })
   firebaseToken: string;
 
+  @Exclude()
   @Column({ type: 'timestamp', nullable: true })
   firebaseTokenUpdatedAt: Date;
 

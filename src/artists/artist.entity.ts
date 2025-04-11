@@ -24,7 +24,7 @@ export class Artist implements IArtist {
   id: number;
 
   @Column()
-  stageName: string;
+  name: string;
 
   @Column({ nullable: true })
   bio: string;

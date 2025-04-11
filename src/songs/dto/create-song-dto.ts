@@ -3,12 +3,14 @@ import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
   IsDateString,
+  IsEnum,
   IsMilitaryTime,
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
 } from 'class-validator';
+import { SongGenre } from '../types';
 
 export class UploadSongDto {
   @ApiProperty({
@@ -61,13 +63,10 @@ export class UploadSongDto {
   @IsDateString()
   readonly releaseDate: Date;
 
-  @ApiProperty({
-    example: 'afrobeats',
-    description: 'Provide the genre',
-  })
+  @IsEnum(SongGenre)
   @IsString()
   @IsNotEmpty()
-  readonly genre: string;
+  readonly genre: SongGenre;
 
   @ApiProperty({
     example: '02:34',

@@ -1,6 +1,7 @@
 import { Album } from 'src/albums/album.entity';
 import { Artist } from 'src/artists/artist.entity';
 import { Playlist } from 'src/playlists/playlist.entity';
+import { SongGenre } from '../types';
 
 export interface ISong {
   /** song's id **/
@@ -31,7 +32,7 @@ export interface ISong {
   popularity: number;
 
   /** song's genre **/
-  genre: string[];
+  genre: SongGenre;
 
   /** song's artists **/
   artists: Artist[];

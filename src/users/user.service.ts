@@ -1,6 +1,8 @@
 import { ConflictException, Injectable, Response } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcryptjs';
+
 import { User } from './user.entity';
 import { CreateUserDTO } from './auth/dto';
 import { Playlist } from '../playlists/playlist.entity';
@@ -8,7 +10,6 @@ import { MailService } from '../library/mailer/mailer.service';
 import { JwtService } from '@nestjs/jwt';
 import { SendEmailResponse } from './types';
 import {
-  JWT_ACCESS_TOKEN_EXP,
   JWT_ACCESS_TOKEN_SECRET,
   SESSION_USER,
   TIME_IN,
@@ -20,7 +21,6 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { CacheService } from 'src/library/cache/cache.service';
 import { SUBSCRIPTION_PLAN } from 'src/subscriptions/type';
-import { CloudinaryService } from 'src/library/cloudinary/cloudinary.service';
 import { UpdateUserDto } from './types/dto/update-user.dto';
 
 @Injectable()
@@ -143,7 +143,11 @@ export class UserService {
   }
 
   public async updateUser(userId: number, updateUserDto: UpdateUserDto) {
-    return await this.userRepository.update({ id: userId }, updateUserDto);
+    const hashedPassword = await bcrypt.hash(updateUserDto.password, 10);
+    return await this.userRepository.update(
+      { id: userId },
+      { ...updateUserDto, password: hashedPassword },
+    );
   }
 
   /** Finds a user by playlist id */

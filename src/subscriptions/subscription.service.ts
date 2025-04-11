@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -16,6 +17,7 @@ import { generateUUID } from 'src/library';
 import { PAYMENT_TYPE } from 'src/payments/types';
 import { Transaction } from 'src/payments/payment.entity';
 import { NotificationService } from 'src/notification/notification.service';
+import { NotificationType } from 'src/notification/type';
 
 @Injectable()
 export class SubscriptionService {
@@ -202,7 +204,6 @@ export class SubscriptionService {
 
       let expiresAt: Date | null = null;
 
-      /// promocode for discount
       if (subscription.billingCycle === 'monthly') {
         expiresAt = addMonths(today, 1);
       }
@@ -223,9 +224,41 @@ export class SubscriptionService {
       user.subscription = subscription.plan;
       await this.userRepository.save(user);
 
-      user.subscriptions = data as Subscription;
+      await this.notificationService.createNotification({
+        type: NotificationType.SUBSCRIPTION,
+        message: `User ${user.id} successfully subscribed.`,
+        data: user.subscriptions,
+        userId: user.id,
+      });
 
-      return transaction;
+      return {
+        success: true,
+        message: 'Subscription payment completed successfully.',
+        transaction,
+      };
+    } else {
+      const failedTransaction = await this.transactionRepository.findOne({
+        where: { ref: tex_ref },
+      });
+
+      if (failedTransaction) {
+        failedTransaction.status = false;
+        await this.transactionRepository.save(failedTransaction);
+      }
+
+      await this.notificationService.createNotification({
+        type: NotificationType.SUBSCRIPTION,
+        message: `Payment failed for subscription plan.`,
+        data: { orderId, status },
+        userId: failedTransaction?.customerId || 0,
+      });
+
+      throw new BadRequestException({
+        message:
+          'Payment was not successful. Please try again or use a different method.',
+        errorCode: 'PAYMENT_FAILED',
+        status,
+      });
     }
   }
 }

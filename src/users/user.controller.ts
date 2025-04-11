@@ -91,7 +91,7 @@ export class UserController {
         resource_type: 'image',
         public_id,
       });
-      // await bcrypt.hash(password.confirm_newpassword, 10),
+
       if (user.imagePublicId) {
         await this.cloudinaryService.deleteFile(user.imagePublicId);
       }

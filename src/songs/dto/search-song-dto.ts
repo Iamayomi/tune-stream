@@ -1,63 +1,71 @@
-import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsNumber,
-  Min,
-} from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsString, IsNumber, Min } from 'class-validator';
+import { SongGenre } from '../types';
+import { Type } from 'class-transformer';
 
 export class SearchSongDto {
   @ApiProperty({ example: 'tryme', description: 'Provide the search query' })
-  @IsNotEmpty()
-  // @IsOptional()
+  @IsOptional()
   @IsString()
-  query: string;
+  query?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'popularity',
     description: 'Sort by field',
-    required: false,
   })
   @IsOptional()
   @IsString()
   sortBy?: 'popularity' | 'releaseDate';
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'desc',
     description: 'Sort order',
-    required: false,
     enum: ['asc', 'desc'],
   })
   @IsOptional()
   @IsString()
   order?: 'asc' | 'desc';
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 1,
     description: 'Page number for pagination',
-    required: false,
   })
   @IsOptional()
   @IsNumber()
   @Min(1)
-  page?: number = 1;
+  page?: number;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 10,
     description: 'Number of results per page',
-    required: false,
   })
   @IsOptional()
   @IsNumber()
   @Min(1)
-  limit?: number = 10;
+  limit?: number;
 
-  @ApiProperty({
+  // Filters with explicit property types
+  @ApiPropertyOptional({
     example: { genre: 'hip-hop', artist: 'Drake' },
-    description: 'Filters',
+    description: 'Filters for various song attributes',
+    type: Object,
+  })
+  @IsOptional()
+  filters?: {
+    genre?: SongGenre;
+    artist?: string;
+    album?: string;
+    popularity?: number;
+  };
+
+  @ApiPropertyOptional({
+    example: 0,
+    description: 'Offset for pagination, used for skipping records.',
     required: false,
   })
   @IsOptional()
-  filters?: Record<string, any>;
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  offset?: number;
 }

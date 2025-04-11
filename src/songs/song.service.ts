@@ -4,6 +4,7 @@ import {
   Injectable,
   Logger,
   NotFoundException,
+  Query,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,16 +13,25 @@ import {
   Pagination,
   paginate,
 } from 'nestjs-typeorm-paginate';
-// import { ElasticSearchService } from '../search/search.service';
-import { DeleteResult, In, Repository, UpdateResult } from 'typeorm';
+import {
+  Brackets,
+  DeleteResult,
+  ILike,
+  In,
+  Repository,
+  UpdateResult,
+} from 'typeorm';
 import { Song } from './song.entity';
 import { UpdateSongDTO } from './dto/update-song-dto';
 import { Artist } from 'src/artists/artist.entity';
 import { AlbumService } from '../albums/album.service';
-import { SearchSongDto } from './dto/search-song-dto';
+import { SearchDto } from './dto/search-dto';
 import { NotificationService } from 'src/notification/notification.service';
 import { NotificationType } from 'src/notification/type';
 import { UploadSongDto } from './dto/create-song-dto';
+import { Playlist } from 'src/playlists/playlist.entity';
+import { SearchSongDto } from './dto/search-song-dto';
+import { SongGenre } from './types';
 
 @Injectable()
 export class SongsService {
@@ -36,10 +46,13 @@ export class SongsService {
     @InjectRepository(Artist)
     private artistRepository: Repository<Artist>,
 
+    @InjectRepository(Playlist)
+    private playlistRepository: Repository<Playlist>,
+
     private notificationService: NotificationService,
 
-    // @Inject(ElasticSearchService) // Explicitly inject ElasticSearchService
-    // private readonly elasticSearch: ElasticSearchService,
+    // @Inject(SearchService) // Explicitly inject ElasticSearchService
+    // private readonly searchService: SearchService,
   ) {}
 
   public async createSong(
@@ -133,7 +146,7 @@ export class SongsService {
     return song;
   }
 
-  async updateSongById(
+  public async updateSongById(
     songId: number,
     artistId: number,
     updateSongData: UpdateSongDTO,
@@ -154,7 +167,7 @@ export class SongsService {
     return await this.songRepository.update(songId, updateSongData);
   }
 
-  async deleteSongById(
+  public async deleteSongById(
     songId: number,
     artistId: number,
   ): Promise<DeleteResult> {
@@ -174,17 +187,119 @@ export class SongsService {
     return await this.songRepository.delete(songId);
   }
 
-  async findAllSong(): Promise<Song[]> {
+  public async findAllSong(): Promise<Song[]> {
     return await this.songRepository.find();
   }
 
-  async searchSong(searchSongDto: SearchSongDto) {
-    // return await this.elasticSearch.searchsong(searchSongDto);
+  public async search(searchDto: SearchDto) {
+    const {
+      song,
+      page,
+      limit,
+      artist,
+      playlist,
+      genre,
+      sortBy,
+      offset,
+      order,
+    } = searchDto;
+
+    if (song || genre) {
+      const [songs, totalSong] = await this.songRepository.findAndCount({
+        where: [{ title: ILike(`%${song}%`) }, { genre }],
+        relations: ['artists', 'album'],
+        take: limit,
+        skip: offset,
+        order: { [sortBy]: order.toUpperCase() as 'ASC' | 'DESC' },
+      });
+
+      return results('song', totalSong, songs);
+    }
+
+    if (artist) {
+      const [artists, totalArtist] = await this.artistRepository.findAndCount({
+        where: { name: ILike(`%${artist}%`) },
+        relations: ['songs', 'albums'],
+        take: limit,
+        skip: offset,
+        order: { createdAt: order.toUpperCase() as 'ASC' | 'DESC' },
+      });
+
+      return results('artists', totalArtist, artists);
+    }
+
+    if (playlist) {
+      const [playlists, totalPlaylist] =
+        await this.playlistRepository.findAndCount({
+          where: { name: ILike(`%${playlist}%`), isPublic: true },
+          relations: ['songs', 'creator'],
+          take: limit,
+          skip: offset,
+          order: { createdAt: order.toUpperCase() as 'ASC' | 'DESC' },
+        });
+
+      return results('playlist', totalPlaylist, playlists);
+    }
+
+    function results(name: string, total: number, data: Record<string, any>) {
+      return {
+        success: true,
+        message: `Found ${total} ${name}(s) matching your query.`,
+        data,
+        total,
+        page,
+        limit,
+      };
+    }
   }
 
-  async pagination(options: IPaginationOptions): Promise<Pagination<Song>> {
-    const queryBuilder = this.songRepository.createQueryBuilder('c');
-    queryBuilder.orderBy('c.releaseDate', 'DESC');
-    return await paginate<Song>(queryBuilder, options);
+  public async findSongs(searchSongDto: SearchSongDto) {
+    const {
+      query,
+      page = 1,
+      limit = 10,
+      filters,
+      sortBy,
+      order,
+    } = searchSongDto;
+
+    const offset = (page - 1) * limit;
+
+    const where: any = {};
+
+    if (query) {
+      where.title = ILike(`%${query}%`);
+    }
+
+    if (filters) {
+      if (filters.popularity !== undefined) {
+        where.popularity = filters.popularity;
+      }
+
+      if (filters.album) {
+        where.album = { id: filters.album };
+      }
+
+      if (filters.genre) {
+        where.genre = ILike(`%${filters.genre}%`);
+      }
+    }
+
+    const [songs, total] = await this.songRepository.findAndCount({
+      where,
+      relations: ['artists', 'album', 'playlists', 'likedByUsers', 'comments'],
+      take: limit,
+      skip: offset,
+      order: { [sortBy]: order.toUpperCase() as 'ASC' | 'DESC' },
+    });
+
+    return {
+      success: true,
+      message: `Found ${total} song(s) matching your query.`,
+      data: songs,
+      total,
+      page,
+      limit,
+    };
   }
 }

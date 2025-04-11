@@ -19,7 +19,13 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiResponse,
+} from '@nestjs/swagger';
 import { DeleteResult, UpdateResult } from 'typeorm';
 
 import { SongsService } from './song.service';
@@ -28,7 +34,7 @@ import { UpdateSongDTO } from './dto/update-song-dto';
 
 import { Song } from './song.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
-import { SearchSongDto } from './dto/search-song-dto';
+import { SearchDto } from './dto/search-dto';
 import { ProtectUser, ProtectArtist } from 'src/library/decorator';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from 'src/library/cloudinary/cloudinary.service';
@@ -88,36 +94,34 @@ export class SongsController {
   }
 
   @ApiBearerAuth('JWT-auth')
-  @Get()
+  @Get('search')
   @ProtectUser()
-  findAll(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
-  ): Promise<Pagination<Song>> {
-    limit = limit > 100 ? 100 : limit;
-    return this.songServices.pagination({
-      page,
-      limit,
-    });
+  @ApiOperation({
+    summary: 'Search for songs with filters, sorting, and pagination',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Search results for songs, artists, albums',
+    type: [Song], // assuming Song is your response entity
+  })
+  async searchsongs(@Query() searchDto: SearchDto) {
+    return await this.songServices.search(searchDto);
   }
 
   @ApiBearerAuth('JWT-auth')
-  @Get('search')
+  @Get()
   @ProtectUser()
-  async searchsongs(@Query() searchSongDto: SearchSongDto) {
-    // return await this.songServices.searchSong(query);
-    // if (!query) sendError.BadRequestError('Query parameter is required');
-    // const page = parseInt(searchSongDto.page);
-    // const limit = parseInt(searchSongDto.limit);
-    // return await this.songServices.searchSong(query, page, limit);
-    return await this.songServices.searchSong(searchSongDto);
-    // );
-    // return this.songServices.searchSong(query, { genre, artist },
-    //   sortBy,
-    //   order,
-    //   page,
-    //   limit,
-    // );
+  @ApiOperation({
+    summary: 'finds for songs with filters, sorting, and pagination',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Song results for songs with filters, sorting, and pagination ',
+    type: [Song], // assuming Song is your response entity
+  })
+  async findSongs(@Query() searchDto: SearchDto) {
+    return await this.songServices.findSongs(searchDto);
   }
 
   @ApiBearerAuth('JWT-auth')
