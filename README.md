@@ -44,11 +44,17 @@ The Tune-stream API is a RESTful service designed to power modern music applicat
 
 7. Genre & Mood Tags: Explore music by genres, moods, or custom tags.
 
+8. Notification: Get notify base on activities like artist drop a new song.
+
+9. Follow, comment and like: Like and comment on a song and follow artist
+
+10. Subscribption: Choose premium plan for better services
+
+11. payment: Securely make a transaction for premium plan
 
 ## Getting Started:
 
 To get started with the Tune-stream API, check out the API [documentation](https://docs.nestjs.com/) for endpoint details and usage examples.
-
 
 ## Clone the repository to your local machine:
 
@@ -67,8 +73,6 @@ cd tune-stream
 ```bash
 $ yarn install
 ```
-
-
 
 ## Compile and run the project
 
@@ -114,8 +118,6 @@ With Mau, you can deploy your application in just a few clicks, allowing you to 
 Check out a few resources that may come in handy when working with NestJS:
 
 - Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-
-
 
 ## Support
 

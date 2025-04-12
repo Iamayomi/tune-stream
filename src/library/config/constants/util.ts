@@ -3,11 +3,11 @@ import { generateDays, generateHours, generateMinutes } from '../../utils';
 /** Time in `minute`, ` hour` and `day` expressed in `milliseconds` */
 export const TIME_IN = {
   /** Time in `minutes` expressed in `milliseconds` */
-  minutes: generateMinutes,
+  minutes: generateMinutes(),
   /** Time in `hours` expressed in `milliseconds` */
-  hours: generateHours,
+  hours: generateHours(),
   /** Time in `days` expressed in `milliseconds` */
-  days: generateDays,
+  days: generateDays(),
 };
 
 export const APP_NAME = 'Tunestream Music';
