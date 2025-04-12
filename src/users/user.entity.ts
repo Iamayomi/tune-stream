@@ -25,6 +25,7 @@ import { Album } from 'src/albums/album.entity';
 import { Comment } from 'src/comments/comment.entity';
 import { Notification } from 'src/notification/notification.entity';
 import { SUBSCRIPTION_PLAN } from 'src/subscriptions/type';
+import { Stream } from 'src/stats/stream.entity';
 
 @Entity('users')
 export class User implements IUser, IUserMethods {
@@ -113,6 +114,9 @@ export class User implements IUser, IUserMethods {
 
   @OneToMany(() => Notification, (notification) => notification.user)
   notifications: Notification[];
+
+  @OneToMany(() => Stream, (stream) => stream.user)
+  streams: Stream[];
 
   @Column({ unique: true, nullable: true })
   refresh_token: string;

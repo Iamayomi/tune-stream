@@ -24,6 +24,7 @@ import { SubscriptionModule } from './subscriptions/subscription.module';
 import { PaymentModule } from './payments/payments.module';
 
 import { CloudinaryModule } from './library/cloudinary/cloudinary.module';
+import { StatsModule } from './stats/stats.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { CloudinaryModule } from './library/cloudinary/cloudinary.module';
     CommentModule,
     PaymentModule,
     CloudinaryModule,
+    StatsModule,
   ],
   controllers: [AppController],
   providers: [

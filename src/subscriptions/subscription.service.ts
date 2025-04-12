@@ -136,7 +136,7 @@ export class SubscriptionService {
       invoice_id: tex_ref,
       application_context: {
         brand_name: 'tunestream',
-        landing_page: 'BILLING', // ✅ Forces the payment page instead of login
+        landing_page: 'BILLING', // Forces the payment page instead of login
         user_action: 'PAY_NOW',
         return_url: 'http://localhost:8080/api/v1/subscriptions/success',
         cancel_url: 'http://localhost:8080/api/v1/subscriptions/cancel',
