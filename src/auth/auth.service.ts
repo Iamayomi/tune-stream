@@ -12,8 +12,9 @@ import { LoginDTO } from '../auth/dto';
 import { UserService } from 'src/users/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { ArtistsService } from 'src/artists/artist.service';
-import { PayloadType } from '../../library/types';
+import { PayloadType } from '../library/types';
 import {
+  JWT_ACCESS_TOKEN_SECRET,
   JWT_REFRESH_TOKEN_EXP,
   JWT_REFRESH_TOKEN_SECRET,
   REFRESH_TOKEN,
@@ -21,6 +22,7 @@ import {
   TIME_IN,
   VERIFY_EMAIL,
   emailVerificationResendTemplate,
+  emailVerificationTemplate,
   getRandomNumbers,
   resetPasswordTemplate,
 } from 'src/library';
@@ -28,12 +30,18 @@ import { MailService } from 'src/library/mailer/mailer.service';
 import { VerificationCodeDTO } from './dto';
 import { CacheService } from 'src/library/cache/cache.service';
 import { ConfigService } from '@nestjs/config';
-import { User } from '../user.entity';
+import { User } from '../users/user.entity';
 import { ResetPasswordDTO } from './dto/reset-password-dto';
+import { CreateUserDTO } from './dto/create-user-dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
+
     private userService: UserService,
     private jwtService: JwtService,
     private artistService: ArtistsService,
@@ -41,6 +49,53 @@ export class AuthService {
     private configService: ConfigService,
     private cache: CacheService,
   ) {}
+
+  /** Creates and returns a new user document */
+  public async createUser(data: CreateUserDTO, @Response() res) {
+    const existingUser = await this.userService.findByEmail(data.email);
+
+    // step 1: check if the email exist
+    if (existingUser) {
+      throw new ConflictException('Email already exists');
+    }
+
+    const user = this.userRepository.create(data);
+
+    const { code } = await getRandomNumbers();
+
+    const access_token = await this.jwtService.signAsync(
+      {
+        sub: user.id,
+        email: user.email,
+        role: ['user'],
+      },
+      {
+        secret: this.configService.get<string>(JWT_ACCESS_TOKEN_SECRET),
+        expiresIn: `1h`,
+      },
+    );
+
+    await this.userRepository.save(user);
+
+    await this.cache.set(VERIFY_EMAIL(user.email), code, TIME_IN.minutes[5]);
+
+    await this.cache.set(
+      SESSION_USER(`${user.id}`),
+      access_token,
+      TIME_IN.hours[1],
+    );
+
+    res.setHeader('Authorization', access_token);
+
+    const mailOptions = emailVerificationTemplate(user.fullName, code);
+
+    await this.mailService.viaNodemailer({ ...mailOptions, to: user.email });
+
+    return await this.sendEmailResponse(user.email);
+  }
+  sendEmailResponse(email: string) {
+    throw new Error('Method not implemented.');
+  }
 
   /** Login user returns */
   public async userLogin(data: LoginDTO, @Response() res) {

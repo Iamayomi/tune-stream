@@ -1,27 +1,14 @@
-import { ConflictException, Injectable, Response } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 
 import { User } from './user.entity';
-import { CreateUserDTO } from './auth/dto';
 import { Playlist } from '../playlists/playlist.entity';
-import { MailService } from '../library/mailer/mailer.service';
-import { JwtService } from '@nestjs/jwt';
 import { SendEmailResponse } from './types';
-import {
-  JWT_ACCESS_TOKEN_SECRET,
-  SESSION_USER,
-  TIME_IN,
-  VERIFY_EMAIL,
-  emailVerificationTemplate,
-  getRandomNumbers,
-  obscureEmail,
-} from 'src/library';
-import { ConfigService } from '@nestjs/config';
-import { CacheService } from 'src/library/cache/cache.service';
+import { obscureEmail } from 'src/library';
 import { SUBSCRIPTION_PLAN } from 'src/subscriptions/type';
-import { UpdateUserDto } from './types/dto/update-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -31,59 +18,7 @@ export class UserService {
 
     @InjectRepository(Playlist)
     private playlistRepository: Repository<Playlist>,
-
-    private mailService: MailService,
-
-    private configService: ConfigService,
-
-    private jwtService: JwtService,
-
-    private cache: CacheService,
   ) {}
-
-  /** Creates and returns a new user document */
-  public async createUser(data: CreateUserDTO, @Response() res) {
-    const existingUser = await this.findByEmail(data.email);
-
-    // step 1: check if the email exist
-    if (existingUser) {
-      throw new ConflictException('Email already exists');
-    }
-
-    const user = this.userRepository.create(data);
-
-    const { code } = await getRandomNumbers();
-
-    const access_token = await this.jwtService.signAsync(
-      {
-        sub: user.id,
-        email: user.email,
-        role: ['user'],
-      },
-      {
-        secret: this.configService.get<string>(JWT_ACCESS_TOKEN_SECRET),
-        expiresIn: `1h`,
-      },
-    );
-
-    await this.userRepository.save(user);
-
-    await this.cache.set(VERIFY_EMAIL(user.email), code, TIME_IN.minutes[5]);
-
-    await this.cache.set(
-      SESSION_USER(`${user.id}`),
-      access_token,
-      TIME_IN.hours[1],
-    );
-
-    res.setHeader('Authorization', access_token);
-
-    const mailOptions = emailVerificationTemplate(user.fullName, code);
-
-    await this.mailService.viaNodemailer({ ...mailOptions, to: user.email });
-
-    return await this.sendEmailResponse(user.email);
-  }
 
   /** Create user by data */
   public async sendEmailResponse(

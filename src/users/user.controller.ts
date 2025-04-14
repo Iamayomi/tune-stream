@@ -22,15 +22,17 @@ import { UserService } from './user.service';
 import { Playlist } from '../playlists/playlist.entity';
 import { GuardRoute } from 'src/library/decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UpdateUserDto } from './types/dto/update-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { CloudinaryService } from 'src/library/cloudinary/cloudinary.service';
 import { RoleAllowed } from 'src/library/decorator/role-allowed';
 import { Roles } from 'src/library/types';
+import { CustomLogger } from 'src/library';
 
 // @ProtectUser()
 @Controller('users')
 export class UserController {
   constructor(
+    private readonly logger: CustomLogger,
     private readonly userService: UserService,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
@@ -58,6 +60,7 @@ export class UserController {
 
   @Get(':userId')
   async getMe(@Param('userId', ParseIntPipe) userId: number) {
+    this.logger.log(`user id: ${userId}`, 'UserService');
     return await this.userService.findById(userId);
   }
 

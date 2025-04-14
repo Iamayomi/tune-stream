@@ -17,7 +17,7 @@ import {
   CustomValidator,
   IsPhoneNumberConstraint,
   IsTrueConstraint,
-} from '../../../library/validator';
+} from '../../library/validator';
 
 export class CreateUserDTO {
   @ApiProperty({

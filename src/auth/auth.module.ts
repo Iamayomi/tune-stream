@@ -6,13 +6,16 @@ import { AuthController } from './auth.controller';
 import { UserModule } from 'src/users/user.module';
 import { JWTStrategy } from './auth.jwt.strategy';
 import { ArtistsModule } from 'src/artists/artist.module';
-import { JWT_ACCESS_TOKEN_EXP, JWT_ACCESS_TOKEN_SECRET } from '../../library';
+import { JWT_ACCESS_TOKEN_EXP, JWT_ACCESS_TOKEN_SECRET } from '../library';
 import { MailModule } from 'src/library/mailer/mailer.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { User } from 'src/users/user.entity';
 
 // import { ApiKeyStrategy } from './apikey.strategy';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([User]),
     UserModule,
     ArtistsModule,
     JwtModule.registerAsync({

@@ -17,7 +17,7 @@ import { User } from 'src/users/user.entity';
 import { ISong } from './interfaces';
 import { Comment } from 'src/comments/comment.entity';
 import { SongGenre } from './types';
-import { Stream } from '../stats/stream.entity';
+import { Stream } from '../stream/stream.entity';
 
 @Entity('songs')
 export class Song implements ISong {
