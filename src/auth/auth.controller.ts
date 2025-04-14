@@ -11,14 +11,16 @@ import {
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { UserService } from 'src/users/user.service';
-import { AuthService } from 'src/users/auth/auth.service';
+import { AuthService } from './auth.service';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Message, ParsedJWTCookie, GuardRoute } from 'src/library/decorator';
-import { LoginDTO, CreateUserDTO, VerificationCodeDTO } from './dto';
+import { LoginDTO, VerificationCodeDTO } from './dto';
 import { NODE_ENV, TIME_IN } from 'src/library';
 import { ResetPasswordDTO } from './dto/reset-password-dto';
 import { Roles } from 'src/library/types';
 import { RoleAllowed } from 'src/library/decorator/role-allowed';
+
+import { CreateUserDTO } from './dto/create-user-dto';
 
 @Message()
 @Controller('auth')
@@ -43,7 +45,7 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @Body() userData: CreateUserDTO,
   ) {
-    return await this.userService.createUser(userData, res);
+    return await this.authService.createUser(userData, res);
   }
 
   /**

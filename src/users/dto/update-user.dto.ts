@@ -5,7 +5,7 @@ import {
   IsString,
   IsStrongPassword,
 } from 'class-validator';
-import { CreateUserDTO } from 'src/users/auth/dto/create-user-dto';
+import { CreateUserDTO } from '../../auth/dto/create-user-dto';
 
 export class UpdateUserDto extends PartialType(
   OmitType(CreateUserDTO, ['terms_of_service', 'email'] as const),

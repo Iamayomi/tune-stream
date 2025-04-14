@@ -18,3 +18,10 @@ export const STATS_ARTIST = (time: string) => `STATS_ARTIST-${time}`;
 
 export const STATS_USER = (userId: string, category: string, time: string) =>
   `STATS_USER-${userId}-${category}-${time}`;
+
+export const SESSION_SONG = (songId: string) => `SESSION_SONG-${songId}`;
+
+export const SESSION_SOCKET = (userId: string, socketId) =>
+  `session-${userId}-${socketId}`;
+
+export const PLAYBACK = (userId: string) => `PLAYBACK-${userId}`;

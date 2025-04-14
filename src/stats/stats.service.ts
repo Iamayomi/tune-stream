@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MoreThanOrEqual, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Stream } from './stream.entity';
+import { Stream } from '../stream/stream.entity';
 import { TimeFrame } from 'src/library/types';
 import { CacheService } from 'src/library/cache/cache.service';
 import {

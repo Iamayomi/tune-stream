@@ -2,14 +2,14 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { ThrottlerModule } from '@nestjs/throttler';
 
-import { ResponseInterceptor } from './library';
-import { LoggerMiddleware } from './library';
+import { ResponseInterceptor, TIME_IN } from './library';
 import { SongsModule } from './songs/song.module';
 import { UserModule } from './users/user.module';
 import { ArtistsModule } from './artists/artist.module';
 import { PlaylistsModule } from './playlists/playlist.module';
-import { AuthModule } from './users/auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 import { AlbumsModule } from './albums/album.module';
 import { AppController } from './app.controller';
 import { MailModule } from './library/mailer/mailer.module';
@@ -25,14 +25,25 @@ import { PaymentModule } from './payments/payments.module';
 
 import { CloudinaryModule } from './library/cloudinary/cloudinary.module';
 import { StatsModule } from './stats/stats.module';
+import { HealthModule } from './health/health.module';
+import { LoggerModule } from './library/logger/logger.module';
+import { LoggerMiddleware } from './library/logger/logger.middleware';
+import { StreamModule } from './stream/stream.module';
+import { PlaybackModule } from './playback/playback.module';
 
 @Module({
   imports: [
-    NotificationModule,
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'src', '../public'), // Path to your static files directory
       serveRoot: '/public',
     }),
+    ThrottlerModule.forRoot([
+      {
+        ttl: TIME_IN.minutes[1],
+        limit: 100,
+      },
+    ]),
+    NotificationModule,
     DatabaseModule,
     SongsModule,
     UserModule,
@@ -52,6 +63,10 @@ import { StatsModule } from './stats/stats.module';
     PaymentModule,
     CloudinaryModule,
     StatsModule,
+    HealthModule,
+    LoggerModule,
+    StreamModule,
+    PlaybackModule,
   ],
   controllers: [AppController],
   providers: [

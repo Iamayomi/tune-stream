@@ -1,4 +1,5 @@
 import {
+  Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
@@ -17,6 +18,9 @@ export class Stream {
 
   @ManyToOne(() => User, (user) => user.streams)
   user: User;
+
+  @Column({ type: 'int', default: 0 })
+  duration: number;
 
   @CreateDateColumn()
   streamedAt: Date;

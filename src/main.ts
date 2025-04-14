@@ -51,6 +51,8 @@ async function bootstrap() {
 
   app.use(bodyParser.urlencoded({ extended: true }));
 
+  // app.useLogger(app.get(CustomLogger));
+
   // app.use(morgan('dev'));
   const config = app.get(ConfigService);
 

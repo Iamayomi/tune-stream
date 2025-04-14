@@ -1,18 +1,10 @@
 import {
   ConflictException,
-  Inject,
   Injectable,
   Logger,
   NotFoundException,
-  Query,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  IPaginationOptions,
-  Pagination,
-  paginate,
-} from 'nestjs-typeorm-paginate';
 import {
   Brackets,
   DeleteResult,
@@ -32,6 +24,8 @@ import { UploadSongDto } from './dto/create-song-dto';
 import { Playlist } from 'src/playlists/playlist.entity';
 import { SearchSongDto } from './dto/search-song-dto';
 import { SongGenre } from './types';
+import { SESSION_SONG, TIME_IN } from 'src/library';
+import { CacheService } from 'src/library/cache/cache.service';
 
 @Injectable()
 export class SongsService {
@@ -51,11 +45,46 @@ export class SongsService {
 
     private notificationService: NotificationService,
 
+    private cache: CacheService,
+
     // @Inject(SearchService) // Explicitly inject ElasticSearchService
     // private readonly searchService: SearchService,
   ) {}
 
-  public async createSong(
+  private async songNotification(song: Song, artist: Artist[]) {
+    //  Notify artist
+    const user = artist.map((val) => val);
+
+    const artistMsg =
+      artist.length <= 1
+        ? `Your Song ${song.title} has been created successfully`
+        : `Your Collaboration Song title ${song.title} has been created successfully`;
+
+    user.map((user) => {
+      this.notificationService.createNotification({
+        type: NotificationType.NEW_MUSIC,
+        message: artistMsg,
+        userId: user.user.id,
+        data: song,
+      });
+    });
+
+    //  Notify artist followers
+    const followers = artist.find((fol) => fol.followers);
+
+    const folUser = user.find((val) => val);
+
+    followers.followers.map((fol) => {
+      this.notificationService.createNotification({
+        type: NotificationType.NEW_MUSIC,
+        message: `${folUser} just release a new song: ${song.title}`,
+        userId: fol.id,
+        data: song,
+      });
+    });
+  }
+
+  public async uploadSong(
     songDTO: UploadSongDto,
     audioUrl: string,
     coverImgUrl: string,
@@ -101,40 +130,9 @@ export class SongsService {
 
     // this.logger.log(`Song created: ${JSON.stringify(song)}`);
 
+    await this.cache.set(SESSION_SONG(`${song.id}`), song, TIME_IN.hours[1]);
+
     return songSaved;
-  }
-
-  private async songNotification(song: Song, artist: Artist[]) {
-    //  Notify artist
-    const user = artist.map((val) => val);
-
-    const artistMsg =
-      artist.length <= 1
-        ? `Your Song ${song.title} has been created successfully`
-        : `Your Collaboration Song title ${song.title} has been created successfully`;
-
-    user.map((user) => {
-      this.notificationService.createNotification({
-        type: NotificationType.NEW_MUSIC,
-        message: artistMsg,
-        userId: user.user.id,
-        data: song,
-      });
-    });
-
-    //  Notify artist followers
-    const followers = artist.find((fol) => fol.followers);
-
-    const folUser = user.find((val) => val);
-
-    followers.followers.map((fol) => {
-      this.notificationService.createNotification({
-        type: NotificationType.NEW_MUSIC,
-        message: `${folUser} just release a new song: ${song.title}`,
-        userId: fol.id,
-        data: song,
-      });
-    });
   }
 
   public async findSongById(songId: number): Promise<Song> {
@@ -163,6 +161,10 @@ export class SongsService {
 
     if (!song)
       throw new NotFoundException(`Song with this ID ${songId} not found`);
+
+    await this.cache.delete(SESSION_SONG(`${song.id}`));
+
+    await this.cache.set(SESSION_SONG(`${song.id}`), song, TIME_IN.hours[1]);
 
     return await this.songRepository.update(songId, updateSongData);
   }

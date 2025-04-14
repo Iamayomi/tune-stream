@@ -89,7 +89,7 @@ export class SongsController {
       }),
     ]);
 
-    return await this.songServices.createSong(
+    return await this.songServices.uploadSong(
       uploadSongDto,
       uploadedAudio.secure_url,
       uploadedCover.secure_url,

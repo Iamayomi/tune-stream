@@ -3,6 +3,7 @@
 3. most user listening song, album in a day, month and year and total streams and list most listening artist 
 4. songs player fuctionality 
 5. premium functionality for ads
+6. logger
 
 
 ## Key Features:

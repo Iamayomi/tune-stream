@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { StatsService } from './stats.service';
 import { StatsController } from './stats.controller';
-import { Stream } from './stream.entity';
+import { Stream } from '../stream/stream.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Stream])],
