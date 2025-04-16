@@ -25,6 +25,8 @@ class EnvironmentVariables {
   CLOUDINARY_CLOUD_NAME: string;
   CLOUDINARY_API_KEY: string;
   CLOUDINARY_API_SECRET: string;
+
+  REDIS_CLOUD_URL: string;
 }
 
 export function validate(config: Record<string, unknown>) {

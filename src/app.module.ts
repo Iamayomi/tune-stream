@@ -24,12 +24,13 @@ import { SubscriptionModule } from './subscriptions/subscription.module';
 import { PaymentModule } from './payments/payments.module';
 
 import { CloudinaryModule } from './library/cloudinary/cloudinary.module';
-import { StatsModule } from './stats/stats.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 import { HealthModule } from './health/health.module';
 import { LoggerModule } from './library/logger/logger.module';
 import { LoggerMiddleware } from './library/logger/logger.middleware';
 import { StreamModule } from './stream/stream.module';
 import { PlaybackModule } from './playback/playback.module';
+import { QueueModule } from './library/queue/queue.module';
 
 @Module({
   imports: [
@@ -62,11 +63,12 @@ import { PlaybackModule } from './playback/playback.module';
     CommentModule,
     PaymentModule,
     CloudinaryModule,
-    StatsModule,
+    AnalyticsModule,
     HealthModule,
     LoggerModule,
     StreamModule,
     PlaybackModule,
+    QueueModule,
   ],
   controllers: [AppController],
   providers: [

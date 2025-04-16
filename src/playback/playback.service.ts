@@ -9,7 +9,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { PLAYBACK, SESSION_SOCKET, TIME_IN } from 'src/library';
 import { RepeatMode } from './type';
-import { PlaybackActionDTO } from './dto';
+import { PlaybackActionDTO } from './dto/create-playback-dto';
 
 @Injectable()
 export class PlaybackService {

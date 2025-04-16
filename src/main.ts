@@ -1,7 +1,8 @@
 import { HttpAdapterHost, NestFactory } from '@nestjs/core';
-import { SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import helmet from 'helmet';
+import { createAdapter } from '@socket.io/redis-adapter';
+import { createClient } from 'redis';
 
 import { HttpStatus, Logger, ValidationPipe } from '@nestjs/common';
 
@@ -11,13 +12,19 @@ import { AppModule } from './app.module';
 import {
   AllExceptionsFilter,
   PORT,
+  REDIS_CLOUD_URL,
   corsOptions,
   setupSwagger,
   swaggerOptions,
 } from './library';
 import { io, Socket } from 'socket.io-client';
+import { NotificationGateway } from './notification/notification.gateway';
+import { PlaybackGateway } from './playback/playback.gateway';
+import { AnalyticsGateway } from './analytics/analytics.gateway';
 
 async function bootstrap() {
+  const logger = new Logger('Bootstrap');
+
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
   });
@@ -51,40 +58,64 @@ async function bootstrap() {
 
   app.use(bodyParser.urlencoded({ extended: true }));
 
+  const config = app.get(ConfigService);
+
   // app.useLogger(app.get(CustomLogger));
 
+  const redisClient = createClient({
+    url: config.get<string>(REDIS_CLOUD_URL),
+  });
+  await redisClient.connect();
+  const pubClient = redisClient.duplicate();
+  await pubClient.connect();
+
+  const playbackGateway = app.get(PlaybackGateway);
+  const analyticsGateway = app.get(AnalyticsGateway);
+  const notificationGateway = app.get(NotificationGateway);
+
+  if (notificationGateway?.server) {
+    notificationGateway.server.adapter(createAdapter(pubClient, redisClient));
+  }
+
+  if (playbackGateway?.server) {
+    playbackGateway.server.adapter(createAdapter(pubClient, redisClient));
+  }
+
+  if (analyticsGateway?.server) {
+    analyticsGateway.server.adapter(createAdapter(pubClient, redisClient));
+  }
+
   // app.use(morgan('dev'));
-  const config = app.get(ConfigService);
 
   await app.listen(config.get(PORT, 5000));
 
-  const logger = new Logger('WebSocketTest');
+  // const logger = new Logger('WebSocketTest');
 
-  // Simulate a WebSocket client connecting to the server
-  const socket: Socket = io(`http://localhost:8080/notification`, {
-    reconnection: false, // Avoid reconnection loops in this test
-  });
+  // // Simulate a WebSocket client connecting to the server
+  // const socket: Socket = io(`http://localhost:8080/notification`, {
+  //   reconnection: false, // Avoid reconnection loops in this test
+  // });
 
-  socket.on('connect', () => {
-    logger.log('Test client connected to WebSocket server');
-    socket.emit('message', 'Test message from backend client');
-  });
+  // socket.on('connect', () => {
+  //   logger.log('Test client connected to WebSocket server');
+  //   socket.emit('message', 'Test message from backend client');
+  // });
 
-  socket.on('welcome', (msg) => {
-    logger.log(`Received welcome message: ${msg}`);
-  });
+  // socket.on('welcome', (msg) => {
+  //   logger.log(`Received welcome message: ${msg}`);
+  // });
 
-  socket.on('notification', (msg) => {
-    logger.log(`Received server response: ${msg}`);
-    // Close the client and server after the test
-    socket.disconnect();
-    app.close().then(() => logger.log('Test complete, server closed'));
-  });
+  // socket.on('notification', (msg) => {
+  //   logger.log(`Received server response: ${msg}`);
+  //   // Close the client and server after the test
+  //   socket.disconnect();
+  //   app.close().then(() => logger.log('Test complete, server closed'));
+  // });
 
-  socket.on('connect_error', (err) => {
-    logger.error(`Connection error: ${err.message}`);
-    app.close();
-  });
+  // socket.on('connect_error', (err) => {
+  //   logger.error(`Connection error: ${err.message}`);
+  //   app.close();
+  // });
 
   // if (module.hot) {
   //   module.hot.accept();

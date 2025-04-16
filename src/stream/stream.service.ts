@@ -33,6 +33,7 @@ export class StreamService {
       await this.streamQueue.add('log-stream', {
         songId,
         userId,
+        albumId: song.album?.id,
         durationPlayed,
         playedAt: new Date(),
       });

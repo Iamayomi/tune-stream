@@ -89,7 +89,7 @@ export type Hours =
 
 export type Days = 1 | 2 | 3 | 4 | 5 | 6 | 7;
 
-export type TimeFrame = 'day' | 'month' | 'year';
+export type TimeFrame = 'day' | 'month' | 'year' | 'total';
 
 export type TimeInMilliseconds<T extends string | number | symbol> = {
   [key in T]: number;

@@ -1,5 +1,6 @@
 import { Artist } from 'src/artists/artist.entity';
 import { Song } from 'src/songs/song.entity';
+import { Stream } from 'src/stream/stream.entity';
 import { User } from 'src/users/user.entity';
 
 export interface IAlbum {
@@ -11,6 +12,9 @@ export interface IAlbum {
 
   /** album's songs **/
   tracks: Song[];
+
+  /** album's streams **/
+  streams: Stream[];
 
   /** album's release date **/
   releaseDate: Date;

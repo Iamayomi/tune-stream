@@ -5,6 +5,7 @@ import { PlaybackState } from './playback.entity';
 import { User } from 'src/users/user.entity';
 import { BullModule } from '@nestjs/bull';
 import { Song } from 'src/songs/song.entity';
+import { PlaybackGateway } from './playback.gateway';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { Song } from 'src/songs/song.entity';
       name: 'stream-queue',
     }),
   ],
-  providers: [PlaybackService],
+  providers: [PlaybackService, PlaybackGateway],
+  exports: [PlaybackGateway],
 })
 export class PlaybackModule {}

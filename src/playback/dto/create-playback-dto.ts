@@ -29,7 +29,8 @@ export class PlaybackActionDTO {
   })
   @IsNotEmpty()
   @IsMilitaryTime()
-  readonly position: Date;
+  @IsOptional()
+  readonly position?: Date;
 
   @IsInt()
   @Min(0)
