@@ -11,8 +11,10 @@ import {
 import { Server, Socket } from 'socket.io';
 import { NotificationService } from './notification.service';
 import { CreateNotificationDto } from './dto';
-import { corsOptions } from 'src/library';
 import { Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
+import { JWT_ACCESS_TOKEN_SECRET } from 'src/library';
 
 @WebSocketGateway({ namespace: 'notification', cors: { origin: '*' } })
 export class NotificationGateway
@@ -23,7 +25,11 @@ export class NotificationGateway
 
   private logger: Logger = new Logger('NotificationGateway');
 
-  constructor(private notificationsService: NotificationService) {}
+  constructor(
+    private notificationsService: NotificationService,
+    private configService: ConfigService,
+    private jwtService: JwtService,
+  ) {}
 
   afterInit(server: Server) {
     this.logger.log(
@@ -31,12 +37,25 @@ export class NotificationGateway
     );
   }
 
-  handleConnection(client: Socket) {
-    this.logger.log(`Client Connected from /notification: ${client.id}`);
-    client.emit(
-      'welcome',
-      `Hello, client ${client.id}! Welcome to the notification namespace`,
-    );
+  async handleConnection(client: Socket) {
+    try {
+      const token = client.handshake.auth.token?.replace('Bearer ', '');
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get<string>(JWT_ACCESS_TOKEN_SECRET),
+      });
+
+      const userId = payload.sub;
+      client.data.userId = userId;
+      client.join(userId);
+      this.logger.log(`Client Connected from /notification: ${client.id}`);
+      client.emit(
+        'welcome',
+        `Hello, client ${client.id}! Welcome to the notification namespace`,
+      );
+    } catch {
+      this.logger.warn(`Unauthorized connection attempt from ${client.id}`);
+      client.disconnect();
+    }
   }
 
   handleDisconnect(client: Socket) {

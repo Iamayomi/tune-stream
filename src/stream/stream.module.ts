@@ -9,7 +9,7 @@ import { Song } from 'src/songs/song.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Song, Stream, User]),
+    TypeOrmModule.forFeature([Song, Stream, User, Stream]),
     BullModule.registerQueue({ name: 'stream-queue' }),
   ],
   providers: [StreamService],

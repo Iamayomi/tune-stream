@@ -14,6 +14,7 @@ import { Song } from '../songs/song.entity';
 import { Artist } from '../artists/artist.entity';
 import { User } from 'src/users/user.entity';
 import { IAlbum } from './interfaces';
+import { Stream } from 'src/stream/stream.entity';
 
 @Entity('albums')
 export class Album implements IAlbum {
@@ -41,6 +42,9 @@ export class Album implements IAlbum {
 
   @OneToMany(() => Song, (song) => song.album, { cascade: true })
   tracks: Song[];
+
+  @OneToMany(() => Stream, (stream) => stream.album)
+  streams: Stream[];
 
   @ManyToMany(() => User, (user) => user.followedAlbums)
   @JoinTable()

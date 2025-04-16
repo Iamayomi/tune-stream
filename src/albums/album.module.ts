@@ -5,11 +5,15 @@ import { AlbumController } from './album.controller';
 import { Album } from './album.entity';
 import { Artist } from '../artists/artist.entity';
 import { Song } from '../songs/song.entity';
+import { Stream } from 'src/stream/stream.entity';
 
 import { CloudinaryModule } from 'src/library/cloudinary/cloudinary.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Album, Artist, Song]), CloudinaryModule],
+  imports: [
+    TypeOrmModule.forFeature([Album, Artist, Song, Stream]),
+    CloudinaryModule,
+  ],
   providers: [AlbumService],
   controllers: [AlbumController],
 })

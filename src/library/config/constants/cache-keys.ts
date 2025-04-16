@@ -25,3 +25,11 @@ export const SESSION_SOCKET = (userId: string, socketId) =>
   `session-${userId}-${socketId}`;
 
 export const PLAYBACK = (userId: string) => `PLAYBACK-${userId}`;
+
+export const STREAM_SONG_COUNT = (songId: string) =>
+  `STREAM_SONG_COUNT-${songId}`;
+
+export const STATS_POPULAR_ARTISTS = 'STATS-POPULAR_ARTISTS';
+
+export const STREAM_ALBUM_COUNT = (albumId: string) =>
+  `STREAM_COUNT-ALBUM-${albumId}`;
