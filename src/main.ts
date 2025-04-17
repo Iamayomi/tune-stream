@@ -85,6 +85,14 @@ async function bootstrap() {
     analyticsGateway.server.adapter(createAdapter(pubClient, redisClient));
   }
 
+  // process.on('SIGTERM', async () => {
+  //   logger.log('Shutting down...');
+  //   if (pubClient) await pubClient.quit();
+  //   if (subClient) await subClient.quit();
+  //   await app.close();
+  //   process.exit(0);
+  // });
+
   // app.use(morgan('dev'));
 
   await app.listen(config.get(PORT, 5000));
@@ -93,6 +101,7 @@ async function bootstrap() {
 
   // // Simulate a WebSocket client connecting to the server
   // const socket: Socket = io(`http://localhost:8080/notification`, {
+  // auth: { token: 'Bearer <token>' },
   //   reconnection: false, // Avoid reconnection loops in this test
   // });
 

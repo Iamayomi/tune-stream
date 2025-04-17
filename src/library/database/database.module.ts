@@ -13,7 +13,7 @@ import { DATABASE_URL } from '../config';
         type: 'postgres',
         url: configService.get<string>(DATABASE_URL),
         autoLoadEntities: true,
-        synchronize: true, // ⚠️ Set to false in production
+        synchronize: false, // ⚠️ Set to false in production
         entities: ['dist/**/*.entity.js'],
         migrations: ['dist/src/library/database/migrations/*.js'],
       }),
