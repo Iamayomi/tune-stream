@@ -5,9 +5,10 @@ import { Artist } from './artist.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
 import { UserModule } from '../users/user.module';
+import { Stream } from 'src/stream/stream.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Artist, User]), UserModule],
+  imports: [TypeOrmModule.forFeature([Artist, User, Stream]), UserModule],
   providers: [ArtistsService],
   controllers: [ArtistsController],
   exports: [ArtistsService],

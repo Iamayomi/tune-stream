@@ -38,6 +38,7 @@ import { QueueModule } from './library/queue/queue.module';
       rootPath: join(process.cwd(), 'src', '../public'), // Path to your static files directory
       serveRoot: '/public',
     }),
+
     ThrottlerModule.forRoot([
       {
         ttl: TIME_IN.minutes[1],

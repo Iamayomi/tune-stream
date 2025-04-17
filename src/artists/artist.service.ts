@@ -5,11 +5,12 @@ import {
 } from '@nestjs/common';
 import { Artist } from './artist.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, MoreThan, Repository } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { createArtistDTO } from './dto/create-artist.dto';
 import { Roles } from '../library/types';
 import { UserService } from '../users/user.service';
+import { Stream } from 'src/stream/stream.entity';
 
 @Injectable()
 export class ArtistsService {
@@ -19,6 +20,9 @@ export class ArtistsService {
 
     @InjectRepository(User)
     private userRepository: Repository<User>,
+
+    @InjectRepository(Stream)
+    private streamRepository: Repository<Stream>,
 
     private readonly userService: UserService,
   ) {}
@@ -53,5 +57,34 @@ export class ArtistsService {
     });
 
     return await this.artistRepository.save(artist);
+  }
+
+  public async updateMonthlyListeners() {
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
+    const streams = await this.streamRepository.find({
+      where: { streamedAt: MoreThan(thirtyDaysAgo) },
+      relations: ['song', 'song.artists'],
+    });
+
+    const artistListenersMap = new Map<number, Set<number>>();
+
+    for (const stream of streams) {
+      const userId = stream.user.id;
+      const artists = stream.song?.artists || [];
+
+      for (const artist of artists) {
+        if (!artistListenersMap.has(artist.id)) {
+          artistListenersMap.set(artist.id, new Set());
+        }
+        artistListenersMap.get(artist.id).add(userId);
+      }
+    }
+
+    for (const [artistId, userSet] of artistListenersMap.entries()) {
+      await this.artistRepository.update(artistId, {
+        monthlyListeners: userSet.size,
+      });
+    }
   }
 }
