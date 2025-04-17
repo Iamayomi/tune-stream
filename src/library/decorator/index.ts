@@ -9,6 +9,7 @@ import {
 import { Request } from 'express';
 import { AuthenticationGuard } from '../guards/auth.guard';
 import { RolesGuard } from '../guards/roles.guard';
+import { PremiumGuard } from '../guards/premium.user.guide';
 
 export const ParsedJWTCookie = createParamDecorator(
   (key: string = 'jwt', ctx: ExecutionContext) => {
@@ -34,6 +35,6 @@ export const GuardRoute = () => {
   return applyDecorators(UseGuards(AuthenticationGuard, RolesGuard));
 };
 
-// export const ProtectArtist = () => {
-//   return applyDecorators(UseGuards(AuthenticationGuard, ArtistGuard));
-// };
+export const GuardPremium = () => {
+  return applyDecorators(UseGuards(PremiumGuard));
+};

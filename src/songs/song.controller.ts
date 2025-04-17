@@ -35,7 +35,7 @@ import { UpdateSongDTO } from './dto/update-song-dto';
 import { Song } from './song.entity';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { SearchDto } from './dto/search-dto';
-import { GuardRoute } from 'src/library/decorator';
+import { GuardRoute, Message } from 'src/library/decorator';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from 'src/library/cloudinary/cloudinary.service';
 import { RoleAllowed } from 'src/library/decorator/role-allowed';
@@ -48,6 +48,10 @@ export class SongsController {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
+  @Message('Song Uploaded successfully')
+  @ApiOperation({
+    summary: 'Artist upload a song',
+  })
   @ApiBearerAuth('JWT-auth')
   @UseInterceptors(
     FileFieldsInterceptor([
@@ -129,6 +133,10 @@ export class SongsController {
     return await this.songServices.findSongs(searchDto);
   }
 
+  @Message('Song Fetch successfully')
+  @ApiOperation({
+    summary: 'User Get a song',
+  })
   @ApiBearerAuth('JWT-auth')
   @RoleAllowed(Roles.USER)
   @GuardRoute()
@@ -143,6 +151,10 @@ export class SongsController {
     return this.songServices.findSongById(songId);
   }
 
+  @Message('Song Update successfully')
+  @ApiOperation({
+    summary: 'Artist Update a song',
+  })
   @ApiBearerAuth('JWT-auth')
   @RoleAllowed(Roles.ARTIST)
   @GuardRoute()
@@ -155,8 +167,12 @@ export class SongsController {
     return this.songServices.updateSongById(songId, artistId, updateSongDTO);
   }
 
+  @Message('Song Deleted successfully')
+  @ApiOperation({
+    summary: 'Artist Delete a song',
+  })
   @ApiBearerAuth('JWT-auth')
-  @RoleAllowed(Roles.USER)
+  @RoleAllowed(Roles.ARTIST)
   @GuardRoute()
   @Delete(':songId/artists/:artistId')
   async remove(

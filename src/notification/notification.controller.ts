@@ -10,8 +10,8 @@ import {
 import { NotificationService } from './notification.service';
 import { Notification } from './notification.entity';
 import { FilterNotificationDto } from './dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
-import { GuardRoute } from 'src/library/decorator';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { GuardRoute, Message } from 'src/library/decorator';
 import { Roles } from 'src/library/types';
 import { RoleAllowed } from 'src/library/decorator/role-allowed';
 
@@ -20,6 +20,11 @@ import { RoleAllowed } from 'src/library/decorator/role-allowed';
 export class NotificationController {
   constructor(private notificationService: NotificationService) {}
 
+  @Message('Notification Fetch successfully')
+  @ApiOperation({
+    summary: 'Get User Notification',
+  })
+  @ApiBearerAuth('JWT-auth')
   @RoleAllowed(Roles.USER)
   @GuardRoute()
   @Get(':userId')
@@ -31,6 +36,11 @@ export class NotificationController {
     return this.notificationService.getUserNotifications(userId, filterDto);
   }
 
+  @Message(' Unread Notification Fetch successfully')
+  @ApiOperation({
+    summary: 'Get User Unread Notification',
+  })
+  @ApiBearerAuth('JWT-auth')
   @RoleAllowed(Roles.USER)
   @GuardRoute()
   @Get(':userId/unread-count')
@@ -42,6 +52,11 @@ export class NotificationController {
     return { count };
   }
 
+  @Message(' Notification Mark Read successfully')
+  @ApiOperation({
+    summary: 'Get User Unread Notification',
+  })
+  @ApiBearerAuth('JWT-auth')
   @RoleAllowed(Roles.USER)
   @GuardRoute()
   @Patch(':notificationId/read')
@@ -51,6 +66,11 @@ export class NotificationController {
     return this.notificationService.markNotificationAsRead(notificationId);
   }
 
+  @Message('Mark All Notification Read successfully')
+  @ApiOperation({
+    summary: 'Get User Unread Notification',
+  })
+  @ApiBearerAuth('JWT-auth')
   @RoleAllowed(Roles.USER)
   @GuardRoute()
   @Patch(':userId/read-all')
@@ -60,6 +80,11 @@ export class NotificationController {
     return this.notificationService.markAllNotificationsAsRead(userId);
   }
 
+  @Message('Notification Deleted successfully')
+  @ApiOperation({
+    summary: 'Delete Notification',
+  })
+  @ApiBearerAuth('JWT-auth')
   @RoleAllowed(Roles.USER)
   @GuardRoute()
   @Delete(':notificationId')

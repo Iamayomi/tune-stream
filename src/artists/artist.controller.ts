@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { ArtistsService } from './artist.service';
 import { createArtistDTO } from './dto/create-artist.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
-import { GuardRoute } from 'src/library/decorator';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { GuardRoute, Message } from 'src/library/decorator';
 import { RoleAllowed } from 'src/library/decorator/role-allowed';
 import { Roles } from 'src/library/types';
 
@@ -19,6 +19,8 @@ import { Roles } from 'src/library/types';
 export class ArtistsController {
   constructor(private artistService: ArtistsService) {}
 
+  @Message('User upgrade to artist successfully')
+  @ApiOperation({ summary: 'Upgrade to artist' })
   @ApiBearerAuth('JWT-auth')
   @RoleAllowed(Roles.USER)
   @GuardRoute()
@@ -30,6 +32,8 @@ export class ArtistsController {
     return this.artistService.userUpgradeToArtist(userId, artistData);
   }
 
+  @Message('An Artist Fetch successfully')
+  @ApiOperation({ summary: 'Get an artist' })
   @ApiBearerAuth('JWT-auth')
   @RoleAllowed(Roles.USER)
   @GuardRoute()

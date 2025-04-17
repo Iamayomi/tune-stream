@@ -20,7 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { Playlist } from '../playlists/playlist.entity';
-import { GuardRoute } from 'src/library/decorator';
+import { GuardRoute, Message } from 'src/library/decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CloudinaryService } from 'src/library/cloudinary/cloudinary.service';
@@ -42,7 +42,7 @@ export class UserController {
    * @route {GET} /api/v1/user/profile
    * @access protected
    */
-
+  @Message('User profile fetch successfully')
   @ApiOperation({ summary: 'Get user profile' })
   @ApiBearerAuth('JWT-auth')
   @RoleAllowed(Roles.USER)
@@ -58,6 +58,13 @@ export class UserController {
     };
   }
 
+  @Message('User Fetched successfully')
+  @ApiOperation({
+    summary: 'Get a user',
+  })
+  @ApiBearerAuth('JWT-auth')
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Get(':userId')
   async getMe(@Param('userId', ParseIntPipe) userId: number) {
     this.logger.log(`user id: ${userId}`, 'UserService');
@@ -69,7 +76,11 @@ export class UserController {
    * @route {GET} /api/v1/user/:userId/playlists
    * @access protected
    */
+  @Message('user playlist Fetch successfully')
   @ApiOperation({ summary: 'Get user playlists' })
+  @ApiBearerAuth('JWT-auth')
+  @RoleAllowed(Roles.USER)
+  @GuardRoute()
   @Get(':userId/playlists')
   async findAll(
     @Param('userId', ParseIntPipe) userId: number,
@@ -77,13 +88,17 @@ export class UserController {
     return await this.userService.findUserPlaylistsById(userId);
   }
 
-  @Patch('profile')
+  @Message('Upload user profile successfully')
+  @ApiOperation({
+    summary: 'Upload User data',
+  })
   @ApiBearerAuth('JWT-auth')
   @UseInterceptors(FileInterceptor('image'))
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: UpdateUserDto })
   @RoleAllowed(Roles.USER)
   @GuardRoute()
+  @Patch('profile')
   async uploadProfileImage(
     @Req() req,
     @UploadedFile() image: Express.Multer.File,

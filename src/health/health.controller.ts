@@ -1,4 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
+import { ApiOperation } from '@nestjs/swagger';
 import {
   HealthCheck,
   HealthCheckService,
@@ -6,9 +7,8 @@ import {
   MemoryHealthIndicator,
 } from '@nestjs/terminus';
 import { InjectConnection } from '@nestjs/typeorm';
+import { Message } from 'src/library/decorator';
 import { Connection } from 'typeorm';
-
-
 
 @Controller('health')
 export class HealthController {
@@ -19,6 +19,8 @@ export class HealthController {
     @InjectConnection() private connection: Connection,
   ) {}
 
+  @Message('Api Health Check successfully')
+  @ApiOperation({ summary: 'Check Api Health' })
   @Get()
   @HealthCheck()
   check() {

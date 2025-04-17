@@ -10,7 +10,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 
 import { DeleteResult } from 'typeorm';
 import { PlaylistsService } from './playlist.service';
@@ -19,7 +19,7 @@ import {
   CreatePlayListDto,
 } from './dto/create-playlist-dto';
 import { Playlist } from './playlist.entity';
-import { GuardRoute } from 'src/library/decorator';
+import { GuardRoute, Message } from 'src/library/decorator';
 import { RoleAllowed } from 'src/library/decorator/role-allowed';
 import { Roles } from 'src/library/types';
 
@@ -27,6 +27,8 @@ import { Roles } from 'src/library/types';
 export class PlaylistsController {
   constructor(private playlistService: PlaylistsService) {}
 
+  @Message('Playlist Created successfully')
+  @ApiOperation({ summary: 'User Create a playlist' })
   @ApiBearerAuth('JWT-auth')
   @RoleAllowed(Roles.USER)
   @GuardRoute()
@@ -38,6 +40,8 @@ export class PlaylistsController {
     return await this.playlistService.createPlaylist(req.user.id, playlistDTO);
   }
 
+  @Message('Song add to Playlist successfully')
+  @ApiOperation({ summary: 'Add Song to a playlist' })
   @ApiBearerAuth('JWT-auth')
   @RoleAllowed(Roles.USER)
   @GuardRoute()
@@ -52,6 +56,8 @@ export class PlaylistsController {
     );
   }
 
+  @Message('Playlist Fetch successfully')
+  @ApiOperation({ summary: 'Get a playlist' })
   @ApiBearerAuth('JWT-auth')
   @Get(':playlistId/users/:userId')
   @RoleAllowed(Roles.USER)
@@ -63,6 +69,8 @@ export class PlaylistsController {
     return await this.playlistService.getUserPlaylistById(playlistId);
   }
 
+  @Message('Playlist Deleted successfully')
+  @ApiOperation({ summary: 'Delete a playlist' })
   @ApiBearerAuth('JWT-auth')
   @Delete(':playlistId/users/:userId')
   @RoleAllowed(Roles.USER)

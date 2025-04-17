@@ -17,10 +17,15 @@ import { AlbumService } from './album.service';
 import { CreateAlbumDTO } from './dto/create-album-dto';
 import { UpdateAlbumDTO } from './dto/update-album-dto';
 import { DeleteResult, UpdateResult } from 'typeorm';
-import { GuardRoute } from 'src/library/decorator';
+import { GuardRoute, Message } from 'src/library/decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CloudinaryService } from 'src/library/cloudinary/cloudinary.service';
-import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { RoleAllowed } from 'src/library/decorator/role-allowed';
 import { Roles } from 'src/library/types';
 
@@ -31,6 +36,8 @@ export class AlbumController {
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
+  @Message('Album Created successfully')
+  @ApiOperation({ summary: 'Artist Create an Album' })
   @ApiBearerAuth('JWT-auth')
   @UseInterceptors(FileInterceptor('cover'))
   @ApiConsumes('multipart/form-data')
@@ -67,6 +74,9 @@ export class AlbumController {
     );
   }
 
+  @Message('Albums Fetched successfully')
+  @ApiOperation({ summary: 'User Get all Albums' })
+  @ApiBearerAuth('JWT-auth')
   @RoleAllowed(Roles.USER)
   @GuardRoute()
   @Get()
@@ -74,6 +84,9 @@ export class AlbumController {
     return await this.albumService.findAllAlbum();
   }
 
+  @Message('Album Fetched successfully')
+  @ApiOperation({ summary: 'User Get an Album' })
+  @ApiBearerAuth('JWT-auth')
   @RoleAllowed(Roles.USER)
   @GuardRoute()
   @Get(':id')
@@ -81,6 +94,9 @@ export class AlbumController {
     return await this.albumService.findAlbumById(id);
   }
 
+  @Message('Album Update successfully')
+  @ApiOperation({ summary: 'Artist Update an Albums' })
+  @ApiBearerAuth('JWT-auth')
   @RoleAllowed(Roles.ARTIST, Roles.ADMIN)
   @GuardRoute()
   @Patch(':albumId/artists/:artistId')
@@ -92,7 +108,10 @@ export class AlbumController {
     return this.albumService.updateAlbumById(albumId, artistId, updateAlbumDto);
   }
 
-  @RoleAllowed(Roles.ADMIN)
+  @Message('Album Deleted successfully')
+  @ApiOperation({ summary: 'Artist Artist an Albums' })
+  @ApiBearerAuth('JWT-auth')
+  @RoleAllowed(Roles.ARTIST, Roles.ADMIN)
   @GuardRoute()
   @Delete(':albumId/artists/:artistId')
   async delete(
