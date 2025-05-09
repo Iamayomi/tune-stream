@@ -1,15 +1,19 @@
-FROM node:18-alpine
+# Use official Node image
+FROM node:18
 
 WORKDIR /app
 
-COPY package*.json ./
+# Copy only dependency files first to cache install
+COPY package.json yarn.lock ./
 
-RUN npm ci
+# Install dependencies
+RUN yarn install --frozen-lockfile
 
+# Copy the rest of the app
 COPY . .
 
+# Build app
 RUN yarn build
 
-EXPOSE 8080
-
-CMD ["node", "dist/main"]
+# Start app
+CMD ["node", "dist/main.js"]

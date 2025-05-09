@@ -5,13 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Playlist } from '../playlists/playlist.entity';
 import { MailModule } from '../library/mailer/mailer.module';
-import { JwtModule } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import {
-  CustomLogger,
-  JWT_ACCESS_TOKEN_EXP,
-  JWT_ACCESS_TOKEN_SECRET,
-} from 'src/library';
+import { CustomLogger } from 'src/library';
 import { CloudinaryModule } from 'src/library/cloudinary/cloudinary.module';
 
 @Module({

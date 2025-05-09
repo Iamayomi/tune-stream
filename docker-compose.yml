@@ -15,7 +15,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: myserver
-      POSTGRES_DB: stream-stream
+      POSTGRES_DB: tunestream
     volumes:
       - postgres_data:/var/lib/postgresql/data
   redis:
