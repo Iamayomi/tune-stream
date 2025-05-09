@@ -18,6 +18,7 @@ import {
   ApiConsumes,
   ApiOperation,
 } from '@nestjs/swagger';
+import { Express } from 'express';
 import { UserService } from './user.service';
 import { Playlist } from '../playlists/playlist.entity';
 import { GuardRoute, Message } from 'src/library/decorator';

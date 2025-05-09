@@ -13,6 +13,7 @@ import {
   ConflictException,
   UploadedFile,
 } from '@nestjs/common';
+import { Express } from 'express';
 import { AlbumService } from './album.service';
 import { CreateAlbumDTO } from './dto/create-album-dto';
 import { UpdateAlbumDTO } from './dto/update-album-dto';
