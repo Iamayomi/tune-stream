@@ -95,7 +95,7 @@ async function bootstrap() {
 
   // app.use(morgan('dev'));
 
-  await app.listen(process.env.PORT || 3000, 5000));
+  await app.listen(process.env.PORT || 3000);
 
   // const logger = new Logger('WebSocketTest');
 
