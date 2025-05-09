@@ -9,6 +9,7 @@ const devOrigin = [
   'http://localhost:8080',
   `http://localhost:${process.env.PORT}`,
   'https://tunestream.koyeb.app/',
+  'https://tune-stream-sigma.vercel.app/',
   'http://localhost:4173',
   'http://localhost:5173',
   'http://localhost:5174',
