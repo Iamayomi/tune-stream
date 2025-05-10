@@ -20,8 +20,14 @@ import { Album } from 'src/albums/album.entity';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
         const redisUrl = configService.get<string>(REDIS_CLOUD_URL);
+        const url = new URL(redisUrl); // Parse the Redis URL
+
         return {
-          redis: redisUrl,
+          redis: {
+            host: url.hostname,
+            port: parseInt(url.port, 10),
+            password: url.password,
+          },
           prefix: 'bull',
         };
       },
