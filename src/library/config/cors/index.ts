@@ -2,6 +2,7 @@ const prodOrigin = [
   'http://localhost:4173',
   'http://localhost:5173',
   'http://localhost:5174',
+  'https://tune-stream.onrender.com'
 ];
 
 /** Development origins */
