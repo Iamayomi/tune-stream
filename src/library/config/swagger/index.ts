@@ -19,7 +19,7 @@ export const swaggerOptions = new DocumentBuilder()
     'http://www.apache.org/licenses/LICENSE-2.0.html', // License URL
   )
   .addServer(`http://localhost:8080/`, 'Local environment')
-  .addServer('https://tune-stream.onrender.com', 'Production')
+  .addServer('https://tune-stream.onrender.com/', 'Production')
   // .addServer('https://production.yourapi.com/', 'Production')
   .addBearerAuth(
     // Enable Bearer Auth here
